@@ -7,7 +7,7 @@
 
   "watermark": "",
   "useFeaturedIfAvaliable": "True",
-  "iconType": "clean",
+  "iconType": "standard",
 
   "twitAPIKey": "",
   "twitAPISecretKey": "",
