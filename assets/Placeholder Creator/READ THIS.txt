@@ -1,0 +1,1 @@
+You can use this photoshop file (placeholder.psd) to create your own placeholder image, you can then upload online to create a link for it (I suggest imgur) then you can change it in settings.json
