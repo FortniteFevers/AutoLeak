@@ -1,0 +1,21 @@
+{
+  "name": "AutoLeak",
+  "footer": "#Fortnite",
+  "language": "en",
+  "imageFont": "BurbankBigCondensed-Black.otf",
+  "placeholderUrl": "https://i.ibb.co/svXhCgN/ph.png",
+
+  "watermark": "",
+  "useFeaturedIfAvaliable": "True",
+  "iconType": "clean",
+
+  "twitAPIKey": "",
+  "twitAPISecretKey": "",
+  "twitAccessToken": "",
+  "twitAccessTokenSecret": "",
+
+  "BenBot": "True",
+
+  "tweetUpdate": "False",
+  "tweetAes": "False"
+}
