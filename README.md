@@ -18,6 +18,12 @@ Currently, the program features these options:
 
 More coming soon!
 
+**Sample Image:**
+
+<p align="left">
+    <img src="https://i.ibb.co/gWbYFyV/CID-731-Athena-Commando-F-Neon.png" width="400" draggable="false">
+</p>
+
 # Running AutoLeak
 To run AutoLeak, you have to have [Python 3.9](https://www.microsoft.com/en-us/p/python-39/9p7qfqmjrfp7) installed on your computer.
 
