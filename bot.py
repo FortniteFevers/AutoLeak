@@ -312,7 +312,7 @@ def update_mode():
 
 def generate_cosmetics():
 
-    if benbot == 'False':
+    if benbot == 'False' or 'false':
             print('Loading Fortnite-API...\n')
             fontSize = 40
             response = requests.get('https://fortnite-api.com/v2/cosmetics/br/new?language='+language)
@@ -471,7 +471,7 @@ def generate_cosmetics():
             print(f"IMAGE GENERATING COMPLETE - Generated images in {round(end - start, 2)} seconds")
             print("!  !  !  !  !  !  !")
     
-    if benbot == 'True':
+    if benbot == 'True' or 'true':
         print('Loading BenBot...\n')
         fontSize = 40
         response = requests.get('https://benbotfn.tk/api/v1/newCosmetics')
