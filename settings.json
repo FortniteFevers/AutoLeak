@@ -14,7 +14,7 @@
   "twitAccessToken": "",
   "twitAccessTokenSecret": "",
 
-  "BenBot": "True",
+  "BenBot": "False",
 
   "tweetUpdate": "False",
   "tweetAes": "False"
