@@ -26,6 +26,8 @@ import PIL
 from PIL import Image, ImageFont, ImageDraw, ImageChops
 import os
 import json
+import glob
+import shutil
 
 from colorama import *
 init()
@@ -34,7 +36,7 @@ loop = True
 count = 1
 fontSize = 40
 initialCheckDelay = 2
-currentVersion = '1.2.0'
+currentVersion = '1.2.4'
 
 response = requests.get('https://pastebin.com/raw/zku0yz9q')
 ln1 = response.json()["1"]
@@ -312,7 +314,7 @@ def update_mode():
 
 def generate_cosmetics():
 
-    if benbot == 'False' or 'false':
+    if benbot == 'False':
             print('Loading Fortnite-API...\n')
             fontSize = 40
             response = requests.get('https://fortnite-api.com/v2/cosmetics/br/new?language='+language)
@@ -471,7 +473,7 @@ def generate_cosmetics():
             print(f"IMAGE GENERATING COMPLETE - Generated images in {round(end - start, 2)} seconds")
             print("!  !  !  !  !  !  !")
     
-    if benbot == 'True' or 'true':
+    if benbot == 'True':
         print('Loading BenBot...\n')
         fontSize = 40
         response = requests.get('https://benbotfn.tk/api/v1/newCosmetics')
@@ -631,7 +633,7 @@ def generate_cosmetics():
         print("!  !  !  !  !  !  !")
 
 def check_version():
-    response = requests.get('http://ifbr.xyz/api/devtools/autoleak/newsData.json')
+    response = requests.get('https://pastebin.com/raw/zku0yz9q')
     latestVersion = response.json()["latestVersion"]
 
     if currentVersion == latestVersion:
@@ -810,6 +812,14 @@ def search_cosmetic():
 
     print(Fore.GREEN+"\nFinished successfully!")
 
+def delete_contents():
+    print('Deleting contents of the Icons folder...')
+    try:
+        shutil.rmtree('icons')
+        os.makedirs('icons')
+    except:
+        os.makedirs('icons')
+    print('Cleared contents!')
 
 print("- - - - - MENU - - - - -")
 print("")
@@ -818,6 +828,7 @@ print("(2) - Generate new cosmetics")
 print("(3) - Tweet current build")
 print("(4) - Tweet current AES key")
 print("(5) - Search for a cosmetic")
+print("(6) - Clear contents of the icon folder")
 print("")
 option_choice = input(">> ")
 if option_choice == "1":
@@ -830,8 +841,12 @@ elif option_choice == "4":
     tweet_aes()
 elif option_choice == "5":
     search_cosmetic()
+elif option_choice == "6":
+    delete_contents()
 else:
-    print("Please enter a number between 1 and 4")
+    print("Please enter a number between 1 and 6")
+
+# ALL STUFF BELOW IS FOR THE OLD GUI AUTOLEAK, KEEPING AS A COMMENT TO SAVE FOR FURTHER NOTICE
 
 #app = App(title="AutoLeak v"+currentVersion, bg='#36393f', width=400, height=750)
 # menubar = MenuBar(app,
