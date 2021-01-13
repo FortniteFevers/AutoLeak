@@ -36,7 +36,7 @@ loop = True
 count = 1
 fontSize = 40
 initialCheckDelay = 2
-currentVersion = '1.2.4'
+currentVersion = '1.2.5'
 
 response = requests.get('https://pastebin.com/raw/zku0yz9q')
 ln1 = response.json()["1"]
