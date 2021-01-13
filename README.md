@@ -33,7 +33,7 @@ After you have done this, extract the folder, and open up **INSTALL PACKAGES** a
 
 Now, go into 'settings.json' and edit the content to your liking.
 
-After this, run 'bot.py' and enjoy!
+After this, run 'bot.py' and enter in a number (Each number correlates to a command) and enjoy!
 
 # Languages
 The following languages are supported: ar / de / en / es / es-419 / fr / it / ja / ko / pl / pt-BR / ru / tr / zh-CN / zh-Hant
