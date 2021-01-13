@@ -222,7 +222,7 @@ def update_mode():
     while 1:
         response = requests.get('https://fortnite-api.com/v2/aes')
         if response:
-            print(Fore.YELLOW+ "Waiting for Fortnite update -> [Count: "+str(count)+"]")
+            print(Fore.YELLOW+ f'Waiting for Fortnite update -> [Count: {count}] BenBot = {benbot}')
             status = response.json()["status"]
             if status != 200:
                 if status == 503:
@@ -257,7 +257,7 @@ def update_mode():
                                     time.sleep(initialCheckDelay)
                                 else:
 
-                                    print(Fore.YELLOW+ "Waiting for AES update -> [Count: "+str(count)+"]")
+                                    print(Fore.YELLOW+ f"Waiting for AES update -> [Count: "+str(count)+"]")
                                     mainKey = response.json()["data"]["mainKey"]
                                     mainKeyVersion1 = response.json()["data"]["build"].replace('++Fortnite+Release-', '')
                                     mainKeyVersion = mainKeyVersion1.replace('-Windows', '')
@@ -273,34 +273,72 @@ def update_mode():
 
                                         count = 1
                                         while 4:
-                                            response = requests.get('https://fortnite-api.com/v2/cosmetics/br/new?language='+language)
-                                            if response:
-                                                status = response.json()["status"]
-                                                if status != 200:
-                                                    if status == 503:
-                                                        error = response.json()["error"]
-                                                        print(Fore.RED + f"ERROR: {error} please wait...")
-                                                    else:
-                                                        print(Fore.RED + "Error in Cosmetics Endpoint (Status is not 200 or 503) - Retrying... (This is an error with fortnite-api.com)")
-                                                    time.sleep(initialCheckDelay)
-                                                else:
-
-                                                    print(Fore.YELLOW+ "Waiting for endpoint update -> [Count: "+str(count)+"]")
-
-                                                    response = requests.get('https://fortnite-api.com/v2/cosmetics/br/new?language='+language)
-                                                    newBuild = response.json()["data"]["build"]
-
-                                                    count = count + 1
-                                                    if versionLoop == newBuild:
-                                                        generate_cosmetics()
-                                                        return
-
-                                                    else:
+                                            if benbot == 'False' or 'false':
+                                                print('Loaded Fortnite-API.')
+                                                response = requests.get('https://fortnite-api.com/v2/cosmetics/br/new?language='+language)
+                                                if response:
+                                                    status = response.json()["status"]
+                                                    if status != 200:
+                                                        if status == 503:
+                                                            error = response.json()["error"]
+                                                            print(Fore.RED + f"ERROR: {error} please wait...")
+                                                        else:
+                                                            print(Fore.RED + "Error in Cosmetics Endpoint (Status is not 200 or 503) - Retrying... (This is an error with fortnite-api.com)")
                                                         time.sleep(initialCheckDelay)
+                                                    else:
 
+                                                        print(Fore.YELLOW+ "Waiting for endpoint update -> [Count: "+str(count)+"]")
+
+                                                        response = requests.get('https://fortnite-api.com/v2/cosmetics/br/new?language='+language)
+                                                        newBuild = response.json()["data"]["build"]
+
+                                                        count = count + 1
+                                                        if versionLoop == newBuild:
+                                                            generate_cosmetics()
+                                                            return
+
+                                                        else:
+                                                            time.sleep(initialCheckDelay)
+
+                                                else:
+                                                    print(Fore.RED + "Error in COSMETICS Endpoint (Page Down) - Retrying... (This is an error with fortnite-api.com)")
+                                                    time.sleep(initialCheckDelay)
                                             else:
-                                                print(Fore.RED + "Error in COSMETICS Endpoint (Page Down) - Retrying... (This is an error with fortnite-api.com)")
-                                                time.sleep(initialCheckDelay)
+                                                print('Loaded BenBot.')
+                                                response = requests.get('https://benbotfn.tk/api/v1/newCosmetics')
+                                                if response:
+                                                    currentVersion = response.json()["currentVersion"]
+                                                    oldVersion = response.json()['previousVersion']
+                                                    try:
+                                                        if oldVersion != currentVersion:
+                                                            if currentVersion == oldVersion:
+                                                                error = response.json()["error"]
+                                                                print(Fore.RED + f"ERROR: {error} please wait...")
+                                                            else:
+                                                                print(Fore.RED + "Error in Cosmetics Endpoint (Status is not 200 or 503) - Retrying... (This is an error with BenBot...)")
+                                                            time.sleep(initialCheckDelay)
+                                                    except:
+                                                        print('')
+                                                        # Passes, since we havent really finished this.
+                                                    else:
+
+                                                        print(Fore.YELLOW+ "Waiting for endpoint update -> [Count: "+str(count)+"]")
+
+                                                        response = requests.get('https://benbotfn.tk/api/v1/newCosmetics')
+                                                        newBuild = response.json()["currentVersion"]
+
+                                                        count = count + 1
+                                                        if versionLoop == newBuild:
+                                                            generate_cosmetics()
+                                                            return
+
+                                                        else:
+                                                            time.sleep(initialCheckDelay)
+
+                                                else:
+                                                    print(Fore.RED + "Error in COSMETICS Endpoint (Page Down) - Retrying... (This is an error with fortnite-api.com)")
+                                                    time.sleep(initialCheckDelay)
+                                                
 
                                     time.sleep(initialCheckDelay)
                             else:
