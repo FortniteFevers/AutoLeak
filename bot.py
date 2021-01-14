@@ -701,6 +701,7 @@ def tweet_build():
         print(Fore.RED+"Failed to tweet current build!")
 
 def search_cosmetic():
+
     fontSize = 40
     print('\nWhat cosmetic do you want to grab?')
     ask = input()
@@ -708,6 +709,7 @@ def search_cosmetic():
 
     print(f'\nGenerating {ask}...')
     print('')
+    start = time.time()
 
     try:
         i = response.json()['data']
@@ -735,7 +737,12 @@ def search_cosmetic():
     open(f'cache/{i["id"]}.png', 'wb').write(r.content)
     iconImg = Image.open(f'cache/{i["id"]}.png')
 
-    diff = ImageChops.difference(placeholderImg, iconImg)
+    try:
+        diff = ImageChops.difference(placeholderImg, iconImg)
+    except:
+        print(Fore.RED + 'Could not grab icon as there is an error with the image.')
+        time.sleep(5)
+        exit()
 
     if diff.getbbox():
         r = requests.get(url, allow_redirects=True)
@@ -843,12 +850,48 @@ def search_cosmetic():
 
     img.save('icons/'+i["id"]+'.png')
     os.remove('cache/F'+i["id"]+'.png')
+    print(Fore.GREEN + "Done loading image!")
 
-    print(Fore.CYAN + f"Generated image for {id}")
+    end = time.time()
 
-    print('Saving file...')
+    print(Fore.GREEN+"")
+    print("!  !  !  !  !  !  !")
+    print(f"IMAGE GENERATING COMPLETE - Generated image in {round(end - start, 2)} seconds!")
+    print("!  !  !  !  !  !  !")
+    time.sleep(2)
 
-    print(Fore.GREEN+"\nFinished successfully!")
+    if twitsearch == 'True':
+        print('\nAre you sure you want to Tweet this? - y/n')
+        ask2 = input()
+        if ask2 == 'y':
+            print(Fore.CYAN + '')
+            print('Tweeting icon...')
+
+            data = response.json()['data']
+            itemname = data['name']
+            itemdesc = data['description']
+            itemrarity = data['rarity']["displayValue"]
+            introduction = data['introduction']["season"]
+            type = data['type']['displayValue']
+
+            print('Cosmetic info retreived! Printing icon details...')
+            print('\nItem Name:',itemname)
+            print('\nItem Type:',type)
+            print('\nItem Description:',itemdesc)
+            print('\nItem Rarity:',itemrarity)
+            print('\nIntroduced in season',introduction)
+
+            itemid = 'icons/'+i["id"]+'.png'
+
+            print('\nTweeting out',ask+'.')
+            api.update_with_media(f'{itemid}', f'[AUTOLEAK] {itemname} {type}:\n\nDescription of {itemname}: \n{itemdesc}\n\nItem Rarity: {itemrarity}\n\nIntroduced in Season {introduction}')
+            print("\nTweeted",ask+' successfully!')
+        else:
+            print(Fore.RED + '\nNot tweeting icon.')
+    if twitsearch == 'False':
+        print(Fore.RED + '\nNot tweeting icon.')
+    else:
+        print(Fore.RED + '\nNot tweeting icon.')
 
 def delete_contents():
     print('Deleting contents of the Icons folder...')
