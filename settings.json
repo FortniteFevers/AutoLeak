@@ -9,13 +9,15 @@
   "useFeaturedIfAvaliable": "True",
   "iconType": "standard",
 
-  "twitAPIKey": "",
-  "twitAPISecretKey": "",
-  "twitAccessToken": "",
-  "twitAccessTokenSecret": "",
+  "twitAPIKey": "srFCdWUhqtpo6UJbM9u3DEXxM",
+  "twitAPISecretKey": "XDTfHoYza689oR2CncpxcdpGBySztNbBeMa1gfB0yKkpNFNcNQ",
+  "twitAccessToken": "1057364060390543361-U3kLDnQ6Qc03r4P1oUhacmMmfixNCd",
+  "twitAccessTokenSecret": "ehxkt40x164sEFlDbOjhtxvQBXa1AOnCvigbFxcRsaXzO",
 
   "BenBot": "False",
 
   "tweetUpdate": "False",
-  "tweetAes": "False"
+  "tweetAes": "False",
+
+  "TweetSearch": "True"
 }
