@@ -38,6 +38,10 @@ fontSize = 40
 initialCheckDelay = 2
 currentVersion = '1.2.7'
 
+os.system("cls")
+os.system(
+    "TITLE AutoLeak / By Thomas Keig and Fevers.")
+
 response = requests.get('https://pastebin.com/raw/zku0yz9q')
 ln1 = response.json()["1"]
 ln2 = response.json()["2"]
