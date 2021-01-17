@@ -30,7 +30,12 @@ import glob
 import shutil
 import math
 from datetime import date
+from datetime import datetime
 
+now = datetime.now()
+
+current_time = now.strftime("%H:%M")
+print("Current Time =", current_time)
 
 from colorama import *
 init()
@@ -928,7 +933,7 @@ def news_feed():
     
             if newsData != newsDataLoop:
             
-                print("News Feed has changed...")
+                print(f"News Feed has changed at {current_time}...")
                 response = requests.get(apiurl)
                 print("Saving image")
                 #url = response.json()["image"]
