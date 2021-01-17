@@ -905,6 +905,69 @@ def delete_contents():
     except:
         os.makedirs('icons')
     print('Cleared contents!')
+                     
+def news_feed():
+    count = 1
+    apiurl = 'https://fn-api.com/api/brnews'
+
+    jsondata = requests.get(apiurl)
+    data = jsondata.json()
+
+    response = requests.get(apiurl)
+    newsData = response.json()["motds"]
+
+    while 1:
+        response = requests.get(apiurl)
+        if response:
+            newsDataLoop = response.json()["motds"]
+            print("Checking for change in news feed... ("+str(count)+")")
+            count = count + 1
+    
+            if newsData != newsDataLoop:
+            
+                print("News Feed has changed...")
+                response = requests.get(apiurl)
+                print("Saving image")
+                #url = response.json()["image"]
+
+                url = 'https://fn-api.com/api/media/brnews.png'
+                r = requests.get(url, allow_redirects=True)
+                open('brnews.png', 'wb').write(r.content)
+                print("Saved image!")
+
+                today = date.today()
+                d = today.strftime("%m/%d/%Y")
+                response = requests.get(apiurl)
+                url = response.json()['image']
+
+                bruh = response.json()['motds']
+                feed = ""
+                for feedtext in bruh:
+                    feed2 = feedtext['title']
+                    feed += f"• {feed2}\n"
+                print(feed)
+                api = tweepy.API(auth)
+
+                try:
+                    api.update_with_media("brnews.png",f"#Fortnite News Update for {d}:\n\n{feed}\n[AUTOLEAK]")
+                except:
+                    print('\nImage could not post, compressing image.')
+                    foo = Image.open("brnews.png")
+                    x, y = foo.size
+                    x2, y2 = math.floor(x/2), math.floor(y/2)
+                    foo = foo.resize((x2,y2),Image.ANTIALIAS)
+                    foo.save("Compressed_news.png",quality=65)
+                    print('Compressed image!')
+                    api.update_with_media("Compressed_news.png",f"#Fortnite News Update for {d}:\n\n{feed}\n[AUTOLEAK]")
+                print("Tweeted image!")
+                
+                response = requests.get(apiurl)
+                newsData = response.json()["motds"]
+    
+        else:
+            print("FAILED TO GRAB NEWS DATA: URL DOWN")
+
+        time.sleep(5)
 
 print("- - - - - MENU - - - - -")
 print("")
@@ -914,6 +977,7 @@ print("(3) - Tweet current build")
 print("(4) - Tweet current AES key")
 print("(5) - Search for a cosmetic")
 print("(6) - Clear contents of the icon folder")
+print("(7) - Check for a change in News Feed")
 print("")
 option_choice = input(">> ")
 if option_choice == "1":
@@ -928,6 +992,8 @@ elif option_choice == "5":
     search_cosmetic()
 elif option_choice == "6":
     delete_contents()
+elif option_choice == "7":
+    news_feed()
 else:
     print("Please enter a number between 1 and 6")
 
