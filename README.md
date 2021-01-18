@@ -15,6 +15,7 @@ Currently, the program features these options:
 - Tweet out current AES
 - Tweet out current build
 - Automaticlly Tweet AES and Build if on update mode
+- Automaticlly Tweet out news feed and detect for a change
 
 More coming soon!
 
