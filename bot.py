@@ -982,7 +982,7 @@ def news_feed():
         else:
             print("FAILED TO GRAB NEWS DATA: URL DOWN")
 
-        time.sleep(5)
+        time.sleep(NewsDelay)
 
 print("- - - - - MENU - - - - -")
 print("")
