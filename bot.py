@@ -211,6 +211,13 @@ with open("settings.json") as settings:
         tweetAes = 'False'
         print(Fore.RED + 'Failed to load "tweetAes", defaulted to "False"')
 
+    try:
+        NewsDelay = data['NewsDelay']
+        print(Fore.GREEN + f'Loaded "NewsDelay" as {NewsDelay} seconds.')
+    except:
+        NewsDelay = 30
+        print(Fore.RED + 'Failed to load "NewsDelay", defaulted to 30 seconds.')
+        
     auth = tweepy.OAuthHandler(twitAPIKey, twitAPISecretKey)
     auth.set_access_token(twitAccessToken, twitAccessTokenSecret)
     api = tweepy.API(auth)
