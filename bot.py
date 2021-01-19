@@ -995,7 +995,7 @@ def news_feed():
 
         time.sleep(NewsDelay)
 
-print("- - - - - MENU - - - - -")
+print(Fore.GREEN + "- - - - - MENU - - - - -")
 print("")
 print("(1) - Start update mode")
 print("(2) - Generate new cosmetics")
