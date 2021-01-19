@@ -920,8 +920,6 @@ def search_cosmetic():
             print("\nTweeted",ask+' successfully!')
        else:
        		print(Fore.RED + '\nNot tweeting icon.')
-    if twitsearch == 'False':
-        print(Fore.RED + '\nNot tweeting icon.')
     else:
         print(Fore.RED + '\nNot tweeting icon.')
 
