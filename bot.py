@@ -918,7 +918,7 @@ def search_cosmetic():
             print('\nTweeting out',ask+'.')
             api.update_with_media(f'{itemid}', f'[AUTOLEAK] {itemname} {type}:\n\nDescription of {itemname}: \n{itemdesc}\n\nItem Rarity: {itemrarity}\n\nIntroduced in Season {introduction}')
             print("\nTweeted",ask+' successfully!')
-       else:
+        else:
        		print(Fore.RED + '\nNot tweeting icon.')
     else:
         print(Fore.RED + '\nNot tweeting icon.')
