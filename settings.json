@@ -19,7 +19,7 @@
   "tweetUpdate": "False",
   "tweetAes": "False",
 
-  "TweetSearch": "True"
+  "TweetSearch": "True",
   
   "NewsDelay": 30
 }
