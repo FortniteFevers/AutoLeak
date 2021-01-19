@@ -218,6 +218,19 @@ with open("settings.json") as settings:
         NewsDelay = 30
         print(Fore.RED + 'Failed to load "NewsDelay", defaulted to 30 seconds.')
         
+    try:
+        twitsearch = data['TweetSearch']
+        if twitsearch == 'True':
+            print(Fore.GREEN + f'Loaded Tweet Search as True.')
+        if twitsearch == 'False':
+            print(Fore.GREEN + f'Loaded Tweet Search as False.')
+        else:
+            twitsearch = 'True'
+            print(Fore.YELLOW + 'Incorrect value for "Twitter Search", defaulting to "True"...')
+    except:
+        twitsearch = 'True'
+        print(Fore.RED + 'Failed to load "Twitter Search", defaulting to "True"...')
+        
     auth = tweepy.OAuthHandler(twitAPIKey, twitAPISecretKey)
     auth.set_access_token(twitAccessToken, twitAccessTokenSecret)
     api = tweepy.API(auth)
