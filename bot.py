@@ -940,12 +940,12 @@ def news_feed():
     data = jsondata.json()
 
     response = requests.get(apiurl)
-    newsData = response.json()["motds"]
+    newsData = response.json()["update"]
 
     while 1:
         response = requests.get(apiurl)
         if response:
-            newsDataLoop = response.json()["motds"]
+            newsDataLoop = response.json()["update"]
             print("Checking for change in news feed... ("+str(count)+")")
             count = count + 1
     
@@ -988,7 +988,7 @@ def news_feed():
                 print("Tweeted image!")
                 
                 response = requests.get(apiurl)
-                newsData = response.json()["motds"]
+                newsData = response.json()["update"]
     
         else:
             print("FAILED TO GRAB NEWS DATA: URL DOWN")
