@@ -23,6 +23,7 @@ import tweepy
 import time
 import urllib.request
 import PIL
+import math
 from PIL import Image, ImageFont, ImageDraw, ImageChops
 import os
 import json
@@ -37,6 +38,7 @@ now = datetime.now()
 current_time = now.strftime("%H:%M")
 print("Current Time =", current_time)
 
+from os import listdir
 from colorama import *
 init()
 
@@ -230,6 +232,17 @@ with open("settings.json") as settings:
     except:
         twitsearch = 'True'
         print(Fore.RED + 'Failed to load "Twitter Search", defaulting to "True"...')
+        
+    try:
+        MergeImagesAuto = data['MergeImages']
+        if MergeImagesAuto == 'True' or MergeImagesAuto == 'False':
+            print(Fore.GREEN + f'Loaded "MergeImages" as "{MergeImagesAuto}"')
+        else:
+            MergeImagesAuto = 'True'
+            print(Fore.YELLOW + f'Incorrect value for MergeImages was given so I have loaded "MergeImages" as "True"')
+    except:
+        print(Fore.YELLOW + 'Incorrect value for "MergeImages", defaulting to "True"...')
+        MergeImagesAuto = 'True'
         
     auth = tweepy.OAuthHandler(twitAPIKey, twitAPISecretKey)
     auth.set_access_token(twitAccessToken, twitAccessTokenSecret)
@@ -701,6 +714,41 @@ def generate_cosmetics():
         print("!  !  !  !  !  !  !")
         print(f"IMAGE GENERATING COMPLETE - Generated images in {round(end - start, 2)} seconds")
         print("!  !  !  !  !  !  !")
+                      
+    print('\nDo you want to merge all of these images? - y/n')
+    ask = input()
+    if ask == 'y':
+        print('\nMerging images...')
+        images = [file for file in listdir('icons')]
+        count = int(round(math.sqrt(len(images)+0.5), 0))
+        #print(len(images), count)
+        x = len(images)
+        print(f'\nFound {x} images in "Icons" folder.')
+        finalImg = Image.new("RGBA", (512*count, 512*count))
+        #draw = ImageDraw.Draw(finalImg)
+        x = 0
+        y = 0
+        counter = 0
+        for img in images:
+            tImg = Image.open(f"icons/{img}")
+            if counter >= count:
+                y += 512
+                x = 0
+                counter = 0
+            finalImg.paste(tImg, (x, y), tImg)
+            x += 512
+            counter += 1
+        finalImg.show()
+        finalImg.save(f'merged/MERGED {x}.png')
+        print('\nSaved image!')
+        print('\nTweeting out image....')
+        print('What text do you want the Tweet to say?')
+        text = input()
+        api.update_with_media(f'merged/MERGED {x}.png', f'[AUTOLEAK] {text}')
+        print('\nTweeted image successfully!')
+            
+    else:
+        print(Fore.RED + '\nNot merging images.')
 
 def check_version():
     response = requests.get('https://pastebin.com/raw/zku0yz9q')
@@ -1177,6 +1225,41 @@ def news_feed():
             print("FAILED TO GRAB NEWS DATA: URL DOWN")
 
         time.sleep(NewsDelay)
+                         
+def merge_images():
+    print('\nMerging images...')
+    images = [file for file in listdir('icons')]
+    count = int(round(math.sqrt(len(images)+0.5), 0))
+    #print(len(images), count)
+    x = len(images)
+    print(f'\nFound {x} images in "Icons" folder.')
+    finalImg = Image.new("RGBA", (512*count, 512*count))
+    #draw = ImageDraw.Draw(finalImg)
+    x = 0
+    y = 0
+    counter = 0
+    for img in images:
+        tImg = Image.open(f"icons/{img}")
+        if counter >= count:
+            y += 512
+            x = 0
+            counter = 0
+        finalImg.paste(tImg, (x, y), tImg)
+        x += 512
+        counter += 1
+    finalImg.show()
+    finalImg.save(f'merged/MERGED {x}.png')
+    print('\nSaved image!')
+    print('\nDo you want to Tweet this image? - y/n')
+    asklol = input()
+    if asklol == 'y':
+        print('\nTweeting out image....')
+        print('What text do you want the Tweet to say?')
+        text = input()
+        api.update_with_media(f'merged/MERGED {x}.png', f'[AUTOLEAK] {text}')
+        print('\nTweeted image successfully!')
+    else:
+        print(Fore.RED + 'Not Tweeting.')
 
 print(Fore.GREEN + "- - - - - MENU - - - - -")
 print("")
@@ -1203,6 +1286,8 @@ elif option_choice == "6":
     delete_contents()
 elif option_choice == "7":
     news_feed()
+elif option_choice == "8":
+    merge_images()
 else:
     print("Please enter a number between 1 and 6")
 
