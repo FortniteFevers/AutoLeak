@@ -15,6 +15,7 @@
   "twitAccessTokenSecret": "",
 
   "BenBot": "False",
+  "MergeImages": "True",
 
   "tweetUpdate": "False",
   "tweetAes": "False",
