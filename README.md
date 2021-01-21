@@ -16,6 +16,9 @@ Currently, the program features these options:
 - Tweet out current build
 - Automaticlly Tweet AES and Build if on update mode
 - Automaticlly Tweet out news feed and detect for a change
+- BenBot Support for searching cosmetics
+- Merge images by using the new 'Merge Images' command in AutoLeak
+(Merging images automatically saves to the new "merged" folder!)
 
 More coming soon!
 
