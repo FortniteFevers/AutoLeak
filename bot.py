@@ -1270,6 +1270,7 @@ print("(4) - Tweet current AES key")
 print("(5) - Search for a cosmetic")
 print("(6) - Clear contents of the icon folder")
 print("(7) - Check for a change in News Feed")
+print("(8) - Merge images in icons folder")
 print("")
 option_choice = input(">> ")
 if option_choice == "1":
