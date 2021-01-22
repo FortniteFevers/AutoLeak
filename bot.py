@@ -46,7 +46,7 @@ loop = True
 count = 1
 fontSize = 40
 initialCheckDelay = 2
-currentVersion = '1.3.0'
+currentVersion = '1.3.4'
 
 os.system("cls")
 os.system(
@@ -73,11 +73,11 @@ print("")
 print("Version info:")
 print("")
 if latestVersion == currentVersion:
-    print('--> This version of AUTOLEAK is up to date!')
+    print(Fore.GREEN + '--> This version of AUTOLEAK is up to date!')
 else:
-    print('--> You are currently running v'+currentVersion+' of AutoLeak, v'+latestVersion+' is now avaliable - Please check #autoleak-updates in the discord server for the update!')
+    print(Fore.RED + '--> You are currently running v'+currentVersion+' of AutoLeak, v'+latestVersion+' is now avaliable - Please check #autoleak-updates in the discord server for the update!')
 print("")
-print("------------------------------------------------------------------------------------------------")
+print(Style.RESET_ALL + "------------------------------------------------------------------------------------------------")
 print("")
 
 with open("settings.json") as settings:
@@ -214,24 +214,22 @@ with open("settings.json") as settings:
         print(Fore.RED + 'Failed to load "tweetAes", defaulted to "False"')
 
     try:
-        NewsDelay = data['NewsDelay']
-        print(Fore.GREEN + f'Loaded "NewsDelay" as {NewsDelay} seconds.')
+        BotDelay = data['BotDelay']
+        print(Fore.GREEN + f'Loaded "BotDelay" as {BotDelay} seconds.')
     except:
-        NewsDelay = 30
-        print(Fore.RED + 'Failed to load "NewsDelay", defaulted to 30 seconds.')
+        BotDelay = 30
+        print(Fore.RED + 'Failed to load "BotDelay", defaulted to 30 seconds.')
         
     try:
         twitsearch = data['TweetSearch']
-        if twitsearch == 'True':
-            print(Fore.GREEN + f'Loaded Tweet Search as True.')
-        if twitsearch == 'False':
-            print(Fore.GREEN + f'Loaded Tweet Search as False.')
+        if twitsearch == 'True' or twitsearch == 'False':
+            print(Fore.GREEN + f'Loaded "Tweet Search" as {twitsearch}.')
         else:
             twitsearch = 'True'
             print(Fore.YELLOW + 'Incorrect value for "Twitter Search", defaulting to "True"...')
     except:
         twitsearch = 'True'
-        print(Fore.RED + 'Failed to load "Twitter Search", defaulting to "True"...')
+        print(Fore.RED + 'Failed to load "Tweet Search", defaulting to "True"...')
         
     try:
         MergeImagesAuto = data['MergeImages']
@@ -243,6 +241,17 @@ with open("settings.json") as settings:
     except:
         print(Fore.YELLOW + 'Incorrect value for "MergeImages", defaulting to "True"...')
         MergeImagesAuto = 'True'
+
+    try:
+        CreatorCode = data['CreatorCode']
+        if CreatorCode != '':
+            print(Fore.GREEN + f'Loaded "CreatorCode" as "{CreatorCode}')
+        else:
+            print(Fore.GREEN + 'Loaded Creator Code as none.')
+            CreatorCode = ''
+    except:
+        CreatorCode = ''
+        print(Fore.YELLOW + 'Incorrect value for "CreatorCode", defaulting to none.')
         
     auth = tweepy.OAuthHandler(twitAPIKey, twitAPISecretKey)
     auth.set_access_token(twitAccessToken, twitAccessTokenSecret)
@@ -547,7 +556,7 @@ def generate_cosmetics():
                     print("")
                     counter = counter + 1
                 except:
-                    print(Fore.YELLOW + "Ignored due to error: "+i["id"])
+                    print(Fore.YELLOW + f"Ignored due to error: "+i["id"]+"\n")
             end = time.time()
             print("")
     
@@ -744,7 +753,11 @@ def generate_cosmetics():
         print('\nTweeting out image....')
         print('What text do you want the Tweet to say?')
         text = input()
-        api.update_with_media(f'merged/MERGED {x}.png', f'[AUTOLEAK] {text}')
+        try:
+            api.update_with_media(f'merged/MERGED {x}.png', f'[AUTOLEAK] {text}')
+        except:
+            print(Fore.RED + 'File size is too big.')
+            time.sleep(5)
         print('\nTweeted image successfully!')
             
     else:
@@ -948,7 +961,7 @@ def search_cosmetic():
         print(Fore.GREEN)
         response = requests.get(f'https://benbotfn.tk/api/v1/cosmetics/br/search?lang=en&searchLang=en&matchMethod=full&name={ask}')
 
-        print(f'\nGenerating {ask}...')
+        print(f'Generating {ask}...')
         print('')
         start = time.time()
 
@@ -959,8 +972,13 @@ def search_cosmetic():
             print(Fore.RED + f'Unable to retreive {ask}.')
             time.sleep(5)
             exit()
-
-        print(Fore.BLUE + "Loading image for "+i["id"])
+        
+        try:
+            print(Fore.BLUE + "Loading image for "+i["id"])
+        except:
+            print(Fore.RED + f'Unable to retreive {ask}.')
+            time.sleep(5)
+            exit()
 
 
         if useFeaturedIfAvaliable == 'True':
@@ -1224,7 +1242,7 @@ def news_feed():
         else:
             print("FAILED TO GRAB NEWS DATA: URL DOWN")
 
-        time.sleep(NewsDelay)
+        time.sleep(BotDelay)
                          
 def merge_images():
     print('\nMerging images...')
@@ -1256,12 +1274,109 @@ def merge_images():
         print('\nTweeting out image....')
         print('What text do you want the Tweet to say?')
         text = input()
-        api.update_with_media(f'merged/MERGED {x}.png', f'[AUTOLEAK] {text}')
+        try:
+            api.update_with_media(f'merged/MERGED {x}.png', f'[AUTOLEAK] {text}')
+        except:
+            print(Fore.YELLOW + '\nFile size is too big, compressing image.')
+            foo = Image.open(f'merged/MERGED {x}.png')
+            x, y = foo.size
+            x2, y2 = math.floor(x/2), math.floor(y/2)
+            foo = foo.resize((x2,y2),Image.ANTIALIAS)
+            foo.save(f'merged/MERGED {x}.png',quality=65)
+            print(Fore.GREEN + 'Compressed!')
+            api.update_with_media(f'merged/MERGED {x}.png', f'[AUTOLEAK] {text}')
+            time.sleep(5)
         print('\nTweeted image successfully!')
     else:
         print(Fore.RED + 'Not Tweeting.')
 
-print(Fore.GREEN + "- - - - - MENU - - - - -")
+def shop_sections():
+    count = 1
+    apiurl = 'https://api.nitestats.com/v1/epic/modes'
+    print(Fore.YELLOW + 'Note: This feature is a bit bugged at the moment, and sometimes it can make unwanted tweets.\n' + Fore.GREEN)
+
+    jsondata = requests.get(apiurl)
+    data = jsondata.json()
+
+    response = requests.get(apiurl)
+    newsData = response.json()['channels']['client-events']['states']
+
+    while 1:
+        response = requests.get(apiurl)
+        if response:
+            newsDataLoop = response.json()['channels']['client-events']['states']
+            print("Checking for change in the Shop Sections... ("+str(count)+")")
+            count = count + 1
+            
+            if newsData != newsDataLoop:
+
+                print(f"The Shop Sections have changed at {current_time}...")
+                response = requests.get(apiurl)
+                sections = ""
+                try:
+                    for sectionStoreEnds in response.json()['channels']['client-events']['states'][1]['state']['sectionStoreEnds']:
+                        section2 = sectionStoreEnds
+                        sections += "• " + section2 + "\n"
+                except:
+                    print(Fore.RED + '\nTonights Shop Sections were not found, most likely due to them not being published yet.')
+                    time.sleep(5)
+                    break
+                print(sections)
+                print('\nTweeting out the current shop sections...')
+                api.update_status(f'[AUTOLEAK] #Fortnite Shop Sections Update:\n\n'+str(sections))
+                print('Tweeted out the shop sections!')
+        else:
+            print("FAILED TO GRAB SHOP SECTIONS DATA: URL DOWN")
+
+        time.sleep(BotDelay)
+
+def shop():
+    count = 1
+    apiurl = 'https://fortnite-api.com/v2/shop/br'
+
+    jsondata = requests.get(apiurl)
+    data = jsondata.json
+    
+    response = requests.get(apiurl)
+    newsData = response.json()['data']['hash']
+
+    while 1:
+        response = requests.get(apiurl)
+        if response:
+            newsDataLoop = response.json()['data']['hash']
+            print("Checking for change in Item Shop... ("+str(count)+")")
+            count = count + 1
+            response = requests.get(apiurl)
+
+            if newsData != newsDataLoop:
+                
+                print(f"Shop have changed at {current_time}...")
+                response = requests.get(apiurl)
+                if CreatorCode != '':
+                    url = f'https://api.nitestats.com/v1/shop/image?footer=Creator%20Code%3A%20{CreatorCode}'
+                else:
+                    url = f'https://api.nitestats.com/v1/shop/image?'
+                r = requests.get(url, allow_redirects=True)
+                print('\nWaitng for 3 minutes since this website has a big ass delay xd')
+                time.sleep(200)
+                open('shop.png', 'wb').write(r.content)
+                print('\nSaved Shop!')
+                today = date.today()
+                d2 = today.strftime("%B %d, %Y")
+                try:
+                    api.update_with_media(f"shop.png", f'#Fortnite Item Shop for {d2}\n\nSupport-a-Creator Code: CEPTNITE10')
+                except:
+                    time.sleep(100)
+                    open('shop.png', 'wb').write(r.content)
+                    print('\nSaved Shop!')
+                    api.update_with_media(f"shop.png", f'#Fortnite Item Shop for {d2}\n\nSupport-a-Creator Code: CEPTNITE10')
+
+        else:
+            print("FAILED TO GRAB SHOP DATA: URL DOWN")
+
+        time.sleep(BotDelay)
+
+print(Fore.GREEN + "\n- - - - - MENU - - - - -")
 print("")
 print("(1) - Start update mode")
 print("(2) - Generate new cosmetics")
@@ -1271,6 +1386,8 @@ print("(5) - Search for a cosmetic")
 print("(6) - Clear contents of the icon folder")
 print("(7) - Check for a change in News Feed")
 print("(8) - Merge images in icons folder")
+print("(9) - Check for a change in Shop Sections")
+print("(10) - Check for a change in Item Shop")
 print("")
 option_choice = input(">> ")
 if option_choice == "1":
@@ -1289,6 +1406,10 @@ elif option_choice == "7":
     news_feed()
 elif option_choice == "8":
     merge_images()
+elif option_choice == "9":
+    shop_sections()
+elif option_choice == "10":
+    shop()
 else:
     print("Please enter a number between 1 and 6")
 
