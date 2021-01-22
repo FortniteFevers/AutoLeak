@@ -1,4 +1,6 @@
-# AutoLeak
+# AutoLeak 1.3.4 BETA VERSION
+
+> Please note this version may have some bugs.
 
 A program made by [Fevers](https://twitter.com/itsfevers__) and [Thomas Keig](https://twitter.com/thomaskeig_).
 
