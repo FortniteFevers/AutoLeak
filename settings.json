@@ -15,12 +15,14 @@
   "twitAccessTokenSecret": "",
 
   "BenBot": "False",
-  "MergeImages": "True",
+  "BotDelay": 30,
+
+  "CreatorCode": "",
 
   "tweetUpdate": "False",
   "tweetAes": "False",
 
   "TweetSearch": "True",
-  
-  "NewsDelay": 30
+
+  "MergeImages": "True"
 }
