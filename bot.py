@@ -1366,7 +1366,8 @@ def shop():
                 try:
                     api.update_with_media(f"shop.png", f'#Fortnite Item Shop for {d2}\n\nSupport-a-Creator Code: CEPTNITE10')
                 except:
-                    time.sleep(100)
+                    print('Damn we gotta wait ANOTHER 3 minutes since this API is trash')
+                    time.sleep(200)
                     open('shop.png', 'wb').write(r.content)
                     print('\nSaved Shop!')
                     api.update_with_media(f"shop.png", f'#Fortnite Item Shop for {d2}\n\nSupport-a-Creator Code: CEPTNITE10')
@@ -1411,7 +1412,7 @@ elif option_choice == "9":
 elif option_choice == "10":
     shop()
 else:
-    print("Please enter a number between 1 and 6")
+    print("Please enter a number between 1 and 10")
 
 # ALL STUFF BELOW IS FOR THE OLD GUI AUTOLEAK, KEEPING AS A COMMENT TO SAVE FOR FURTHER NOTICE
 
