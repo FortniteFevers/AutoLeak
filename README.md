@@ -1,7 +1,12 @@
-# AutoLeak
+# AutoLeak 1.3.4 Beta
+> Please note that this version may have bugs.
 
 A program made by [Fevers](https://twitter.com/itsfevers__) and [Thomas Keig](https://twitter.com/thomaskeig_).
 
+# Whats new in 1.3.4 Beta?
+- Checking for Item Shop
+- Checking for Shop Sections
+- A lot of bug fixes
 
 AutoLeak is a utility to generate all of the latest leaks in Fortnite, with some bonus features as well.
 
