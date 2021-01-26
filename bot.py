@@ -834,7 +834,7 @@ def search_cosmetic():
         try:
             diff = ImageChops.difference(placeholderImg, iconImg)
         except:
-            print(Fore.RED + 'Could not grab icon as there is an error with the image.')
+            print(Fore.RED + 'Could not grab icon as there is an error with the image. - (Try using BenBot instead!)')
             time.sleep(5)
             exit()
 
@@ -1289,46 +1289,6 @@ def merge_images():
         print('\nTweeted image successfully!')
     else:
         print(Fore.RED + 'Not Tweeting.')
-
-def shop_sections():
-    count = 1
-    apiurl = 'https://api.nitestats.com/v1/epic/modes'
-    print(Fore.YELLOW + 'Note: This feature is a bit bugged at the moment, and sometimes it can make unwanted tweets.\n' + Fore.GREEN)
-
-    jsondata = requests.get(apiurl)
-    data = jsondata.json()
-
-    response = requests.get(apiurl)
-    newsData = response.json()['channels']['client-events']['states']
-
-    while 1:
-        response = requests.get(apiurl)
-        if response:
-            newsDataLoop = response.json()['channels']['client-events']['states']
-            print("Checking for change in the Shop Sections... ("+str(count)+")")
-            count = count + 1
-            
-            if newsData != newsDataLoop:
-
-                print(f"The Shop Sections have changed at {current_time}...")
-                response = requests.get(apiurl)
-                sections = ""
-                try:
-                    for sectionStoreEnds in response.json()['channels']['client-events']['states'][1]['state']['sectionStoreEnds']:
-                        section2 = sectionStoreEnds
-                        sections += "• " + section2 + "\n"
-                except:
-                    print(Fore.RED + '\nTonights Shop Sections were not found, most likely due to them not being published yet.')
-                    time.sleep(5)
-                    break
-                print(sections)
-                print('\nTweeting out the current shop sections...')
-                api.update_status(f'[AUTOLEAK] #Fortnite Shop Sections Update:\n\n'+str(sections))
-                print('Tweeted out the shop sections!')
-        else:
-            print("FAILED TO GRAB SHOP SECTIONS DATA: URL DOWN")
-
-        time.sleep(BotDelay)
 
 def shop():
     count = 1
