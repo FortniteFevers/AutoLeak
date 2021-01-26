@@ -1368,11 +1368,9 @@ elif option_choice == "7":
 elif option_choice == "8":
     merge_images()
 elif option_choice == "9":
-    shop_sections()
-elif option_choice == "10":
     shop()
 else:
-    print("Please enter a number between 1 and 10")
+    print("Please enter a number between 1 and 9")
 
 # ALL STUFF BELOW IS FOR THE OLD GUI AUTOLEAK, KEEPING AS A COMMENT TO SAVE FOR FURTHER NOTICE
 
