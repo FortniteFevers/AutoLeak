@@ -46,7 +46,7 @@ loop = True
 count = 1
 fontSize = 40
 initialCheckDelay = 2
-currentVersion = '1.3.4'
+currentVersion = '1.3.3'
 
 os.system("cls")
 os.system(
