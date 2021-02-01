@@ -1293,7 +1293,7 @@ def merge_images():
 def shop_sections():
     count = 1
     apiurl = 'https://fn-api.com/api/shop_categories'
-    print(Fore.YELLOW + 'Note: This feature is a bit bugged at the moment, and sometimes it can make unwanted tweets.\n' + Fore.GREEN)
+
 
     jsondata = requests.get(apiurl)
     data = jsondata.json()
