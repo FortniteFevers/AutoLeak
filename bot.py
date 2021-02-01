@@ -46,7 +46,7 @@ loop = True
 count = 1
 fontSize = 40
 initialCheckDelay = 2
-currentVersion = '1.3.3'
+currentVersion = '1.3.4'
 
 os.system("cls")
 os.system(
@@ -834,7 +834,7 @@ def search_cosmetic():
         try:
             diff = ImageChops.difference(placeholderImg, iconImg)
         except:
-            print(Fore.RED + 'Could not grab icon as there is an error with the image. - (Try using BenBot instead!)')
+            print(Fore.RED + 'Could not grab icon as there is an error with the image. (Hint: Try using BenBot instead!)')
             time.sleep(5)
             exit()
 
@@ -1290,6 +1290,45 @@ def merge_images():
     else:
         print(Fore.RED + 'Not Tweeting.')
 
+def shop_sections():
+    count = 1
+    apiurl = 'https://fn-api.com/api/shop_categories'
+    print(Fore.YELLOW + 'Note: This feature is a bit bugged at the moment, and sometimes it can make unwanted tweets.\n' + Fore.GREEN)
+
+    jsondata = requests.get(apiurl)
+    data = jsondata.json()
+
+    response = requests.get(apiurl)
+    newsData = response.json()['timestamp']
+
+    while 1:
+        response = requests.get(apiurl)
+        if response:
+            newsDataLoop = response.json()['timestamp']
+            print("Checking for change in the Shop Sections... ("+str(count)+")")
+            count = count + 1
+            
+            if newsData != newsDataLoop:
+
+                print(Fore.GREEN + '\nShop sections have changed!')
+                response = requests.get('https://fn-api.com/api/shop_categories')
+                ss = response.json()['shopCategories']
+                sections = ""
+
+                for i in ss:
+                    #print(f'{i["sectionName"]} - (x{i["quantity"]})\n')
+                    sections += f'{i["sectionName"]} - (x{i["quantity"]})\n'
+
+                print(sections)
+
+                print('\nTweeting out the current shop sections...')
+                api.update_status(f'[AUTOLEAK] #Fortnite Shop Sections Update:\n\n'+str(sections))
+                print('Tweeted out the shop sections!')
+        else:
+            print("FAILED TO GRAB SHOP SECTIONS DATA: URL DOWN")
+
+        time.sleep(BotDelay)
+
 def shop():
     count = 1
     apiurl = 'https://fortnite-api.com/v2/shop/br'
@@ -1318,7 +1357,7 @@ def shop():
                     url = f'https://api.nitestats.com/v1/shop/image?'
                 r = requests.get(url, allow_redirects=True)
                 print('\nWaitng for 3 minutes since this website has a big ass delay xd')
-                time.sleep(200)
+                time.sleep(350)
                 open('shop.png', 'wb').write(r.content)
                 print('\nSaved Shop!')
                 today = date.today()
@@ -1326,8 +1365,7 @@ def shop():
                 try:
                     api.update_with_media(f"shop.png", f'#Fortnite Item Shop for {d2}\n\nSupport-a-Creator Code: CEPTNITE10')
                 except:
-                    print('Damn we gotta wait ANOTHER 3 minutes since this API is trash')
-                    time.sleep(200)
+                    time.sleep(100)
                     open('shop.png', 'wb').write(r.content)
                     print('\nSaved Shop!')
                     api.update_with_media(f"shop.png", f'#Fortnite Item Shop for {d2}\n\nSupport-a-Creator Code: CEPTNITE10')
@@ -1336,6 +1374,186 @@ def shop():
             print("FAILED TO GRAB SHOP DATA: URL DOWN")
 
         time.sleep(BotDelay)
+
+def dynamic_pak():
+    print('\nWhat number pak do you want to grab?')
+    ask = input('>> ')
+
+    response = requests.get(f'https://benbotfn.tk/api/v1/cosmetics/br/dynamic/{ask}?lang=en')
+    
+    try:
+        test = response.json()[0]['id']
+        print('\nGrabbed!')
+    except:
+        print(Fore.RED + '\nAn error had occured; pak not found or API error.')
+        time.sleep(2)
+        exit()
+    
+    data = response.json()
+
+    print(f"Generating {len(data)} new cosmetics from pak {ask}...")
+    fontSize = 40
+    print('')
+    loop = False
+    counter = 1
+    start = time.time()
+    shutil.rmtree('icons')
+    os.makedirs('icons')
+    for i in data:
+        try:
+            print(Fore.BLUE + "Loading image for "+i["id"])
+            if useFeaturedIfAvaliable == 'True':
+                if i["icons"]["featured"] != None:
+                    url = i["icons"]["featured"]
+                else:
+                    url = i["icons"]["icon"]
+            elif useFeaturedIfAvaliable == 'False':
+                url = i["icons"]["icon"]
+            placeholderImg = Image.open('assets/doNotDelete.png')
+            r = requests.get(url, allow_redirects=True)
+            open(f'cache/{i["id"]}.png', 'wb').write(r.content)
+            iconImg = Image.open(f'cache/{i["id"]}.png')
+            diff = ImageChops.difference(placeholderImg, iconImg)
+            if diff.getbbox():
+                r = requests.get(url, allow_redirects=True)
+                open(f'cache/{i["id"]}.png', 'wb').write(r.content)
+                img=Image.open(f'cache/{i["id"]}.png')
+                img=img.resize((512,512),PIL.Image.ANTIALIAS)
+                img.save(f'cache/{i["id"]}.png')
+            else:
+                try:
+                    r = requests.get(placeholderUrl, allow_redirects=True)
+                    open(f'cache/{i["id"]}.png', 'wb').write(r.content)
+                    img=Image.open(f'cache/{i["id"]}.png')
+                    img=img.resize((512,512),PIL.Image.ANTIALIAS)
+                    img.save(f'cache/{i["id"]}.png')
+                except:
+                    continue
+                
+            rarity = i["rarity"]
+
+            foreground = Image.open('cache/'+i["id"]+'.png')
+            try:
+                background = Image.open(f'rarities/{iconType}/{rarity}.png')
+                border = Image.open(f'rarities/{iconType}/border{rarity}.png')
+            except:
+                background = Image.open(f'rarities/{iconType}/common.png')
+                border = Image.open(f'rarities/{iconType}/bordercommon.png')
+            Image.alpha_composite(background, foreground).save('cache/F'+i["id"]+'.png')
+            os.remove('cache/'+i["id"]+'.png')
+            background = Image.open('cache/F'+i["id"]+'.png')
+            Image.alpha_composite(background, border).save('cache/BLANK'+i["id"]+'.png')
+            costype = i['rarity']
+            img=Image.open('cache/BLANK'+i["id"]+'.png')
+            name= i["name"]
+            loadFont = 'fonts/'+imageFont
+            if len(name) > 20:
+                fontSize = 30
+            if len(name) > 30:
+                fontSize = 20
+            if iconType == 'clean':
+                font=ImageFont.truetype(loadFont,fontSize)
+                w,h=font.getsize(name)
+                draw=ImageDraw.Draw(img)
+                draw.text((25,440),name,font=font,fill='white')
+                fontSize = 40
+                id = i["id"]
+                font=ImageFont.truetype(loadFont,30)
+                w,h=font.getsize(costype)
+                draw=ImageDraw.Draw(img)
+                draw.text((25,402),costype,font=font,fill='white')
+                if watermark != '':
+                    font=ImageFont.truetype(loadFont,25)
+                    w,h=font.getsize(watermark)
+                    draw=ImageDraw.Draw(img)
+                    draw.text((30,30),watermark,font=font,fill='white')
+            elif iconType == 'standard':
+                font=ImageFont.truetype(loadFont,fontSize)
+                w,h=font.getsize(name)
+                draw=ImageDraw.Draw(img)
+                w1, h1 = draw.textsize(name, font=font)
+                draw.text(((512-w1)/2,390),name,font=font,fill='white')
+                fontSize = 40
+                desc = i["description"]
+                font=ImageFont.truetype(loadFont,15)
+                w,h=font.getsize(desc)
+                draw=ImageDraw.Draw(img)
+                w1, h1 = draw.textsize(desc, font=font)
+                draw.text(((512-w1)/2,455),desc,font=font,fill='white')
+                id = i["id"]
+                font=ImageFont.truetype(loadFont,15)
+                w,h=font.getsize(id)
+                draw=ImageDraw.Draw(img)
+                w1, h1 = draw.textsize(id, font=font)
+                draw.text(((512-w1)/2,475),id,font=font,fill='white')
+                font=ImageFont.truetype(loadFont,20)
+                w,h=font.getsize(costype)
+                draw=ImageDraw.Draw(img)
+                w1, h1 = draw.textsize(costype, font=font)
+                draw.text(((512-w1)/2,430),costype,font=font,fill='white')
+                if watermark != '':
+                    font=ImageFont.truetype(loadFont,25)
+                    w,h=font.getsize(watermark)
+                    draw=ImageDraw.Draw(img)
+                    draw.text((10,9),watermark,font=font,fill='white')
+            os.remove('cache/BLANK'+i["id"]+'.png')
+            img.save('icons/'+i["id"]+'.png')
+            os.remove('cache/F'+i["id"]+'.png')
+            percentage = counter/len(data)
+            realpercentage = percentage * 100
+            print(Fore.CYAN + f"Generated image for {id}")
+            print(Fore.CYAN + f"{counter}/{len(data)} - {round(realpercentage)}%")
+            print("")
+            counter = counter + 1
+        except:
+            print(Fore.YELLOW + "Ignored due to error: "+i["id"])
+    end = time.time()
+    print(Fore.GREEN+"")
+    print("!  !  !  !  !  !  !")
+    print(f"IMAGE GENERATING COMPLETE - Generated images in {round(end - start, 2)} seconds")
+    print("!  !  !  !  !  !  !")
+    print('\nMerging images...')
+    images = [file for file in listdir('icons')]
+    count = int(round(math.sqrt(len(images)+0.5), 0))
+    #print(len(images), count)
+    x = len(images)
+    print(f'\nFound {x} images in "Icons" folder.')
+    finalImg = Image.new("RGBA", (512*count, 512*count))
+    #draw = ImageDraw.Draw(finalImg)
+    x = 0
+    y = 0
+    counter = 0
+    for img in images:
+        tImg = Image.open(f"icons/{img}")
+        if counter >= count:
+            y += 512
+            x = 0
+            counter = 0
+        finalImg.paste(tImg, (x, y), tImg)
+        x += 512
+        counter += 1
+    finalImg.show()
+    finalImg.save(f'merged/Pak {ask} Merged.png')
+    print('\nSaved image!')
+    print('\nDo you want to Tweet this image? - y/n')
+    asklol = input()
+    if asklol == 'y':
+        print('\nTweeting out image....')
+        try:
+            api.update_with_media(f'merged/MERGED {x}.png', f'[AUTOLEAK] Found {len(data)} items in Pak {ask}:')
+        except:
+            print(Fore.YELLOW + '\nFile size is too big, compressing image.')
+            foo = Image.open(f'merged/MERGED {x}.png')
+            x, y = foo.size
+            x2, y2 = math.floor(x/2), math.floor(y/2)
+            foo = foo.resize((x2,y2),Image.ANTIALIAS)
+            foo.save(f'merged/MERGED {x}.png',quality=65)
+            print(Fore.GREEN + 'Compressed!')
+            api.update_with_media(f'merged/MERGED {x}.png', f'[AUTOLEAK] Found {len(data)} items in Pakchunk {ask}:')
+            time.sleep(5)
+        print('\nTweeted image successfully!')
+    else:
+        print(Fore.RED + 'Not Tweeting.')
 
 print(Fore.GREEN + "\n- - - - - MENU - - - - -")
 print("")
@@ -1349,6 +1567,7 @@ print("(7) - Check for a change in News Feed")
 print("(8) - Merge images in icons folder")
 print("(9) - Check for a change in Shop Sections")
 print("(10) - Check for a change in Item Shop")
+print("(11) - Grab all cosmetics from a specific pak")
 print("")
 option_choice = input(">> ")
 if option_choice == "1":
@@ -1368,9 +1587,13 @@ elif option_choice == "7":
 elif option_choice == "8":
     merge_images()
 elif option_choice == "9":
+    shop_sections()
+elif option_choice == "10":
     shop()
+elif option_choice == "11":
+    dynamic_pak()
 else:
-    print("Please enter a number between 1 and 9")
+    print("Please enter a number between 1 and 10")
 
 # ALL STUFF BELOW IS FOR THE OLD GUI AUTOLEAK, KEEPING AS A COMMENT TO SAVE FOR FURTHER NOTICE
 
