@@ -12,7 +12,7 @@ AutoLeak is a utility to generate all of the latest leaks in Fortnite, with some
 - Added a command where you can grab cosmetics for a specific pak number!
 - A lot of bug fixes
 
-### Versio Bugs:
+### Version Bugs:
 - When merging cosmetics from a specific pak, if the number of items merged is equal to "5", it will not work for some reason.
 
 
