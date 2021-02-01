@@ -1,8 +1,13 @@
-# AutoLeak 1.3.5
+# AutoLeak
 
 A program made by [Fevers](https://twitter.com/itsfevers__) and [Thomas Keig](https://twitter.com/thomaskeig_).
 
-# Whats new in 1.3.5 Beta?
+AutoLeak is a utility to generate all of the latest leaks in Fortnite, with some bonus features as well.
+
+---
+
+#### AutoLeak 1.3.5 has just been released!
+# Whats new in version 1.3.5?
 - Added Shop Sections command! Connect it to your Twitter, and you are able to check for Shop Sections!
 - Added a command where you can grab cosmetics for a specific pak number!
 - A lot of bug fixes
@@ -10,7 +15,6 @@ A program made by [Fevers](https://twitter.com/itsfevers__) and [Thomas Keig](ht
 ### Versio Bugs:
 - When merging cosmetics from a specific pak, if the number of items merged is equal to "5", it will not work for some reason.
 
-AutoLeak is a utility to generate all of the latest leaks in Fortnite, with some bonus features as well.
 
 # Features
 AutoLeak is a program with many features.
