@@ -1294,7 +1294,6 @@ def shop_sections():
     count = 1
     apiurl = 'https://fn-api.com/api/shop_categories'
 
-
     jsondata = requests.get(apiurl)
     data = jsondata.json()
 
@@ -1311,6 +1310,7 @@ def shop_sections():
             if newsData != newsDataLoop:
 
                 print(Fore.GREEN + '\nShop sections have changed!')
+                time.sleep(3)
                 response = requests.get('https://fn-api.com/api/shop_categories')
                 ss = response.json()['shopCategories']
                 sections = ""
@@ -1322,7 +1322,7 @@ def shop_sections():
                 print(sections)
 
                 print('\nTweeting out the current shop sections...')
-                api.update_status(f'[AUTOLEAK] #Fortnite Shop Sections Update:\n\n'+str(sections))
+                api.update_status(f'#Fortnite Shop Sections Update:\n\n'+str(sections)+'\n\n[AUTOLEAK]')
                 print('Tweeted out the shop sections!')
         else:
             print("FAILED TO GRAB SHOP SECTIONS DATA: URL DOWN")
