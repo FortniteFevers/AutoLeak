@@ -1540,7 +1540,7 @@ def dynamic_pak():
     if asklol == 'y':
         print('\nTweeting out image....')
         try:
-            api.update_with_media(f'merged/MERGED {x}.png', f'[AUTOLEAK] Found {len(data)} items in Pak {ask}:')
+            api.update_with_media(f'merged/Pak {ask} Merged.png', f'[AUTOLEAK] Found {len(data)} items in Pak {ask}:')
         except:
             print(Fore.YELLOW + '\nFile size is too big, compressing image.')
             foo = Image.open(f'merged/MERGED {x}.png')
@@ -1549,7 +1549,7 @@ def dynamic_pak():
             foo = foo.resize((x2,y2),Image.ANTIALIAS)
             foo.save(f'merged/MERGED {x}.png',quality=65)
             print(Fore.GREEN + 'Compressed!')
-            api.update_with_media(f'merged/MERGED {x}.png', f'[AUTOLEAK] Found {len(data)} items in Pakchunk {ask}:')
+            api.update_with_media(f'merged/Pak {ask} Merged.png', f'[AUTOLEAK] Found {len(data)} items in Pakchunk {ask}:')
             time.sleep(5)
         print('\nTweeted image successfully!')
     else:
