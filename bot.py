@@ -1,6 +1,6 @@
 """
 Commons Clause - License Condition v1.0
-Copyright thomaskeig 2020
+Copyright Fevers 2021
 The Software is provided to you by the Licensor under the
 License, as defined below, subject to the following condition.
 Without limiting other conditions in the License, the grant
@@ -1619,6 +1619,6 @@ else:
 # picture = Picture(app, image="assets/Images/general-options.png")
 # label = Text(app, text="COMING SOON", color='white')
 # label = Text(app, text="")
-# label = Text(app, size=10, text="Developed by @thomaskeig#0001", color='white')
+# label = Text(app, size=10, text="Developed by @Fevers#3474", color='white')
 #
 # app.display()
