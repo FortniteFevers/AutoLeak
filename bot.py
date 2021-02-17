@@ -1363,12 +1363,12 @@ def shop():
                 today = date.today()
                 d2 = today.strftime("%B %d, %Y")
                 try:
-                    api.update_with_media(f"shop.png", f'#Fortnite Item Shop for {d2}\n\nSupport-a-Creator Code: CEPTNITE10')
+                    api.update_with_media(f"shop.png", f'#Fortnite Item Shop for {d2}\n\nSupport-a-Creator Code: {CreatorCode}')
                 except:
                     time.sleep(100)
                     open('shop.png', 'wb').write(r.content)
                     print('\nSaved Shop!')
-                    api.update_with_media(f"shop.png", f'#Fortnite Item Shop for {d2}\n\nSupport-a-Creator Code: CEPTNITE10')
+                    api.update_with_media(f"shop.png", f'#Fortnite Item Shop for {d2}\n\nSupport-a-Creator Code: {CreatorCode}')
 
         else:
             print("FAILED TO GRAB SHOP DATA: URL DOWN")
