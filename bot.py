@@ -619,6 +619,19 @@ def generate_cosmetics():
                     
                     
                 rarity = i["rarity"]
+                rarity = rarity.lower()
+                try:
+                    series = i['series']['name']
+                    if series == 'Icon Series':
+                        rarity = 'icon'
+                    elif series == 'MARVEL SERIES':
+                        rarity = 'marvel'
+                    elif series == 'Gaming Legends Series':
+                        rarity = 'gaminglegends'
+                    elif series == 'DC SERIES':
+                        rarity = 'dc'
+                except:
+                    pass
                 foreground = Image.open('cache/'+i["id"]+'.png')
                 try:
                     background = Image.open(f'rarities/{iconType}/{rarity}.png')
@@ -1022,6 +1035,19 @@ def search_cosmetic():
                 print('')
 
         rarity = i["rarity"]
+        rarity = rarity.lower()
+        try:
+            series = i['series']['name']
+            if series == 'Icon Series':
+                rarity = 'icon'
+            elif series == 'MARVEL SERIES':
+                rarity = 'marvel'
+            elif series == 'Gaming Legends Series':
+                rarity = 'gaminglegends'
+            elif series == 'DC SERIES':
+                rarity = 'dc'
+        except:
+            pass
         foreground = Image.open('cache/'+i["id"]+'.png')
         try:
             background = Image.open(f'rarities/{iconType}/{rarity}.png')
@@ -1431,6 +1457,19 @@ def dynamic_pak():
                     continue
                 
             rarity = i["rarity"]
+            rarity = rarity.lower()
+            try:
+                series = i['series']['name']
+                if series == 'Icon Series':
+                    rarity = 'icon'
+                elif series == 'MARVEL SERIES':
+                    rarity = 'marvel'
+                elif series == 'Gaming Legends Series':
+                    rarity = 'gaminglegends'
+                elif series == 'DC SERIES':
+                    rarity = 'dc'
+            except:
+                pass
 
             foreground = Image.open('cache/'+i["id"]+'.png')
             try:
