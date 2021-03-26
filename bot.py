@@ -1380,7 +1380,7 @@ def shop():
                 r = requests.get(url, allow_redirects=True)
                 print('\nWaitng for 3 minutes since this website has a big delay xd sawwy')
                 time.sleep(350)
-                 if CreatorCode != '':
+                if CreatorCode != '':
                     url = f'https://api.nitestats.com/v1/shop/image?footer=Creator%20Code%3A%20{CreatorCode}'
                 else:
                     url = f'https://api.nitestats.com/v1/shop/image?'
