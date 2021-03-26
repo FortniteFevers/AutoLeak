@@ -1377,13 +1377,13 @@ def shop():
                 
                 print(f"Shop have changed at {current_time}...")
                 response = requests.get(apiurl)
-                if CreatorCode != '':
+                r = requests.get(url, allow_redirects=True)
+                print('\nWaitng for 3 minutes since this website has a big delay xd sawwy')
+                time.sleep(350)
+                 if CreatorCode != '':
                     url = f'https://api.nitestats.com/v1/shop/image?footer=Creator%20Code%3A%20{CreatorCode}'
                 else:
                     url = f'https://api.nitestats.com/v1/shop/image?'
-                r = requests.get(url, allow_redirects=True)
-                print('\nWaitng for 3 minutes since this website has a big ass delay xd')
-                time.sleep(350)
                 open('shop.png', 'wb').write(r.content)
                 print('\nSaved Shop!')
                 today = date.today()
