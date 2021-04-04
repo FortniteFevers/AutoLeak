@@ -7,7 +7,7 @@ AutoLeak is a utility to generate all of the latest leaks in Fortnite, with some
 ---
 
 #### AutoLeak 1.3.8 has just been released!
-# Whats new in version 1.3.5?
+# Whats new in version 1.3.8?
 1. NEW ICONS!
 - You can use these by changing your type of icons to 'new' in settings.json!
 - You can search, generate, and grab paks with these new icons!
