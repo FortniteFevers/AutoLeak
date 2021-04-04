@@ -7,22 +7,25 @@
 
   "watermark": "",
   "useFeaturedIfAvaliable": "True",
-  "iconType": "standard",
+  "iconType": "new",
 
   "twitAPIKey": "",
   "twitAPISecretKey": "",
   "twitAccessToken": "",
   "twitAccessTokenSecret": "",
 
-  "BenBot": "False",
-  "BotDelay": 30,
+  "BenBot": "True",
+  "BotDelay": 10,
+  "showitemsource": "True",
+  "apikey": "",
 
   "CreatorCode": "",
 
   "tweetUpdate": "False",
   "tweetAes": "False",
 
-  "TweetSearch": "True",
+  "TweetSearch": "False",
 
-  "MergeImages": "True"
+  "MergeImages": "True",
+  "MergeWatermarkUrl": ""
 }
