@@ -45,6 +45,9 @@ AutoLeak is a utility to generate all of the latest leaks in Fortnite, with some
 - Added 'CreatorCode' (Your creator code goes here. This is used for Item Shop posts, news posts, etc. NOT REQUIRED!)
 - Added 'MergeWatermarkUrl' (When merging images it will add a watermark to the merged image NOT REQUIRED!)
 
+8. UPDATE MODE CHANGES:
+- Added Map and Versionbot support in update mode. Enable Tweet Update in settings.json for it to work!
+
 ### Version Bugs:
 - When merging cosmetics from a specific pak, if the number of items merged is equal to "5", it will not work for some reason.
 
