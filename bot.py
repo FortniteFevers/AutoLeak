@@ -1721,8 +1721,8 @@ def dynamic_pak():
 
 def notices():
     count = 1
-    response = requests.get('https://pastebin.com/raw/D0xzbdCL')
-    apiurl = 'https://pastebin.com/raw/D0xzbdCL'
+    response = requests.get('https://fn-api.com/api/emergencynotice')
+    apiurl = 'https://fn-api.com/api/emergencynotice'
     
     response = requests.get(apiurl)
     noticesData = response.json()['messages']
