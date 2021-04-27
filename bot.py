@@ -2242,29 +2242,27 @@ def newcnew():
             url = i["icons"]["icon"]
         placeholderImg = Image.open('assets/doNotDelete.png')
         r = requests.get(url, allow_redirects=True)
-        open(f'cache/{i["id"]}.png', 'wb').write(r.content)
-        iconImg = Image.open(f'cache/{i["id"]}.png')
+        open(f'cache/icontemp.png', 'wb').write(r.content)
+        iconImg = Image.open(f'cache/icontemp.png')
         try:
             diff = ImageChops.difference(placeholderImg, iconImg)
         except:
-            print(Fore.RED + 'Could not grab icon as there is an error with the image.')
-            time.sleep(5)
-            exit()
+            pass
         if diff.getbbox():
             r = requests.get(url, allow_redirects=True)
-            open(f'cache/{i["id"]}.png', 'wb').write(r.content)
-            img=Image.open(f'cache/{i["id"]}.png')
+            open(f'cache/icontemp.png', 'wb').write(r.content)
+            img=Image.open(f'cache/icontemp.png')
             img=img.resize((512,512),PIL.Image.ANTIALIAS)
-            img.save(f'cache/{i["id"]}.png')
+            img.save(f'cache/temp.png')
         else:
             try:
                 r = requests.get(placeholderUrl, allow_redirects=True)
-                open(f'cache/{i["id"]}.png', 'wb').write(r.content)
-                img=Image.open(f'cache/{i["id"]}.png')
+                open(f'cache/icontemp.png', 'wb').write(r.content)
+                img=Image.open(f'cache/icontemp.png')
                 img=img.resize((512,512),PIL.Image.ANTIALIAS)
-                img.save(f'cache/{i["id"]}.png')
+                img.save(f'cache/temp.png')
             except:
-                print('')
+                pass
         rarity = i["rarity"]
         rarity = rarity.lower()
         try:
@@ -2289,18 +2287,25 @@ def newcnew():
                 rarity = 'dark'
         except:
             pass
-            foreground = Image.open('cache/'+i["id"]+'.png')
+            foreground = Image.open('cache/icontemp.png')
+        
+        # Background making stuff by Swift-nite#3722 - Your a huge help, thanks! :banana:
         try:
             background = Image.open(f'rarities/{iconType}/{rarity}.png')
-            border = Image.open(f'rarities/{iconType}/border{rarity}.png')
+            border=Image.open(f'rarities/{iconType}/border{rarity}.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
         except:
             background = Image.open(f'rarities/{iconType}/common.png')
-            border = Image.open(f'rarities/{iconType}/bordercommon.png')
-        Image.alpha_composite(background, foreground).save('cache/F'+i["id"]+'.png')
-        os.remove('cache/'+i["id"]+'.png')
-        background = Image.open('cache/F'+i["id"]+'.png')
-        Image.alpha_composite(background, border).save('cache/BLANK'+i["id"]+'.png')
-        img=Image.open('cache/BLANK'+i["id"]+'.png')
+            border=Image.open(f'rarities/{iconType}/bordercommon.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+        img=Image.new("RGB",(512,512))
+        img.paste(background)
+        img.save('cache/temp.png')
+        img=Image.open(f'cache/temp.png')
+        foreground= Image.open('cache/icontemp.png').resize((512, 512), Image.ANTIALIAS)
+        img.paste(foreground, (0, 0), foreground)
+        img.save('cache/temp.png')
+        img.paste(border, (0, 0), border)
+        img.save('cache/temp.png')
+        background = Image.open('cache/temp.png')
         name1= i["name"]
         loadFont = 'fonts/'+imageFont
         if len(name1) > 20:
@@ -2319,7 +2324,7 @@ def newcnew():
                 descup = 'false'
             name1 = name1.upper()
             w,h=font.getsize(name1)
-            draw=ImageDraw.Draw(img)
+            draw=ImageDraw.Draw(background)
             w1, h1 = draw.textsize(name1, font=font)
             draw.text(((512-w1)/2,406),name1,font=font,fill='white')
     
@@ -2334,12 +2339,12 @@ def newcnew():
             if desc1 != '':
                 font=ImageFont.truetype(loadFont,16)
                 w,h=font.getsize(desc)
-                draw=ImageDraw.Draw(img)
+                draw=ImageDraw.Draw(background)
                 w1, h1 = draw.textsize(desc, font=font)
             else:
                 font=ImageFont.truetype(loadFont,14)
                 w,h=font.getsize(desc)
-                draw=ImageDraw.Draw(img)
+                draw=ImageDraw.Draw(background)
                 w1, h1 = draw.textsize(desc, font=font)
                 if xx>70:
                     desc1 = 'aaaa'
@@ -2373,7 +2378,7 @@ def newcnew():
                         if xx<80:
                             font=ImageFont.truetype(loadFont,10)
                             w,h=font.getsize(desc)
-                            draw=ImageDraw.Draw(img)
+                            draw=ImageDraw.Draw(background)
                             w1, h1 = draw.textsize(desc, font=font)
                             draw.text(((512-w1)/2,465),desc,font=font,fill='white')
                         else:
@@ -2387,7 +2392,7 @@ def newcnew():
                 set = i["setText"]
                 font=ImageFont.truetype(loadFont,16)
                 w,h=font.getsize(set)
-                draw=ImageDraw.Draw(img)
+                draw=ImageDraw.Draw(background)
                 w1, h1 = draw.textsize(set, font=font)
                 if desc1 != '':
                     if bigaf == '1':
@@ -2409,7 +2414,7 @@ def newcnew():
             if watermark != '':
                 font=ImageFont.truetype(loadFont,25)
                 w,h=font.getsize(watermark)
-                draw=ImageDraw.Draw(img)
+                draw=ImageDraw.Draw(background)
                 draw.text((10,9),watermark,font=font,fill='white')
     
             #i = response.json()
@@ -2484,12 +2489,12 @@ def newcnew():
                     if watermark != '':
                         thing = f'{thing1}'
                         w,h=font.getsize(thing)
-                        draw=ImageDraw.Draw(img)
+                        draw=ImageDraw.Draw(background)
                         draw.text((10,30),thing,font=font,fill='white')
                     else:
                         thing = f'{thing1}'
                         w,h=font.getsize(thing)
-                        draw=ImageDraw.Draw(img)
+                        draw=ImageDraw.Draw(background)
                         draw.text((10,10),thing,font=font,fill='white')
                 else:
                     #print('\nNot writing source as there is none.')
@@ -2498,12 +2503,7 @@ def newcnew():
                 print('Not writing source.')
         
         #os.remove('cache/BLANK'+i["id"]+'.png')
-        img.save('icons/'+i["id"]+'.png')
-        os.remove('cache/F'+i["id"]+'.png')
-        try:
-            os.remove(f'cache/BLANK{id}.png')
-        except:
-            pass
+        background.save('icons/'+i["id"]+'.png')
         i = response.json()
         percentage = counter/len(i['items'])
         realpercentage = percentage * 100
@@ -2513,57 +2513,62 @@ def newcnew():
         counter = counter + 1
         end = time.time()
 
-    if MergeImagesAuto != 'False':
-        print('\nMerging images...')
-        if mergewatermark != '':
-            r = requests.get(mergewatermark, allow_redirects=True)
-            open('icons/zzzwatermark.png', 'wb').write(r.content)
-        else:
-            pass
-        images = [file for file in listdir('icons')]
-        count = int(round(math.sqrt(len(images)+0.5), 0))
-        #print(len(images), count)
-        lol = len(images) - 1
-        print(f'\nFound {lol} images in "Icons" folder.')
-        finalImg = Image.new("RGBA", (512*count, 512*count))
-        #draw = ImageDraw.Draw(finalImg)
-        x = 0
-        y = 0
-        counter = 0
-        for img in images:
-            tImg = Image.open(f"icons/{img}")
-            if counter >= count:
-                y += 512
-                x = 0
-                counter = 0
-            finalImg.paste(tImg, (x, y), tImg)
-            x += 512
-            counter += 1
-        finalImg.show()
-        finalImg.save(f'merged/MERGED {lol}.png')
-        response = requests.get('https://benbotfn.tk/api/v1/status')
-        version = response.json()['currentFortniteVersionNumber']
-        #print(x)
-        lol = len(images) - 1
-        print('\nSaved image!')
-        if twitAPIKey != 'XXX':
-            print('\nTweeting out image....')
-            try:
-                api.update_with_media(f'merged/MERGED {lol}.png', f'[{namelol}] Found {lol} Leaked cosmetics from Patch {version}.')
-            except:
-                print(Fore.YELLOW + '\nFile size is too big, compressing image.')
-                foo = Image.open(f'merged/MERGED {lol}.png')
-                x, y = foo.size
-                x2, y2 = math.floor(x/2), math.floor(y/2)
-                foo = foo.resize((x2,y2),Image.ANTIALIAS)
-                foo.save(f'merged/MERGED {lol}.png',quality=65)
-                print(Fore.GREEN + 'Compressed!')
-                api.update_with_media(f'merged/MERGED {lol}.png', f'[{namelol}] Found {lol} Leaked cosmetics from Patch {version}.')
-                time.sleep(5)
-            print(Fore.GREEN + '\nTweeted image successfully!')
-        else:
-            print(Fore.YELLOW+'Not tweeting images.')
-    print('Not auto merging images.')
+    if automergetweet != 'False':
+        if MergeImagesAuto != 'False':
+            print('\nMerging images...')
+            if mergewatermark != '':
+                r = requests.get(mergewatermark, allow_redirects=True)
+                open('icons/zzzwatermark.png', 'wb').write(r.content)
+            else:
+                pass
+            images = [file for file in listdir('icons')]
+            count = int(round(math.sqrt(len(images)+0.5), 0))
+            #print(len(images), count)
+            lol = len(images) - 1
+            print(f'\nFound {lol} images in "Icons" folder.')
+            finalImg = Image.new("RGB", (512*count, 512*count))
+            #draw = ImageDraw.Draw(finalImg)
+            x = 0
+            y = 0
+            counter = 0
+            for img in images:
+                tImg = Image.open(f"icons/{img}").convert("RGBA")
+                if counter >= count:
+                    y += 512
+                    x = 0
+                    counter = 0
+                finalImg.paste(tImg, (x, y), tImg)
+                x += 512
+                counter += 1
+            finalImg.show()
+            finalImg.save(f'merged/MERGED {lol}.png')
+            response = requests.get('https://benbotfn.tk/api/v1/status')
+            version = response.json()['currentFortniteVersionNumber']
+            #print(x)
+            lol = len(images) - 1
+            print('\nSaved image!')
+            if twitAPIKey != 'XXX':
+                print('\nTweeting out image....')
+                try:
+                    api.update_with_media(f'merged/MERGED {lol}.png', f'[{namelol}] Found {lol} Leaked cosmetics from Patch {version}.')
+                except:
+                    print(Fore.YELLOW + '\nFile size is too big, compressing image.')
+                    foo = Image.open(f'merged/MERGED {lol}.png')
+                    x, y = foo.size
+                    x2, y2 = math.floor(x/2), math.floor(y/2)
+                    foo = foo.resize((x2,y2),Image.ANTIALIAS)
+                    foo.save(f'merged/MERGED {lol}.png',quality=65)
+                    print(Fore.GREEN + 'Compressed!')
+                    api.update_with_media(f'merged/MERGED {lol}.png', f'[{namelol}] Found {lol} Leaked cosmetics from Patch {version}.')
+                    time.sleep(5)
+                print(Fore.GREEN + '\nTweeted image successfully!')
+            else:
+                print(Fore.YELLOW+'Not tweeting images.')
+        print('Not auto merging images.')
+    else:
+        print('Exiting...')
+        time.sleep(2)
+        exit()
 
 
 def dynpak2():
