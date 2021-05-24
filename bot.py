@@ -2213,10 +2213,11 @@ def newcbeta():
     newcbeta()
 
 def newcnew():
-    print('Loaded New Icons | API = BenBot\n')
+    print('Loaded New Icons | API = BenBot')
     fontSize = 40
     response = requests.get('https://benbotfn.tk/api/v1/newCosmetics')
     new = response.json()
+    print(f"Version: {new['currentVersion']}\n")
 
     print(f"Generating {len(new['items'])} new cosmetics from BenBot...")
     print('')
@@ -2237,9 +2238,15 @@ def newcnew():
             if i["icons"]["featured"] != None:
                 url = i["icons"]["featured"]
             else:
-                url = i["icons"]["icon"]
+                if i['icons']['icon'] != None:
+                    url = i["icons"]["icon"]
+                else:
+                    url = 'https://i.ibb.co/KyvMydQ/do-Not-Delete.png'
         elif useFeaturedIfAvaliable == 'False':
-            url = i["icons"]["icon"]
+            if i['icons']['icon'] != None:
+                url = i["icons"]["icon"]
+            else:
+                url = 'https://i.ibb.co/KyvMydQ/do-Not-Delete.png'
         placeholderImg = Image.open('assets/doNotDelete.png')
         r = requests.get(url, allow_redirects=True)
         open(f'cache/icontemp.png', 'wb').write(r.content)
@@ -2263,6 +2270,7 @@ def newcnew():
                 img.save(f'cache/temp.png')
             except:
                 pass
+
         rarity = i["rarity"]
         rarity = rarity.lower()
         try:
@@ -2306,7 +2314,13 @@ def newcnew():
         img.paste(border, (0, 0), border)
         img.save('cache/temp.png')
         background = Image.open('cache/temp.png')
-        name1= i["name"]
+
+        if i['name'] != None:
+            name = i['name']
+        else:
+            name = 'TBD'
+
+        name1= name
         loadFont = 'fonts/'+imageFont
         if len(name1) > 20:
             fontSize = 30
@@ -2332,6 +2346,12 @@ def newcnew():
     
             loadFont = 'fonts/OpenSans-Regular.ttf'
             desc = i["description"]
+
+            if desc != None:
+                pass
+            else:
+                desc = 'TBD'
+
             xx = len(desc)
             desc1 = 'a'
             if xx>35:
@@ -2569,6 +2589,7 @@ def newcnew():
         print('Exiting...')
         time.sleep(2)
         exit()
+
 
 
 def dynpak2():
