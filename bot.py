@@ -507,6 +507,7 @@ def update_mode():
 def generate_cosmetics():
     if iconType == 'new':
         newcnew()
+        return
     else:
         pass
     if benbot == 'False':
