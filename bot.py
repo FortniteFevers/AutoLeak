@@ -2533,58 +2533,57 @@ def newcnew():
         counter = counter + 1
         end = time.time()
 
-    if automergetweet != 'False':
-        if MergeImagesAuto != 'False':
-            print('\nMerging images...')
-            if mergewatermark != '':
-                r = requests.get(mergewatermark, allow_redirects=True)
-                open('icons/zzzwatermark.png', 'wb').write(r.content)
-            else:
-                pass
-            images = [file for file in listdir('icons')]
-            count = int(round(math.sqrt(len(images)+0.5), 0))
-            #print(len(images), count)
-            lol = len(images) - 1
-            print(f'\nFound {lol} images in "Icons" folder.')
-            finalImg = Image.new("RGB", (512*count, 512*count))
-            #draw = ImageDraw.Draw(finalImg)
-            x = 0
-            y = 0
-            counter = 0
-            for img in images:
-                tImg = Image.open(f"icons/{img}").convert("RGBA")
-                if counter >= count:
-                    y += 512
-                    x = 0
-                    counter = 0
-                finalImg.paste(tImg, (x, y), tImg)
-                x += 512
-                counter += 1
-            finalImg.show()
-            finalImg.save(f'merged/MERGED {lol}.png')
-            response = requests.get('https://benbotfn.tk/api/v1/status')
-            version = response.json()['currentFortniteVersionNumber']
-            #print(x)
-            lol = len(images) - 1
-            print('\nSaved image!')
-            if twitAPIKey != 'XXX':
-                print('\nTweeting out image....')
-                try:
-                    api.update_with_media(f'merged/MERGED {lol}.png', f'[{namelol}] Found {lol} Leaked cosmetics from Patch {version}.')
-                except:
-                    print(Fore.YELLOW + '\nFile size is too big, compressing image.')
-                    foo = Image.open(f'merged/MERGED {lol}.png')
-                    x, y = foo.size
-                    x2, y2 = math.floor(x/2), math.floor(y/2)
-                    foo = foo.resize((x2,y2),Image.ANTIALIAS)
-                    foo.save(f'merged/MERGED {lol}.png',quality=65)
-                    print(Fore.GREEN + 'Compressed!')
-                    api.update_with_media(f'merged/MERGED {lol}.png', f'[{namelol}] Found {lol} Leaked cosmetics from Patch {version}.')
-                    time.sleep(5)
-                print(Fore.GREEN + '\nTweeted image successfully!')
-            else:
-                print(Fore.YELLOW+'Not tweeting images.')
-        print('Not auto merging images.')
+    if MergeImagesAuto != 'False':
+        print('\nMerging images...')
+        if mergewatermark != '':
+            r = requests.get(mergewatermark, allow_redirects=True)
+            open('icons/zzzwatermark.png', 'wb').write(r.content)
+        else:
+            pass
+        images = [file for file in listdir('icons')]
+        count = int(round(math.sqrt(len(images)+0.5), 0))
+        #print(len(images), count)
+        lol = len(images) - 1
+        print(f'\nFound {lol} images in "Icons" folder.')
+        finalImg = Image.new("RGB", (512*count, 512*count))
+        #draw = ImageDraw.Draw(finalImg)
+        x = 0
+        y = 0
+        counter = 0
+        for img in images:
+            tImg = Image.open(f"icons/{img}").convert("RGBA")
+            if counter >= count:
+                y += 512
+                x = 0
+                counter = 0
+            finalImg.paste(tImg, (x, y), tImg)
+            x += 512
+            counter += 1
+        finalImg.show()
+        finalImg.save(f'merged/MERGED {lol}.png')
+        response = requests.get('https://benbotfn.tk/api/v1/status')
+        version = response.json()['currentFortniteVersionNumber']
+        #print(x)
+        lol = len(images) - 1
+        print('\nSaved image!')
+        if twitAPIKey != 'XXX':
+            print('\nTweeting out image....')
+            try:
+                api.update_with_media(f'merged/MERGED {lol}.png', f'[{namelol}] Found {lol} Leaked cosmetics from Patch {version}.')
+            except:
+                print(Fore.YELLOW + '\nFile size is too big, compressing image.')
+                foo = Image.open(f'merged/MERGED {lol}.png')
+                x, y = foo.size
+                x2, y2 = math.floor(x/2), math.floor(y/2)
+                foo = foo.resize((x2,y2),Image.ANTIALIAS)
+                foo.save(f'merged/MERGED {lol}.png',quality=65)
+                print(Fore.GREEN + 'Compressed!')
+                api.update_with_media(f'merged/MERGED {lol}.png', f'[{namelol}] Found {lol} Leaked cosmetics from Patch {version}.')
+                time.sleep(5)
+            print(Fore.GREEN + '\nTweeted image successfully!')
+        else:
+            print(Fore.YELLOW+'Not tweeting images.')
+    print('Not auto merging images.')
     else:
         print('Exiting...')
         time.sleep(2)
