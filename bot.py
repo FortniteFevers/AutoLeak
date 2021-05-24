@@ -2583,8 +2583,8 @@ def newcnew():
             print(Fore.GREEN + '\nTweeted image successfully!')
         else:
             print(Fore.YELLOW+'Not tweeting images.')
-    print('Not auto merging images.')
     else:
+        print('Not auto merging images.')
         print('Exiting...')
         time.sleep(2)
         exit()
