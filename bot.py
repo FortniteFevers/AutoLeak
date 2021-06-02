@@ -378,15 +378,15 @@ def update_mode():
                             img=Image.open('map.png')
                             img=img.resize((1200,1200),PIL.Image.ANTIALIAS)
                             img.save('map.png')
-                            response = requests.get('https://benbotfn.tk/api/v1/status')
+                            response = requests.get('https://benbot.app/api/v1/status')
                             version = response.json()['currentFortniteVersionNumber']
                             api.update_with_media('smallmap.png', f'#Fortnite Map Update:\n\nBattle Royale map for v{version}0.')
                             #=== MAP ===#
 
                             #=== VERSIONBOT ===#
-                            response = requests.get('https://benbotfn.tk/api/v1/aes')
+                            response = requests.get('https://benbot.app/api/v1/aes')
                             aes = response.json()['mainKey']
-                            response = requests.get('https://benbotfn.tk/api/v1/status')
+                            response = requests.get('https://benbot.app/api/v1/status')
                             version = response.json()['currentFortniteVersionNumber']
                             build = response.json()['currentFortniteVersion']
                             paks = response.json()['totalPakCount']
@@ -459,7 +459,7 @@ def update_mode():
                                                     time.sleep(initialCheckDelay)
                                             else: # Then loads BenBot to generate the new cosmetics.
                                                 print('Loaded BenBot.')
-                                                response = requests.get('https://benbotfn.tk/api/v1/newCosmetics')
+                                                response = requests.get('https://benbot.app/api/v1/newCosmetics')
                                                 if response:
                                                     currentVersion = response.json()["currentVersion"]
                                                     oldVersion = response.json()['previousVersion']
@@ -478,7 +478,7 @@ def update_mode():
                                                     else:
                                                         print(Fore.YELLOW+ "Waiting for endpoint update -> [Count: "+str(count)+"]")
 
-                                                        response = requests.get('https://benbotfn.tk/api/v1/newCosmetics')
+                                                        response = requests.get('https://benbot.app/api/v1/newCosmetics')
                                                         newBuild = response.json()["currentVersion"]
 
                                                         count = count + 1
@@ -671,7 +671,7 @@ def generate_cosmetics():
     if benbot == 'True':
         print('Loading BenBot...\n')
         fontSize = 40
-        response = requests.get('https://benbotfn.tk/api/v1/newCosmetics')
+        response = requests.get('https://benbot.app/api/v1/newCosmetics')
         new = response.json()
     
         print(f"Generating {len(new['items'])} new cosmetics from BenBot...")
@@ -1075,7 +1075,7 @@ def search_cosmetic():
     if benbot == 'True':
         print(Fore.CYAN + 'Loaded BenBot.')
         print(Fore.GREEN)
-        response = requests.get(f'https://benbotfn.tk/api/v1/cosmetics/br/search?lang={language}&searchLang=en&matchMethod=full&name={ask}')
+        response = requests.get(f'https://benbot.app/api/v1/cosmetics/br/search?lang={language}&searchLang=en&matchMethod=full&name={ask}')
 
         print(f'Generating {ask}...')
         print('')
@@ -1534,7 +1534,7 @@ def dynamic_pak():
     print('\nWhat number pak do you want to grab?')
     ask = input('>> ')
 
-    response = requests.get(f'https://benbotfn.tk/api/v1/cosmetics/br/dynamic/{ask}?lang={language}')
+    response = requests.get(f'https://benbot.app/api/v1/cosmetics/br/dynamic/{ask}?lang={language}')
     
     try:
         test = response.json()[0]['id']
@@ -1914,7 +1914,7 @@ def newcbeta():
     start = time.time()
     print(Fore.YELLOW+'\nType the name of the cosmetic you want to grab below:\n')
     ask = input(Fore.GREEN + '>> ')
-    response = requests.get(f'https://benbotfn.tk/api/v1/cosmetics/br/search?lang={language}&searchLang=en&matchMethod=full&name={ask}')
+    response = requests.get(f'https://benbot.app/api/v1/cosmetics/br/search?lang={language}&searchLang=en&matchMethod=full&name={ask}')
     fontSize = 40
     # Making icon type new to get the new icons lol #
     iconType = 'new'
@@ -2216,7 +2216,7 @@ def newcbeta():
 def newcnew():
     print('Loaded New Icons | API = BenBot')
     fontSize = 40
-    response = requests.get('https://benbotfn.tk/api/v1/newCosmetics')
+    response = requests.get('https://benbot.app/api/v1/newCosmetics')
     new = response.json()
     print(f"Version: {new['currentVersion']}\n")
 
@@ -2562,7 +2562,7 @@ def newcnew():
             counter += 1
         finalImg.show()
         finalImg.save(f'merged/MERGED {lol}.png')
-        response = requests.get('https://benbotfn.tk/api/v1/status')
+        response = requests.get('https://benbot.app/api/v1/status')
         version = response.json()['currentFortniteVersionNumber']
         #print(x)
         lol = len(images) - 1
@@ -2603,7 +2603,7 @@ def dynpak2():
     print('What pak number do you want to grab?')
     paktrue = input('>> ')
     fontSize = 40
-    response = requests.get(f'https://benbotfn.tk/api/v1/cosmetics/br/dynamic/{paktrue}?lang={language}')
+    response = requests.get(f'https://benbot.app/api/v1/cosmetics/br/dynamic/{paktrue}?lang={language}')
     new = response.json()
 
     print(f"\nGenerating {len(new)} new cosmetics from BenBot...")
@@ -2927,7 +2927,7 @@ def dynpak2():
             counter += 1
         finalImg.show()
         finalImg.save(f'merged/MERGED {lol}.png')
-        response = requests.get('https://benbotfn.tk/api/v1/status')
+        response = requests.get('https://benbot.app/api/v1/status')
         version = response.json()['currentFortniteVersionNumber']
         #print(x)
         print('\nSaved image!')
