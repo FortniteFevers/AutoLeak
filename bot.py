@@ -62,6 +62,13 @@ os.system("cls")
 os.system(
     "TITLE AutoLeak / Created by Fevers.")
 
+try:
+    # Removes the placeholder
+    os.remove('icons/placeholder.txt')
+except:
+    pass
+
+
 # Starting Popup
 import ctypes
 
