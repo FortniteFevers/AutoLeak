@@ -1,8 +1,6 @@
 # AutoLeak
 
-A program made by [Fevers](https://twitter.com/FeversLeaks) and [Thomas Keig](https://twitter.com/thomaskeig_).
-
-AutoLeak is a utility to generate all of the latest leaks in Fortnite, with some bonus features as well.
+AutoLeak is a terminal-based utility to generate all of the latest leaks in Fortnite, with some bonus features as well.
 
 Make sure to check out our Wiki, with info on how to utilitize [**settings.json**](https://github.com/FortniteFevers/AutoLeak/wiki/Settings.json-Info)
 
