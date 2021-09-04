@@ -2,5 +2,5 @@ requests
 tweepy
 pillow
 colorama
-datetime
-translate
+googletrans
+pyfiglet
