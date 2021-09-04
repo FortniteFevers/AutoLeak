@@ -2,21 +2,24 @@
   "name": "AutoLeak",
   "footer": "#Fortnite",
   "language": "en",
+
   "imageFont": "BurbankBigCondensed-Black.otf",
+  "sideFont": "",
+
   "placeholderUrl": "https://i.ibb.co/svXhCgN/ph.png",
 
   "watermark": "",
   "useFeaturedIfAvaliable": "True",
   "iconType": "new",
+  "showitemsource": "True",
 
   "twitAPIKey": "",
   "twitAPISecretKey": "",
   "twitAccessToken": "",
   "twitAccessTokenSecret": "",
 
-  "BenBot": "True",
+  "BenBot": "False",
   "BotDelay": 10,
-  "showitemsource": "True",
   "apikey": "",
 
   "CreatorCode": "",
@@ -27,5 +30,11 @@
   "TweetSearch": "False",
 
   "MergeImages": "True",
-  "MergeWatermarkUrl": ""
+  "MergeWatermarkUrl": "image/amogus.png",
+  "AutoTweetMerged": "False",
+
+  "ShowDescOnNPCs": "True",
+
+  "ShopSections_Image": "True",
+  "ImageColor": ""
 }
