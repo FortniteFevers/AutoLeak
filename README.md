@@ -6,50 +6,35 @@ Make sure to check out our Wiki, with info on how to utilitize [**settings.json*
 
 ---
 
-#### AutoLeak 1.3.8 has just been released!
-# Whats new in version 1.3.8?
-1. NEW ICONS!
-- You can use these by changing your type of icons to 'new' in settings.json!
-- You can search, generate, and grab paks with these new icons!
-- The new icons are BenBot ONLY so if you want to use Fortnite-API, switch over to the standard icons.
+#### AutoLeak 1.4 has just been released!
+# Whats new in version 1.4?
+1. BUG FIXES!
+- Fixed issues relating to BenBot and Fortnite-API. AutoLeak now can generate an updates contents in under 30 seconds!
+- Fixed notices command
 
-2. Added notices command
-- Checks for a change or a added Fortnite notice. If it detects one, it will post it to your twitter.
-- REQUIRED You need Twitter API keys for this command.
-- (API LINK: https://developer.twitter.com/en/portal/dashboard)
+2. Added NPCs command
+- Generates icons of all current Fortnite NPCs, or new NPCs added from the latest patch.
 
-3. Added Staging Servers command
-- Checks for a change in the Fortnite Staging Servers. If it detects one, it will post it to your twitter.
-- REQUIRED You need Twitter API keys for this command.
-- (API LINK: https://developer.twitter.com/en/portal/dashboard)
+3. Added Set Search command
+- Grabs all items in a specific set and generates them.
+- Example: Can generate all items in the '24k' set.
 
-4. Weapons command!
-- Search for any weapon you want, and it can generate icons for it.
-- UPCOMING Loot pool command. Generate an image of the current loot pool!
+4. ADDED + FIXED: Shop sections command
+- Shop sections command can now post on your Twitter with either two options:
+    - Can post with just the text
+    - Can post an image showcasing the shop sections of that night. [example here](https://twitter.com/FeversBot/status/1434079356989628416)
+- Fixed all issues related to command.
 
-5. BUG FIXES! (And small changes)
-- Fixed Item Shop, News, and Shop Sections command
-- Faster icon generation
-- Added language support for BenBot
-- Fixed the Footer to not work
-- Item Shop command now compresses the image if it is too big to tweet out.
-- Fixed a lot more things, but I forget what they are so uh it should just be better
-
-6. UPCOMING FEATURES:
-- Custom Item Shop generation (Haven't really started but I will soon)
-- Merge all detection commands into one (I will be doing this but in a different program separate from AutoLeak)
-- Playlist command (I kind of got it done, but it is really spammy)
-
-7. SETTINGS.JSON CHANGES:
-- Added 'apikey' (An API key provided by fortniteapi.io ONLY USED FOR THE WEAPONS COMMAND, NOT REQUIRED!)
-- Added 'CreatorCode' (Your creator code goes here. This is used for Item Shop posts, news posts, etc. NOT REQUIRED!)
-- Added 'MergeWatermarkUrl' (When merging images it will add a watermark to the merged image NOT REQUIRED!)
-
-8. UPDATE MODE CHANGES:
-- Added Map and Versionbot support in update mode. Enable Tweet Update in settings.json for it to work!
+5. SETTINGS.JSON CHANGES:
+- Added 'sideFont' (Used for the font of the Description and Set with new icons NOT REQUIRED!)
+- Added 'AutoTweetMerged' (Used if you enable MergeImages and you want to automatically tweet out merged image NOT REQUIRED!)
+- Added 'ShowDescOnNPCs' (Used for NPCs command if you want to show NPC description MAKE True OR False)
+- Added 'ShopSections_Image' (Used if you are using the Shop Sections command and you want to enable the image feature MAKE True OR False)
+- Added 'ImageColor' (Changes background color for ShopSections image command NOT REQUIRED!)
+- Also moved some stuff around.
 
 ### Version Bugs:
-- When merging cosmetics from a specific pak, if the number of items merged is equal to "5", it will not work for some reason.
+- All bugs have been fixed,  however, if you do encounter issues, please let me know by either joining or [Discord](https://dsc.gg/AutoLeak) server or DM me on discord (Fevers#8962)
 
 
 # Features
