@@ -3,6 +3,7 @@
 """
 Commons Clause - License Condition v1.0
 Copyright Fevers 2021
+
 The Software is provided to you by the Licensor under the
 License, as defined below, subject to the following condition.
 Without limiting other conditions in the License, the grant
@@ -18,35 +19,39 @@ of the Software. Any license notice or attribution required by
 the License must also include this Commons Clause License
 Condition notice.
 
-Please note: You also do not have the right to edit this program
-and distribute it to others. You are allowed to edit the program
-for personal use, but if you do edit it, you are not allowed
-to distribute to others.
+All Rights Reserved. You are not allowed to redistribute this software, or use
+the software to build derivative works based upon without prior written permission.
+This software is open-source only for Educational Purposes, if you learn\copy-over\edit anything from AutoLeak you must give appropriate credit,
+provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner.
 
 Software: AUTOLEAK
 """
 
+currentVersion = 'BETA'
+
 import requests
 import tweepy
 import time
-import urllib.request
 import PIL
 import math
 from PIL import Image, ImageFont, ImageDraw, ImageChops
 import os
 import json
-import glob
 import shutil
 import math
 import datetime
-import webbrowser
-from datetime import date
-from datetime import datetime
+from datetime import date, datetime
 import random
+from modules.shopsections import shop_sections
+from googletrans import Translator
+translator = Translator()
 
 now = datetime.now()
 
 current_time = now.strftime("%H:%M")
+
+from modules.compressor import compressnewcosmetics_normal, compress_brnews, compress_normal, pak_compress, compressnewcosmetics_new
+from modules.merger import merger
 
 from os import listdir
 from colorama import *
@@ -56,30 +61,37 @@ loop = True
 count = 1
 fontSize = 40
 initialCheckDelay = 2
-currentVersion = '1.3.8'
 
-os.system("cls")
-os.system(
+
+import platform # If softwere is linux, it does not run ctypes
+x = platform.system()
+if x == 'Windows':
+    if currentVersion != 'BETA':
+        # Starting Popup
+        import ctypes
+
+        rannumber = random.randint(1, 2)
+        def Mbox(title, text, style):
+            return ctypes.windll.user32.MessageBoxW(0, text, title, style)
+        #if rannumber == 1:
+        #    Mbox('AutoLeak - Created by Fevers.', f'Hey There! Welcome to AutoLeak, the easiest way to Auto-Leak Fortnite. \nMake sure to join our discord by clicking the OK button!\n\n\nYou are on AutoLeak version v{currentVersion}!', 0)
+        #    webbrowser.open_new('https://discord.gg/UZgHArwp4f')
+        #else:
+        #    pass
+
+if x == 'Windows':
+    import pyfiglet
+    ascii_banner = pyfiglet.figlet_format("AUTOLEAK", font = "slant")
+    print(Fore.CYAN + ascii_banner + Fore.RESET)
+    print('Loading...')
+    time.sleep(2)
+    os.system("cls")
+    os.system(
     "TITLE AutoLeak / Created by Fevers.")
+    os.system('cls' if os.name=='nt' else 'clear')
 
-try:
-    # Removes the placeholder
-    os.remove('icons/placeholder.txt')
-except:
-    pass
-
-
-# Starting Popup
-import ctypes
-
-rannumber = random.randint(1, 2)
-if rannumber == 1:
-    def Mbox(title, text, style):
-        return ctypes.windll.user32.MessageBoxW(0, text, title, style)
-    Mbox('AutoLeak - Created by Fevers.', f'Hey There! Welcome to AutoLeak, the easiest way to Auto-Leak Fortnite. \nMake sure to join our discord by clicking the OK button!\n\n\nYou are on AutoLeak version v{currentVersion}!', 0)
-    webbrowser.open_new('https://discord.gg/UZgHArwp4f')
-else:
-    pass
+data = requests.get('https://benbot.app/api/v1/status')
+seasonnum = data.json()['currentFortniteVersionNumber']
 
 # Used to communicate with updates
 response = requests.get('https://pastebin.com/raw/zku0yz9q')
@@ -110,11 +122,15 @@ print("")
 if latestVersion == currentVersion:
     print(Fore.GREEN + '--> This version of AUTOLEAK is up to date!')
 else:
-    print(Fore.RED + '--> You are currently running v'+currentVersion+' of AutoLeak, v'+latestVersion+' is now avaliable - Please check #updates in the AutoLeak discord server for the update!')
+    if currentVersion != 'BETA':
+        print(Fore.RED + '--> You are currently running v'+currentVersion+' of AutoLeak, v'+latestVersion+' is now avaliable - Please check #updates in the AutoLeak discord server for the update!')
+        Mbox("VERSION ERROR", f"Hey there!\n\nWe have noticed you are running a pervious version of AutoLeak!\n\nYou are on version {currentVersion}, and {latestVersion} is now avalible!\nPlease check #updates in the AutoLeak discord server for the update!\n\nYou can still use this version, but make sure to download the latest version after!", 0)
+    else:
+        print(Fore.CYAN + "Welcome to AutoLeak Beta! Thanks for signing up and helping us with developing this program!\nIf there are any errors, make sure to dm Fevers#3474 on Discord.")
 print("")
 print(Style.RESET_ALL + "------------------------------------------------------------------------------------------------")
 print("")
-
+time.sleep(1)
 # Used to communicate with settings.json, grab all user inputs from it.
 
 with open("settings.json") as settings:
@@ -136,6 +152,7 @@ with open("settings.json") as settings:
         print(Fore.RED + 'Failed to load "footer", defaulted to "#Fortnite"')
 
     try:
+        global language
         language = data["language"]
         if language == 'ar' or language == 'de' or language == 'en' or language == 'es' or language == 'es-419' or language == 'fr' or language == 'it' or language == 'ja' or language == 'ko' or language == 'pl' or language == 'pt-BR' or language == 'de' or language == 'ru' or language == 'tr' or language == 'zh-CN' or language == 'zh-Hant':
             print(Fore.GREEN + 'Loaded "language" as "'+language+'"')
@@ -144,7 +161,7 @@ with open("settings.json") as settings:
             print(Fore.YELLOW + 'Incorrect value for language was given so I have loaded "language" as "en"')
 
     except:
-        language = 'False'
+        language = 'en'
         print(Fore.RED + 'Failed to load "language", defaulted to "en"')
 
     try:
@@ -304,6 +321,7 @@ with open("settings.json") as settings:
         print(Fore.YELLOW + 'Incorrect value for "apikey", defaulting to none.')   
     
     try:
+        global showitemsource
         showitemsource = data['showitemsource']
         showitemsource = showitemsource.title()
         if showitemsource != "":
@@ -315,15 +333,74 @@ with open("settings.json") as settings:
         showitemsource = 'True'
         
     try:
+        loc1 = ''
         mergewatermark = data['MergeWatermarkUrl']
-        if mergewatermark != "":
-            print(Fore.GREEN+f'Loaded "MergeWatermark" as "{mergewatermark}')
+        if 'image' in mergewatermark:
+            loc1 = mergewatermark.replace('image/', '')
+            print(Fore.GREEN+f'Detected "MergeWatermark" to be an image file. Image is located in assets/{loc1}')
+
+            def addwatermark():
+                img=Image.open(f'assets/{loc1}')
+                img=img.resize((512,512),PIL.Image.ANTIALIAS)
+                img.save(f'icons/zzz{loc1}')
+            addwatermark()
         else:
-            print(Fore.GREEN+f'Loaded "MergeWatermark" as None.')
-            mergewatermark = ""
+            if mergewatermark != "":
+                print(Fore.GREEN+f'Loaded "MergeWatermark" as "{mergewatermark}')
+            else:
+                print(Fore.GREEN+f'Loaded "MergeWatermark" as None.')
+                mergewatermark = ""
     except:
         print(Fore.YELLOW+'Incorrect value for "mergewatermark", defaulting to None.')
         mergewatermark = ""
+
+    try:
+        automergetweet = data['AutoTweetMerged']
+        automergetweet = automergetweet.title()
+        if automergetweet == 'True' or 'False':
+            print(Fore.GREEN+f'Loaded "Auto Tweet Merged Images" as "{automergetweet}"')
+        else:
+            print(Fore.YELLOW+'Incorrect value for "Auto Tweet Merged Images", defaulting to False.')
+            automergetweet = 'False'
+    except:
+        print(Fore.YELLOW+'Incorrect value for "Auto Tweet Merged Images", defaulting to False.')
+        automergetweet = "False"
+
+    try:
+        showDescription = data['ShowDescOnNPCs']
+        if showDescription == 'True' or 'False':
+            print(Fore.GREEN+f'Loaded "Show Description on NPCs" as "{showDescription}"')
+        else:
+            print(Fore.YELLOW+'Incorrect value for "Show Description on NPCs", defaulting to False.')
+            showDescription = 'False'
+    except:
+        print(Fore.YELLOW+'Incorrect value for "Show Description on NPCs", defaulting to False.')
+        showDescription = "False"
+
+    try:
+        sections_image = data['ShopSections_Image']
+        if sections_image == 'True' or 'False':
+            print(Fore.GREEN+f'Loaded "Shop Sections Image" as "{sections_image}"')
+        else:
+            print(Fore.YELLOW+f'Incorrect value for "Shop Sections Image", defaulting to True."')
+            sections_image = 'False'
+    except:
+        print(Fore.RED+f'Incorrect value for "Shop Sections Image", defaulting to True."')
+        sections_image = 'True'
+
+    try:
+        BG_Color = data['ImageColor']
+        if BG_Color == "":
+            print(Fore.YELLOW+f'Incorrect value for "Background Color", defaulting to "Blue"')
+            BG_Color = '394ff7'
+        else:
+            print(Fore.GREEN+f'Loaded "Background Color" as "{BG_Color}"')
+            
+    except:
+        print(Fore.RED+f'Incorrect value for "Background Color", defaulting to "Blue"')
+        BG_Color = '394ff7'
+    
+    sections_image = sections_image.title()
 
 # Sets up Twitter API keys        
 auth = tweepy.OAuthHandler(twitAPIKey, twitAPISecretKey)
@@ -335,33 +412,47 @@ headers = {'Authorization': apikey}
 
 #-------------------#-------------------#
 
-
 # Defines update mode
 def update_mode():
-
+    
     #Grabs Build
-    response = requests.get('https://fortnite-api.com/v2/aes')
-    updateCompare = response.json()['data']['build']
+    if benbot == 'False':
+        response = requests.get('https://fortnite-api.com/v2/aes')
+        updateCompare = response.json()['data']['build']
+    else:
+        response = requests.get('https://benbot.app/api/v1/newCosmetics')
+        updateCompare = response.json()['currentVersion']
 
     # Grabes AES
-    aesCompare = response.json()['data']['mainKey']
+    if benbot == 'False':
+        aesCompare = response.json()['data']['mainKey']
+    else:
+        rrr = requests.get('https://benbot.app/api/v1/aes')
+        aesCompate = rrr.json()['mainKey']
 
     count = 1
-    initialCheckDelay = 2
+    initialCheckDelay = BotDelay
     while 1: # While 1 checks for a Fortnite Update
-        response = requests.get('https://fortnite-api.com/v2/aes')
+        if benbot == 'False':
+            response = requests.get('https://fortnite-api.com/v2/aes')
+        else:
+            response = requests.get('https://benbot.app/api/v1/newCosmetics')
         if response:
             print(Fore.YELLOW+ f'Waiting for Fortnite update -> [Count: {count}] BenBot = {benbot}')
-            status = response.json()["status"]
-            if status != 200:
-                if status == 503:
-                    error = response.json()["error"]
-                    print(Fore.RED + f"ERROR: {error} please wait...")
-                else:
-                    print(Fore.RED + "Error in AES Endpoint (Status is not 200 or 503) - Retrying... (This is an error with fortnite-api.com)")
-                time.sleep(initialCheckDelay)
+            if benbot == 'False':
+                status = response.json()["status"]
+                if status != 200:
+                    if status == 503:
+                        error = response.json()["error"]
+                        print(Fore.RED + f"ERROR: {error} please wait...")
+                    else:
+                        print(Fore.RED + "Error in AES Endpoint (Status is not 200 or 503) - Retrying... (This is an error with fortnite-api.com)")
+                    time.sleep(initialCheckDelay)
             else:
-                versionLoop = response.json()["data"]["build"]
+                if benbot == 'False':
+                    versionLoop = response.json()["data"]["build"]
+                else:
+                    versionLoop = response.json()['currentVersion']
                 count = count + 1
                 if updateCompare != versionLoop:
                     while 2: # If it detects an update, THEN post build and map.
@@ -375,53 +466,67 @@ def update_mode():
                         #==========#
 
                         if tweetUpdate == 'True':
-                            #=== MAP ===#
-                            print('\nTweeting map...')
-                            response = requests.get('https://fortnite-api.com/v1/map')
-                            map = response.json()['data']['images']['blank']
-                            r = requests.get(map, allow_redirects=True)
-                            open('map.png', 'wb').write(r.content)
-                            print("Opened map.png")
-                            img=Image.open('map.png')
-                            img=img.resize((1200,1200),PIL.Image.ANTIALIAS)
-                            img.save('map.png')
-                            response = requests.get('https://benbot.app/api/v1/status')
-                            version = response.json()['currentFortniteVersionNumber']
-                            api.update_with_media('smallmap.png', f'#Fortnite Map Update:\n\nBattle Royale map for v{version}0.')
-                            #=== MAP ===#
-
-                            #=== VERSIONBOT ===#
-                            response = requests.get('https://benbot.app/api/v1/aes')
-                            aes = response.json()['mainKey']
-                            response = requests.get('https://benbot.app/api/v1/status')
-                            version = response.json()['currentFortniteVersionNumber']
-                            build = response.json()['currentFortniteVersion']
-                            paks = response.json()['totalPakCount']
-                            dynamicpaks = response.json()['dynamicPakCount']
-                            print(f'\nThe current version v'+str(version)+'0'+' has been succesfully retrived!')
-                            print('The AES key, Paks, and Build have now been retreived also.')
-                            time.sleep(1)
-                            api.update_status('A #Fortnite update has been detected... \n\nVersion Number: v'+str(version)+'0'+'\n\nBuild: '+str(build)+':\n\n'+str(paks)+' - Pak Files\n\n'+str(dynamicpaks)+' - Dynamic Pak Files'+'\n\n'+str(aes)+' - AES key')
-                            #=== VERSIONBOT ===#
-                            
+                            try:
+                                #=== MAP ===#
+                                print('\nTweeting map...')
+                                response = requests.get('https://fortnite-api.com/v1/map')
+                                map = response.json()['data']['images']['blank']
+                                r = requests.get(map, allow_redirects=True)
+                                open('map.png', 'wb').write(r.content)
+                                print("Opened map.png")
+                                img=Image.open('map.png')
+                                img=img.resize((1200,1200),PIL.Image.ANTIALIAS)
+                                img.save('map.png')
+                                response = requests.get('https://benbot.app/api/v1/status')
+                                version = response.json()['currentFortniteVersionNumber']
+                                api.update_with_media('smallmap.png', f'#Fortnite Map Update:\n\nBattle Royale map for v{version}0.')
+                                #=== MAP ===#
+                            except:
+                                pass
+                            try:
+                                #=== VERSIONBOT ===#
+                                response = requests.get('https://benbot.app/api/v1/aes')
+                                aes = response.json()['mainKey']
+                                response = requests.get('https://benbot.app/api/v1/status')
+                                version = response.json()['currentFortniteVersionNumber']
+                                build = response.json()['currentFortniteVersion']
+                                paks = response.json()['totalPakCount']
+                                dynamicpaks = response.json()['dynamicPakCount']
+                                print(f'\nThe current version v'+str(version)+'0'+' has been succesfully retrived!')
+                                print('The AES key, Paks, and Build have now been retreived also.')
+                                time.sleep(1)
+                                api.update_status('A #Fortnite update has been detected... \n\nVersion Number: v'+str(version)+'0'+'\n\nBuild: '+str(build)+':\n\n'+str(paks)+' - Pak Files\n\n'+str(dynamicpaks)+' - Dynamic Pak Files'+'\n\n'+str(aes)+' - AES key')
+                                #=== VERSIONBOT ===#
+                            except:
+                                pass
                         count = 1 
                         while 3: # While 3 posts the AES key.
-                            response = requests.get('https://fortnite-api.com/v2/aes')
+                            if benbot == 'False':
+                                response = requests.get('https://fortnite-api.com/v2/aes')
+                            else:
+                                response = requests.get('https://benbot.app/api/v1/aes')
                             if response:
-                                status = response.json()["status"]
-                                if status != 200:
-                                    if status == 503:
-                                        error = response.json()["error"]
-                                        print(Fore.RED + f"ERROR: {error} please wait...")
-                                    else:
-                                        print(Fore.RED + "Error in AES Endpoint (Status is not 200 or 503) - Retrying... (This is an error with fortnite-api.com)")
-                                    time.sleep(initialCheckDelay)
+                                if benbot == 'False':
+                                    status = response.json()["status"]
+                                    if status != 200:
+                                        if status == 503:
+                                            error = response.json()["error"]
+                                            print(Fore.RED + f"ERROR: {error} please wait...")
+                                        else:
+                                            print(Fore.RED + "Error in AES Endpoint (Status is not 200 or 503) - Retrying... (This is an error with fortnite-api.com)")
+                                        time.sleep(initialCheckDelay)
                                 else:
 
                                     print(Fore.YELLOW+ f"Waiting for AES update -> [Count: "+str(count)+"]")
-                                    mainKey = response.json()["data"]["mainKey"]
-                                    mainKeyVersion1 = response.json()["data"]["build"].replace('++Fortnite+Release-', '')
-                                    mainKeyVersion = mainKeyVersion1.replace('-Windows', '')
+
+                                    if benbot == 'False':
+                                        mainKey = response.json()["data"]["mainKey"]
+                                        mainKeyVersion1 = response.json()["data"]["build"].replace('++Fortnite+Release-', '')
+                                        mainKeyVersion = mainKeyVersion1.replace('-Windows', '')
+                                    else:
+                                        mainKey = response.json()["mainKey"]
+                                        mainKeyVersion1 = response.json()["version"].replace('++Fortnite+Release-', '')
+                                        mainKeyVersion = mainKeyVersion1.replace('-Windows', '')
                                     count = count + 1
 
                                     if aesCompare != mainKey:
@@ -475,8 +580,7 @@ def update_mode():
 
                                                     if oldVersion != currentVersion:
                                                         if currentVersion == oldVersion:
-                                                            error = response.json()["error"]
-                                                            print(Fore.RED + f"ERROR: {error} please wait...")
+                                                            print(Fore.RED + f"ERROR: please wait...")
                                                         else:
                                                             print(Fore.RED + "Error in Cosmetics Endpoint (Status is not 200 or 503) - Retrying... (This is an error with BenBot...)")
                                                         time.sleep(initialCheckDelay)
@@ -514,7 +618,7 @@ def update_mode():
 def generate_cosmetics():
     if iconType == 'new':
         newcnew()
-        return
+        exit()
     else:
         pass
     if benbot == 'False':
@@ -834,61 +938,41 @@ def generate_cosmetics():
         print("!  !  !  !  !  !  !")
         print(f"IMAGE GENERATING COMPLETE - Generated images in {round(end - start, 2)} seconds")
         print("!  !  !  !  !  !  !")
-                      
-    if MergeImagesAuto != 'False':
-        print('\nMerging images...')
-        if mergewatermark != '':
-            r = requests.get(mergewatermark, allow_redirects=True)
-            open('icons/zzzwatermark.png', 'wb').write(r.content)
-        else:
-            pass
-        images = [file for file in listdir('icons')]
-        count = int(round(math.sqrt(len(images)+0.5), 0))
-        #print(len(images), count)
-        xlol = len(images)
-        print(f'\nFound {xlol} images in "Icons" folder.')
-        finalImg = Image.new("RGBA", (512*count, 512*count))
-        #draw = ImageDraw.Draw(finalImg)
-        x = 0
-        y = 0
-        counter = 0
-        for img in images:
-            tImg = Image.open(f"icons/{img}")
-            if counter >= count:
-                y += 512
-                x = 0
-                counter = 0
-            finalImg.paste(tImg, (x, y), tImg)
-            x += 512
-            counter += 1
-        finalImg.show()
-        finalImg.save(f'merged/MERGED {xlol}.png')
-        print('\nSaved image!')
-        if twitAPIKey != 'XXX':
-            print('\nTweeting out image....')
-            print('What text do you want the Tweet to say?')
-            text = input()
-            try:
-                api.update_with_media(f'merged/MERGED {xlol}.png', f'[{namelol}] {text}')
-            except:
-                print(Fore.RED + 'File size is too big.')
+    if automergetweet != 'False':                  
+        if MergeImagesAuto != 'False':
+            print('\nMerging images...')
+            addwatermark()
+            merger(mergewatermark, loc1)
+            
+            xlol = len(os.listdir('icons'))
+            if mergewatermark == '':
+                xlol = xlol-1
+            print('\nSaved image!')
+            
+            if twitAPIKey != 'XXX':
+                print('\nTweeting out image....')
+                print('What text do you want the Tweet to say?')
+                text = input()
+                try:
+                    api.update_with_media(f'merged/MERGED {xlol}.png', f'[{namelol}] {text}')
+                except:
+                    print(Fore.RED + 'File size is too big, compressing')
+                    try:
+                        compressnewcosmetics_normal(xlol)
+                        api.update_with_media(f'merged/MERGED {xlol}.png', f'[{namelol}] {text}')
+                    except:
+                        compressnewcosmetics_normal(xlol)
+                        api.update_with_media(f'merged/MERGED {xlol}.png', f'[{namelol}] {text}')
+                print('\nTweeted image successfully!')
                 time.sleep(5)
-            print('\nTweeted image successfully!')
-            time.sleep(5)
+            else:
+                print('Not Tweeting.')
         else:
-            print('Not Tweeting.')
+            print(Fore.RED + '\nNot merging images.')
+            time.sleep(5)
     else:
-        print(Fore.RED + '\nNot merging images.')
-        time.sleep(5)
-
-def check_version():
-    response = requests.get('https://pastebin.com/raw/zku0yz9q')
-    latestVersion = response.json()["latestVersion"]
-
-    if currentVersion == latestVersion:
-        app.info("AutoLeak v"+currentVersion, "You already have the latest version")
-    else:
-        app.info("AutoLeak v"+currentVersion, f"Alert! You are using v{currentVersion} but version v{latestVersion} is avaliable!\nHead to the discord server to download the update!")
+        print('Exiting...')
+        exit()
 
 def edit_function():
     os.startfile('settings.json')
@@ -1312,28 +1396,28 @@ def search_cosmetic():
         search_cosmetic()
 
 def delete_contents():
-    print('Deleting contents of the Icons folder...')
+    #print('Deleting contents of the Icons folder...')
     try:
         shutil.rmtree('icons')
         os.makedirs('icons')
     except:
         os.makedirs('icons')
-    print('Cleared contents!')
+    #print('Cleared contents!')
                      
 def news_feed():
     count = 1
-    apiurl = 'https://fn-api.com/api/brnews'
+    apiurl = 'https://fortnite-api.com/v2/news/br'
 
     jsondata = requests.get(apiurl)
     data = jsondata.json()
 
     response = requests.get(apiurl)
-    newsData = response.json()["update"]
+    newsData = response.json()["data"]["hash"]
 
     while 1:
         response = requests.get(apiurl)
         if response:
-            newsDataLoop = response.json()["update"]
+            newsDataLoop = response.json()["data"]["hash"]
             print("Checking for change in news feed... ("+str(count)+")")
             count = count + 1
     
@@ -1344,7 +1428,8 @@ def news_feed():
                 print("Saving image")
                 #url = response.json()["image"]
 
-                url = 'https://fn-api.com/api/media/brnews.png'
+                xx = response.json()['data']['motds'][0]
+                url = xx['tileImage']
                 r = requests.get(url, allow_redirects=True)
                 open('brnews.png', 'wb').write(r.content)
                 print("Saved image!")
@@ -1352,31 +1437,20 @@ def news_feed():
                 today = date.today()
                 d = today.strftime("%m/%d/%Y")
                 response = requests.get(apiurl)
-                url = response.json()['image']
 
-                bruh = response.json()['motds']
-                feed = ""
-                for feedtext in bruh:
-                    feed2 = feedtext['title']
-                    feed += f"• {feed2}\n"
-                print(feed)
-                api = tweepy.API(auth)
+                title = xx['title']
+                desc = xx['body']
 
                 try:
-                    api.update_with_media("brnews.png",f"#Fortnite News Update for {d}:\n\n{feed}\n[{namelol}]")
+                    api.update_with_media("brnews.png",f"#Fortnite News Update: {title}\n\n'{desc}'\n[{namelol}]")
                 except:
                     print('\nImage could not post, compressing image.')
-                    foo = Image.open("brnews.png")
-                    x, y = foo.size
-                    x2, y2 = math.floor(x/2), math.floor(y/2)
-                    foo = foo.resize((x2,y2),Image.ANTIALIAS)
-                    foo.save("Compressed_news.png",quality=65)
-                    print('Compressed image!')
-                    api.update_with_media("Compressed_news.png",f"#Fortnite News Update for {d}:\n\n{feed}\n[{namelol}]")
+                    compress_brnews()
+                    api.update_with_media("Compressed_news.png",f"#Fortnite News Update: {title}\n\n'{desc}'\n[{namelol}]")
                 print("Tweeted image!")
                 
                 response = requests.get(apiurl)
-                newsData = response.json()["update"]
+                newsData = response.json()["data"]["hash"]
                 news_feed()
     
         else:
@@ -1386,94 +1460,25 @@ def news_feed():
                          
 def merge_images():
     print('\nMerging images...')
-    if mergewatermark != '':
-        r = requests.get(mergewatermark, allow_redirects=True)
-        open('icons/zzzwatermark.png', 'wb').write(r.content)
-    else:
-        pass
-    images = [file for file in listdir('icons')]
-    count = int(round(math.sqrt(len(images)+0.5), 0))
-    #print(len(images), count)
-    x = len(images)
-    print(f'\nFound {x} images in "Icons" folder.')
-    finalImg = Image.new("RGBA", (512*count, 512*count))
-    #draw = ImageDraw.Draw(finalImg)
-    x = 0
-    y = 0
-    counter = 0
-    for img in images:
-        tImg = Image.open(f"icons/{img}")
-        if counter >= count:
-            y += 512
-            x = 0
-            counter = 0
-        finalImg.paste(tImg, (x, y), tImg)
-        x += 512
-        counter += 1
-    finalImg.show()
-    finalImg.save(f'merged/MERGED {x}.png')
+    merger(mergewatermark, loc1)
     print('\nSaved image!')
-    print('\nDo you want to Tweet this image? - y/n')
-    asklol = input()
-    if asklol == 'y':
-        print('\nTweeting out image....')
-        print('What text do you want the Tweet to say?')
-        text = input()
-        try:
-            api.update_with_media(f'merged/MERGED {x}.png', f'[{namelol}] {text}')
-        except:
-            print(Fore.YELLOW + '\nFile size is too big, compressing image.')
-            foo = Image.open(f'merged/MERGED {x}.png')
-            x, y = foo.size
-            x2, y2 = math.floor(x/2), math.floor(y/2)
-            foo = foo.resize((x2,y2),Image.ANTIALIAS)
-            foo.save(f'merged/MERGED {x}.png',quality=65)
-            print(Fore.GREEN + 'Compressed!')
-            api.update_with_media(f'merged/MERGED {x}.png', f'[{namelol}] {text}')
-            time.sleep(5)
-        print('\nTweeted image successfully!')
-    else:
-        print(Fore.RED + 'Not Tweeting.')
-
-def shop_sections():
-    count = 1
-    apiurl = 'https://fn-api.com/api/shop_categories'
-
-    jsondata = requests.get(apiurl)
-    data = jsondata.json()
-
-    response = requests.get(apiurl)
-    newsData = response.json()['timestamp']
-
-    while 1:
-        response = requests.get(apiurl)
-        if response:
-            newsDataLoop = response.json()['timestamp']
-            print("Checking for change in the Shop Sections... ("+str(count)+")")
-            count = count + 1
-            
-            if newsData != newsDataLoop:
-
-                print(Fore.GREEN + '\nShop sections have changed!')
-                time.sleep(3)
-                response = requests.get('https://fn-api.com/api/shop_categories')
-                ss = response.json()['shopCategories']
-                sections = ""
-
-                for i in ss:
-                    #print(f'{i["sectionName"]} - (x{i["quantity"]})\n')
-                    sections += f'{i["sectionName"]} - (x{i["quantity"]})\n'
-
-                print(sections)
-
-                print('\nTweeting out the current shop sections...')
-                api.update_status(f'#Fortnite Shop Sections Update:\n\n'+str(sections)+f'\n\n[{namelol}]')
-                print('Tweeted out the shop sections!')
-                shop_sections()
+    if automergetweet != 'False':
+        print('\nDo you want to Tweet this image? - y/n')
+        asklol = input()
+        if asklol == 'y':
+            print('\nTweeting out image....')
+            print('What text do you want the Tweet to say?')
+            text = input()
+            try:
+                api.update_with_media(f'merged/MERGED {x}.png', f'[{namelol}] {text}')
+            except:
+                print(Fore.YELLOW + '\nFile size is too big, compressing image.')
+                compress_normal(x)
+                api.update_with_media(f'merged/MERGED {x}.png', f'[{namelol}] {text}')
+                time.sleep(5)
+            print('\nTweeted image successfully!')
         else:
-            print("FAILED TO GRAB SHOP SECTIONS DATA: URL DOWN")
-
-        time.sleep(BotDelay)
+            print(Fore.RED + 'Not Tweeting.')
 
 def shop():
     count = 1
@@ -1677,33 +1682,7 @@ def dynamic_pak():
     print(f"IMAGE GENERATING COMPLETE - Generated images in {round(end - start, 2)} seconds")
     print("!  !  !  !  !  !  !")
     print('\nMerging images...')
-    if mergewatermark != '':
-        r = requests.get(mergewatermark, allow_redirects=True)
-        open('icons/zzzwatermark.png', 'wb').write(r.content)
-        print(Fore.CYAN + f"Added Watermark." + Fore.GREEN)
-    else:
-        pass
-    images = [file for file in listdir('icons')]
-    count = int(round(math.sqrt(len(images)+0.5), 0))
-    #print(len(images), count)
-    x = len(images)
-    print(f'\nFound {x} images in "Icons" folder.')
-    finalImg = Image.new("RGBA", (512*count, 512*count))
-    #draw = ImageDraw.Draw(finalImg)
-    x = 0
-    y = 0
-    counter = 0
-    for img in images:
-        tImg = Image.open(f"icons/{img}")
-        if counter >= count:
-            y += 512
-            x = 0
-            counter = 0
-        finalImg.paste(tImg, (x, y), tImg)
-        x += 512
-        counter += 1
-    finalImg.show()
-    finalImg.save(f'merged/Pak {ask} Merged.png')
+    merger(mergewatermark, loc1)
     print('\nSaved image!')
     if twitAPIKey != 'XXX':
         print('\nDo you want to Tweet this image? - y/n')
@@ -1711,16 +1690,11 @@ def dynamic_pak():
         if asklol == 'y':
             print('\nTweeting out image....')
             try:
-                api.update_with_media(f'merged/Pak {ask} Merged.png', f'[{namelol}] Found {len(data)} items in Pak {ask}:')
+                api.update_with_media(f'merged/merge.jpg', f'[{namelol}] Found {len(data)} items in Pak {ask}:')
             except:
                 print(Fore.YELLOW + '\nFile size is too big, compressing image.')
-                foo = Image.open(f'merged/Pak {ask} Merged.png')
-                x, y = foo.size
-                x2, y2 = math.floor(x/2), math.floor(y/2)
-                foo = foo.resize((x2,y2),Image.ANTIALIAS)
-                foo.save(f'merged/MERGED {x}.png',quality=65)
-                print(Fore.GREEN + 'Compressed!')
-                api.update_with_media(f'merged/MERGED {x}.png', f'[{namelol}] Found {len(data)} items in Pakchunk {ask}:')
+                pak_compress(ask, x)
+                api.update_with_media(f'merged/merge.jpg', f'[{namelol}] Found {len(data)} items in Pakchunk {ask}:')
                 time.sleep(5)
             print('\nTweeted image successfully!')
         else:
@@ -1729,21 +1703,21 @@ def dynamic_pak():
 
 def notices():
     count = 1
-    response = requests.get('https://fn-api.com/api/emergencynotice')
-    apiurl = 'https://fn-api.com/api/emergencynotice'
+    response = requests.get('https://fn-api.com/api/emergencyNotices')
+    apiurl = 'https://fn-api.com/api/emergencyNotices'
     
     response = requests.get(apiurl)
-    noticesData = response.json()['messages']
+    noticesData = response.json()['data']
     while 1:
         response = requests.get(apiurl)
         if response:
-            noticesDataLoop = response.json()['messages']
+            noticesDataLoop = response.json()['data']
             print("Checking for change in Notices... ("+str(count)+")")
             count = count + 1
             response = requests.get(apiurl)
             if noticesData != noticesDataLoop:
                 print(f"A new notice has changed/been added at {current_time}...")
-                message = response.json()['messages']
+                message = response.json()['data']
                 twme = ''
                 try:
                     for i in message:
@@ -1917,11 +1891,22 @@ def weapons():
                 time.sleep(4)
 
 def newcbeta():
+    if benbot == 'False':
+        newiconsfnapi()
+    else:
+        pass
     print('Loaded New Icons | API = BenBot\n')
     start = time.time()
     print(Fore.YELLOW+'\nType the name of the cosmetic you want to grab below:\n')
     ask = input(Fore.GREEN + '>> ')
+
     response = requests.get(f'https://benbot.app/api/v1/cosmetics/br/search?lang={language}&searchLang=en&matchMethod=full&name={ask}')
+
+    idsearch = ask.find('Athena_Commando')
+    if idsearch != -1:
+        # Detected an ID
+        response = requests.get(f'https://benbot.app/api/v1/cosmetics/br/search?lang={language}&searchLang=en&matchMethod=full&id={ask}')
+
     fontSize = 40
     # Making icon type new to get the new icons lol #
     iconType = 'new'
@@ -1948,6 +1933,7 @@ def newcbeta():
             url = i["icons"]["icon"]
     elif useFeaturedIfAvaliable == 'False':
         url = i["icons"]["icon"]
+        
     placeholderImg = Image.open('assets/doNotDelete.png')
     r = requests.get(url, allow_redirects=True)
     open(f'cache/{i["id"]}.png', 'wb').write(r.content)
@@ -2035,6 +2021,8 @@ def newcbeta():
 
         loadFont = 'fonts/OpenSans-Regular.ttf'
         desc = i["description"]
+        if desc == None:
+            desc = 'TBD'
         xx = len(desc)
         desc1 = 'a'
         if xx>35:
@@ -2221,20 +2209,1334 @@ def newcbeta():
     newcbeta()
 
 def newcnew():
-    print('Loaded New Icons | API = BenBot')
-    fontSize = 40
-    response = requests.get('https://benbot.app/api/v1/newCosmetics')
+    if benbot == 'True':
+        pass
+    else:
+        newcnew_fnbrapi()
+    centerline = 256
+    try:
+        shutil.rmtree('icons')
+        os.makedirs('icons')
+    except:
+        os.makedirs('icons')
+    print('Cleared Contents\nLoaded New Icons | API = BenBot')
+    
+    #print(Fore.YELLOW + 'WARNING: BenBot has been having response time issues, making the program run slower.' + Fore.RESET)
+    response = requests.get(f'https://benbot.app/api/v1/newCosmetics?lang={language}')
     new = response.json()
-    print(f"Version: {new['currentVersion']}\n")
+    print(f"Version = {new['currentVersion']}\n")
+ 
+    print(f"Generating {len(new['items'])} new cosmetics from BenBot...\n")
 
-    print(f"Generating {len(new['items'])} new cosmetics from BenBot...")
+    counter = 1
+    start1 = time.time()
+    iconType = 'new'
+
+    # Gets season number
+    data = requests.get('https://benbot.app/api/v1/status')
+    seasonnum = data.json()['currentFortniteVersionNumber']
+
+    for i in new['items']:
+        start = time.time()
+        print(Fore.BLUE + f"Loading image for {i['id']}")
+        if useFeaturedIfAvaliable == 'True':
+            if i["icons"]["featured"] != None:
+                url = i["icons"]["featured"]
+            else:
+                if i['icons']['icon'] != None:
+                    url = i['icons']['icon']
+                else:
+                    url = 'https://i.ibb.co/KyvMydQ/do-Not-Delete.png'
+        else:
+            if i['icons']['icon'] != None:
+                    url = i['icons']['icon']
+            else:
+                url = 'https://i.ibb.co/KyvMydQ/do-Not-Delete.png'
+        try:
+            r = requests.get(url)
+        except:
+            print('a')
+        open('cache/icontemp.png', 'wb').write(r.content)
+        iconImg = Image.open('cache/icontemp.png')
+        iconImg.resize((512,512),PIL.Image.ANTIALIAS)
+
+
+        rarity = i["rarity"]
+        rarity = rarity.lower()
+        if i['series'] != None:
+            try:
+                series = i['series']['name']
+                if series == 'Icon Series':
+                    rarity = 'icon'
+                elif series == 'MARVEL SERIES':
+                    rarity = 'marvel'
+                elif series == 'Gaming Legends Series':
+                    rarity = 'gaminglegends'
+                elif series == 'DC SERIES':
+                    rarity = 'dc' 
+                elif series == 'Lava Series':
+                    rarity = 'lava'
+                elif series == 'Shadow Series':
+                    rarity = 'shadow'
+                elif rarity == 'Star Wars Series':
+                    rarity = 'starwars'
+                elif rarity == 'Slurp Series':
+                    rarity = 'slurp'
+                elif rarity == 'DARK SERIES':
+                    rarity = 'dark'
+            except:
+                pass
+        
+        try:
+            background = Image.open(f'rarities/{iconType}/{rarity}.png')
+            border=Image.open(f'rarities/{iconType}/border{rarity}.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+        except:
+            background = Image.open(f'rarities/{iconType}/common.png')
+            border=Image.open(f'rarities/{iconType}/bordercommon.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+        img=Image.new("RGB",(512,512))
+        img.paste(background)
+        img.save('cache/temp.png')
+        img=Image.open(f'cache/temp.png')
+        foreground= Image.open('cache/icontemp.png').resize((512, 512), Image.ANTIALIAS)
+        img.paste(foreground, (0, 0), foreground)
+        img.save('cache/temp.png')
+        img.paste(border, (0, 0), border)
+        img.save('cache/temp.png')
+        background = Image.open('cache/temp.png')
+
+        # Loads Name
+        if i['name'] != None:
+            name = i['name']
+        else:
+            name = 'TBD'
+        
+        loadFont = 'fonts/'+imageFont
+
+        x = len(name)
+
+        if x>17:
+            font=ImageFont.truetype(loadFont,45)
+            movedescup = 'true'
+            loc = 440 # Puts location at a higher level
+        else:
+            font=ImageFont.truetype(loadFont,60) 
+            movedescup = 'false'
+            loc = 450 # Puts location at a lower level
+
+        name = name.upper() 
+        w,h=font.getsize(name)
+        draw=ImageDraw.Draw(background)
+        w1, h1 = draw.textsize(name, font=font)
+        draw.text((centerline,loc),name,font=font,fill='white', anchor='ms') # Writes name
+
+        # Loads Desc
+        if i['description'] != None:
+            desc = i['description']
+        else:
+            desc = 'TBD'
+
+        loadFont = 'fonts/OpenSans-Regular.ttf'
+        
+        set = i['setText']
+        if set == None:
+            set = None
+        else:
+            set = set
+
+        x = len(desc)
+        if x>95:
+            font=ImageFont.truetype(loadFont,10)
+            draw=ImageDraw.Draw(background)
+            line = 470
+            draw.text(
+                (centerline,line),
+                desc,
+                font=font,
+                fill='white', 
+                anchor='ms') # Writes name
+        else:
+            if x>45:
+                #print('above')
+                font=ImageFont.truetype(loadFont,14)
+                draw=ImageDraw.Draw(background)
+                if set != None:
+                    line = 474
+                else:
+                    line = 480
+                if movedescup == 'true':
+                    line = line-8
+                draw.text(
+                    (centerline,line),
+                    desc,
+                    font=font,
+                    fill='white', 
+                    anchor='ms') # Writes name
+            else:
+                #print('below')
+                font=ImageFont.truetype(loadFont,16)
+                draw=ImageDraw.Draw(background)
+                if set != None:
+                    line = 475
+                else:
+                    line = 480
+
+                if movedescup == 'true':
+                    line = line-2
+                draw.text(
+                    (centerline,line),
+                    desc,
+                    font=font,
+                    fill='white', 
+                    anchor='ms') # Writes name   
+
+        # Loads Item Set Text
+        if set != None:
+            font=ImageFont.truetype(loadFont, 18)
+            draw=ImageDraw.Draw(background)
+            draw.text(
+                (centerline, 500),
+                set,
+                font=font,
+                fill='white',
+                anchor='ms') # Writes set
+
+        # Loads watermark
+        loadFont = 'fonts/'+imageFont # Puts font back to original
+        if watermark != '':
+            font=ImageFont.truetype(loadFont,25)
+            draw=ImageDraw.Draw(background)
+            draw.text((10,9),watermark,font=font,fill='white')
+
+        # Loads gameplay tag
+        if showitemsource != 'False':
+            text = ''
+            for x in i['gameplayTags']:
+                if 'Cosmetics.Source.ItemShop' in x:
+                    text = 'Cosmetics.Source.ItemShop'
+                    break
+                if '.BattlePass.Paid' in x:
+                    text = f'Cosmetics.Source.Season{seasonnum}.BattlePass.Paid'
+                    break
+                if 'Cosmetics.Set.' in x:
+                    # Creates Set
+                    try:
+                        set = i['set'].replace(' ', '')
+                    except:
+                        pass
+                    text = f'Cosmetics.Set.{set}'
+                    break
+            font=ImageFont.truetype(loadFont, 15)
+            if watermark != '':
+                draw=ImageDraw.Draw(background)
+                draw.text((10,30),text,font=font,fill='white')
+            else:
+                if text != None or text != '':
+                    draw=ImageDraw.Draw(background)
+                    draw.text((10,10),text,font=font,fill='white')
+        background.save('icons/'+i["id"]+'.png')
+        end = time.time()
+
+        # Finishing Time
+        percentage = counter/len(new['items'])
+        realpercentage = percentage * 100
+        print(Fore.CYAN + f"Generated image for {i['id']}")
+        print(Fore.CYAN + f"{counter}/{len(new['items'])} - {round(realpercentage)}%\n")
+        counter = counter + 1
+
+    end1 = time.time()
+    print("!  !  !  !  !  !  !")
+    print(f"IMAGE GENERATING COMPLETE - Generated image in {round(end1 - start1, 2)} seconds!")
+    if MergeImagesAuto != 'False':
+        print('SAVED MERGED IMAGE!')
+    print("!  !  !  !  !  !  !")
+
+
+    if MergeImagesAuto != 'False':
+        print('\nMerging images...')
+        addwatermark()
+        merger(mergewatermark, loc1)
+        response = requests.get('https://benbot.app/api/v1/status')
+        version = response.json()['currentFortniteVersionNumber']
+        #print(x)
+        lol = len(os.listdir('icons'))
+        if mergewatermark == '':
+            lol = lol-1
+        print('\nSaved image!')
+        if automergetweet != 'False':
+            if twitAPIKey != 'XXX':
+                print('\nTweeting out image....')
+                try:
+                    api.update_with_media(f'merged/merge.jpg', f'[{namelol}] Found {lol} Leaked cosmetics from Patch {version}.')
+                except:
+                    print(Fore.YELLOW + '\nFile size is too big, compressing image.')
+                    compressnewcosmetics_new(lol)
+                    api.update_with_media(f'merged/merge.jpg', f'[{namelol}] Found {lol} Leaked cosmetics from Patch {version}.')
+                    time.sleep(5)
+                print(Fore.GREEN + '\nTweeted image successfully!')
+        else:
+            print(Fore.YELLOW+'Not tweeting images.')
+    else:
+        print('Not auto merging images.')
+        print('Exiting...')
+        time.sleep(2)
+        exit()
+
+
+def dynpak2():
+    try:
+        shutil.rmtree('icons')
+        os.makedirs('icons')
+    except:
+        os.makedirs('icons')
+    print('Cleared "icons" folder contents.')
+    print('Loaded New Icons | API = BenBot\n')
+    print('What pak number do you want to grab?')
+    paktrue = input('>> ')
+    fontSize = 40
+    centerline = 256
+    response = requests.get(f'https://benbot.app/api/v1/cosmetics/br/dynamic/{paktrue}?lang={language}')
+    new = response.json()
+
+    print(f"\nGenerating {len(new)} new cosmetics from BenBot...")
     print('')
     loop = False
     counter = 1
     start = time.time()
     iconType = 'new'
     new = response.json()
+    for i in new:
+        start = time.time()
+        print(Fore.BLUE + f"Loading image for {i['id']}")
+        if useFeaturedIfAvaliable == 'True':
+            if i["icons"]["featured"] != None:
+                url = i["icons"]["featured"]
+            else:
+                if i['icons']['icon'] != None:
+                    url = i['icons']['icon']
+                else:
+                    url = 'https://i.ibb.co/KyvMydQ/do-Not-Delete.png'
+        else:
+            if i['icons']['icon'] != None:
+                    url = i['icons']['icon']
+            else:
+                url = 'https://i.ibb.co/KyvMydQ/do-Not-Delete.png'
+        try:
+            r = requests.get(url)
+        except:
+            print('a')
+        open('cache/icontemp.png', 'wb').write(r.content)
+        iconImg = Image.open('cache/icontemp.png')
+        iconImg.resize((512,512),PIL.Image.ANTIALIAS)
+
+
+        rarity = i["rarity"]
+        rarity = rarity.lower()
+        if i['series'] != None:
+            try:
+                series = i['series']['name']
+                if series == 'Icon Series':
+                    rarity = 'icon'
+                elif series == 'MARVEL SERIES':
+                    rarity = 'marvel'
+                elif series == 'Gaming Legends Series':
+                    rarity = 'gaminglegends'
+                elif series == 'DC SERIES':
+                    rarity = 'dc' 
+                elif series == 'Lava Series':
+                    rarity = 'lava'
+                elif series == 'Shadow Series':
+                    rarity = 'shadow'
+                elif rarity == 'Star Wars Series':
+                    rarity = 'starwars'
+                elif rarity == 'Slurp Series':
+                    rarity = 'slurp'
+                elif rarity == 'DARK SERIES':
+                    rarity = 'dark'
+            except:
+                pass
+        
+        try:
+            background = Image.open(f'rarities/{iconType}/{rarity}.png')
+            border=Image.open(f'rarities/{iconType}/border{rarity}.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+        except:
+            background = Image.open(f'rarities/{iconType}/common.png')
+            border=Image.open(f'rarities/{iconType}/bordercommon.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+        img=Image.new("RGB",(512,512))
+        img.paste(background)
+        img.save('cache/temp.png')
+        img=Image.open(f'cache/temp.png')
+        foreground= Image.open('cache/icontemp.png').resize((512, 512), Image.ANTIALIAS)
+        img.paste(foreground, (0, 0), foreground)
+        img.save('cache/temp.png')
+        img.paste(border, (0, 0), border)
+        img.save('cache/temp.png')
+        background = Image.open('cache/temp.png')
+
+        # Loads Name
+        if i['name'] != None:
+            name = i['name']
+        else:
+            name = 'TBD'
+        
+        loadFont = 'fonts/'+imageFont
+
+        x = len(name)
+
+        if x>17:
+            font=ImageFont.truetype(loadFont,45)
+            movedescup = 'true'
+            loc = 440 # Puts location at a higher level
+        else:
+            font=ImageFont.truetype(loadFont,60) 
+            movedescup = 'false'
+            loc = 450 # Puts location at a lower level
+
+        name = name.upper() 
+        w,h=font.getsize(name)
+        draw=ImageDraw.Draw(background)
+        w1, h1 = draw.textsize(name, font=font)
+        draw.text((centerline,loc),name,font=font,fill='white', anchor='ms') # Writes name
+
+        # Loads Desc
+        if i['description'] != None:
+            desc = i['description']
+        else:
+            desc = 'TBD'
+
+        loadFont = 'fonts/OpenSans-Regular.ttf' # Loads desc and other font
+        
+        set = i['setText']
+        if set == None:
+            set = None
+        else:
+            set = set
+
+        x = len(desc)
+        if x>95: # If desc is OVER 95 characters:
+            font=ImageFont.truetype(loadFont,10)
+            draw=ImageDraw.Draw(background)
+            line = 470
+            draw.text(
+                (centerline,line),
+                desc,
+                font=font,
+                fill='white', 
+                anchor='ms') # Writes name
+        else:
+            if x>45: # If desc is above 45
+                #print('above')
+                font=ImageFont.truetype(loadFont,14)
+                draw=ImageDraw.Draw(background)
+                if set != None: # Uses set onto weather or not to bring desc up
+                    line = 474
+                else:
+                    line = 480
+                if movedescup == 'true':
+                    line = line-8
+                draw.text(
+                    (centerline,line),
+                    desc,
+                    font=font,
+                    fill='white', 
+                    anchor='ms') # Writes name
+            else: # If desc is below 45 (normal)
+                #print('below')
+                font=ImageFont.truetype(loadFont,16)
+                draw=ImageDraw.Draw(background)
+                if set != None: # Brings desc up if set is not None
+                    line = 475
+                else:
+                    line = 480
+
+                if movedescup == 'true':
+                    line = line-2
+                draw.text(
+                    (centerline,line),
+                    desc,
+                    font=font,
+                    fill='white', 
+                    anchor='ms') # Writes name   
+
+        # Loads Item Set Text
+        if set != None:
+            font=ImageFont.truetype(loadFont, 15)
+            draw=ImageDraw.Draw(background)
+            draw.text(
+                (centerline, 500),
+                set,
+                font=font,
+                fill='white',
+                anchor='ms') # Writes set
+
+        # Loads watermark
+        loadFont = 'fonts/'+imageFont # Puts font back to original
+        if watermark != '':
+            font=ImageFont.truetype(loadFont,25)
+            draw=ImageDraw.Draw(background)
+            draw.text((10,9),watermark,font=font,fill='white')
+
+        # Loads gameplay tag
+        if showitemsource != 'False':
+            text = ''
+            for x in i['gameplayTags']:
+                if 'Cosmetics.Source.ItemShop' in x:
+                    text = 'Cosmetics.Source.ItemShop'
+                    break
+                if '.BattlePass.Paid' in x:
+                    text = f'Cosmetics.Source.Season{seasonnum}.BattlePass.Paid'
+                    break
+                if 'Cosmetics.Set.' in x:
+                    # Creates Set
+                    try:
+                        set = i['set'].replace(' ', '')
+                    except:
+                        pass
+                    text = f'Cosmetics.Set.{set}'
+                    break
+            font=ImageFont.truetype(loadFont, 15)
+            if watermark != '':
+                draw=ImageDraw.Draw(background)
+                draw.text((10,30),text,font=font,fill='white')
+            else:
+                if text != None or text != '':
+                    draw=ImageDraw.Draw(background)
+                    draw.text((10,10),text,font=font,fill='white')
+        background.save('icons/'+i["id"]+'.png')
+        end = time.time()
+
+        # Finishing Time
+        percentage = counter/len(new)
+        realpercentage = percentage * 100
+        print(Fore.CYAN + f"Generated image for {i['id']}")
+        print(Fore.CYAN + f"{counter}/{len(new)} - {round(realpercentage)}%\n")
+        counter = counter + 1
+
+    end = time.time()
+    print("!  !  !  !  !  !  !")
+    print(f"IMAGE GENERATING COMPLETE - Generated image in {round(end - start, 2)} seconds!")
+    print("!  !  !  !  !  !  !")
+
+    if MergeImagesAuto != 'False':
+        print('\nMerging images...')
+        addwatermark()
+        merger(mergewatermark, loc1)
+        response = requests.get('https://benbot.app/api/v1/status')
+        version = response.json()['currentFortniteVersionNumber']
+        #print(x)
+        print('\nSaved image!')
+        if automergetweet != 'False':
+            if twitAPIKey != 'XXX':
+                print('\nDo you want to Tweet out this image? - y/n')
+                ask = input('>> ')
+                if ask == 'y':
+                    print('\nTweeting out image....')
+                    lol = len(os.listdir('icons'))
+                    if mergewatermark == '':
+                        lol = lol-1
+                    try:
+                        api.update_with_media(f'merged/merged.jpg', f'[{namelol}] Found {lol} Cosmetics in Pak {paktrue}.')
+                    except:
+                        print(Fore.YELLOW + '\nFile size is too big, compressing image.')
+                        compressnewcosmetics_new(lol)
+                        api.update_with_media(f'merged/merged.jpg', f'[{namelol}] Found {lol} Cosmetics in Pak {paktrue}.')
+                        time.sleep(5)
+                    print(Fore.GREEN + '\nTweeted image successfully!')
+                else:
+                    print('Not tweeting.')
+    else:
+        print('Not auto merging images.')
+        
+
+def newiconsfnapi():
+    print('Loaded New Icons | API = Fortnite-API\n')
+    start = time.time()
+    print(Fore.YELLOW+'\nType the name of the cosmetic you want to grab below:\n')
+    ask = input(Fore.GREEN + '>> ')
+
+    response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/search?name={ask}&lang={language}')
+
+    idsearch = ask.find('Athena_Commando')
+    if idsearch != -1:
+        # Detected an ID
+        response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/search?id={ask}&lang={language}')
+
+    fontSize = 40
+    # Making icon type new to get the new icons lol #
+    iconType = 'new'
+    if ask == 'exit':
+        exit()
+    try:
+        i = response.json()['data']
+        # Item Successfully grabbed
+    except:
+        print(Fore.RED + f'Unable to retreive {ask}.')
+        time.sleep(5)
+        exit()
+
+    try:
+        print(Fore.BLUE + "Loading image for "+i["id"])
+    except:
+        print(Fore.RED + f'Unable to retreive {ask}.')
+        time.sleep(5)
+        exit()
+    if useFeaturedIfAvaliable == 'True':
+        if i["images"]["featured"] != None:
+            url = i["images"]["featured"]
+        else:
+            url = i["images"]["icon"]
+    elif useFeaturedIfAvaliable == 'False':
+        url = i["images"]["icon"]
+        
+    placeholderImg = Image.open('assets/doNotDelete.png')
+    r = requests.get(url, allow_redirects=True)
+    open(f'cache/{i["id"]}.png', 'wb').write(r.content)
+    iconImg = Image.open(f'cache/{i["id"]}.png')
+    try:
+        diff = ImageChops.difference(placeholderImg, iconImg)
+    except:
+        print(Fore.RED + 'Could not grab icon as there is an error with the image.')
+        time.sleep(5)
+        exit()
+    if diff.getbbox():
+        r = requests.get(url, allow_redirects=True)
+        open(f'cache/{i["id"]}.png', 'wb').write(r.content)
+        img=Image.open(f'cache/{i["id"]}.png')
+        img=img.resize((512,512),PIL.Image.ANTIALIAS)
+        img.save(f'cache/{i["id"]}.png')
+    else:
+        try:
+            r = requests.get(placeholderUrl, allow_redirects=True)
+            open(f'cache/{i["id"]}.png', 'wb').write(r.content)
+            img=Image.open(f'cache/{i["id"]}.png')
+            img=img.resize((512,512),PIL.Image.ANTIALIAS)
+            img.save(f'cache/{i["id"]}.png')
+        except:
+            print('')
+    rarity = i["rarity"]['value']
+    foreground = Image.open('cache/'+i["id"]+'.png')
+    try:
+        background = Image.open(f'rarities/{iconType}/{rarity}.png')
+        border = Image.open(f'rarities/{iconType}/border{rarity}.png')
+    except:
+        background = Image.open(f'rarities/{iconType}/common.png')
+        border = Image.open(f'rarities/{iconType}/bordercommon.png')
+    Image.alpha_composite(background, foreground).save('cache/F'+i["id"]+'.png')
+    os.remove('cache/'+i["id"]+'.png')
+    background = Image.open('cache/F'+i["id"]+'.png')
+    Image.alpha_composite(background, border).save('cache/BLANK'+i["id"]+'.png')
+    img=Image.open('cache/BLANK'+i["id"]+'.png')
+    name1= i["name"]
+    loadFont = 'fonts/'+imageFont
+    if len(name1) > 20:
+        fontSize = 30
+    if len(name1) > 30:
+        fontSize = 2
+    if iconType == 'new':
+        descup = 'undefined'
+        xx1 = len(name1)
+        if xx1>17:
+            font=ImageFont.truetype(loadFont,45) 
+            print('Name is greater than 16 characters.\n')
+            descup = 'true'
+        else:
+            font=ImageFont.truetype(loadFont,60) 
+            descup = 'false'
+        name1 = name1.upper()
+        w,h=font.getsize(name1)
+        draw=ImageDraw.Draw(img)
+        w1, h1 = draw.textsize(name1, font=font)
+        draw.text(((512-w1)/2,406),name1,font=font,fill='white')
+
+        fontSize = 4
+
+        loadFont = 'fonts/OpenSans-Regular.ttf'
+        desc = i["description"]
+        xx = len(desc)
+        desc1 = 'a'
+        if xx>35:
+            desc1 = ''
+            # Description is greater than 35. #
+        if desc1 != '':
+            font=ImageFont.truetype(loadFont,16)
+            w,h=font.getsize(desc)
+            draw=ImageDraw.Draw(img)
+            w1, h1 = draw.textsize(desc, font=font)
+        else:
+            font=ImageFont.truetype(loadFont,14)
+            w,h=font.getsize(desc)
+            draw=ImageDraw.Draw(img)
+            w1, h1 = draw.textsize(desc, font=font)
+
+            if xx>75:
+                desc1 = 'aaaa'
+            else:
+                pass
+        bigaf = ''
+        # I should comment some of this stuff #
+        if i['set']['text'] != None:
+            if desc1 != '':
+                if descup != 'true':
+                    if desc1 == 'aaaa':
+                        # IF DESC IS BIG AF THEN DO THIS #
+                        bigaf = '1'
+                        pass
+                    else:
+                        # This means it is not big af
+                        draw.text(((512-w1)/2,455),desc,font=font,fill='white')
+                else:
+                    # This means if it equals none then it 
+                    draw.text(((512-w1)/2,454),desc,font=font,fill='white')
+            else:
+                if desc1 == 'aaaa':
+                    pass
+                else:
+                   # Idek just do this crap #
+                    if name1 != 'PEELY':
+                        draw.text(((512-w1)/2,460),desc,font=font,fill='white')
+                    else:
+                        bigaf = '69'
+                        pass
+        else:
+            if desc1 != '':
+                if desc1 == 'aaaa':
+                    if xx<80:
+                        font=ImageFont.truetype(loadFont,10)
+                        w,h=font.getsize(desc)
+                        draw=ImageDraw.Draw(img)
+                        w1, h1 = draw.textsize(desc, font=font)
+                        draw.text(((512-w1)/2,465),desc,font=font,fill='white')
+                    else:
+                        pass
+                else:
+                    draw.text(((512-w1)/2,465),desc,font=font,fill='white')
+            else:
+                draw.text(((512-w1)/2,470),desc,font=font,fill='white')
+
+        if i['set']['text'] != None:
+            set = i['set']['text']
+            font=ImageFont.truetype(loadFont,16)
+            w,h=font.getsize(set)
+            draw=ImageDraw.Draw(img)
+            w1, h1 = draw.textsize(set, font=font)
+            if desc1 != '':
+                if bigaf == '1':
+                    draw.text(((512-w1)/2,465),set,font=font,fill='white')
+                else:
+                    # Alright, this should be if the description is too big then it does this i guess #
+                    draw.text(((512-w1)/2,480),set,font=font,fill='white')
+            else:
+                # Same thing as the one above but just adding an else because if its normal its not '' #
+                if bigaf != '69':
+                    draw.text(((512-w1)/2,480),set,font=font,fill='white')
+                else:
+                    draw.text(((512-w1)/2,465),set,font=font,fill='white')
+
+
+        loadFont = 'fonts/'+imageFont
+
+        id = i["id"]
+
+        #showitemsource = 'True'
+
+        if watermark != '':
+            font=ImageFont.truetype(loadFont,25)
+            w,h=font.getsize(watermark)
+            draw=ImageDraw.Draw(img)
+            draw.text((10,9),watermark,font=font,fill='white')
+
+        i = response.json()['data']
+        
+        shop = ''
+        if showitemsource != 'False':
+            for x in i['gameplayTags']:
+                result = x.find('Cosmetics.Source.ItemShop')
+                if result != -1:
+                    print('Found an Item Shop tag.')
+                    shop = '1'
+                else:
+                    pass
+
+            if shop != '1':
+                shop = '69'
+                print('did not find an item shop tag')
+
+            if shop == '69':
+                for x in i['gameplayTags']:
+                    result = x.find('BattlePass.Paid')
+                    if result != -1:
+                        print('Found a battle pass tag.')
+                        shop = '2'
+                        resp1 = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/search?name={ask}')
+                        seasonnum = resp1.json()['data']['introduction']['backendValue']
+                        break
+                if shop != '2':
+                    print('Did not find a battle pass tag, skipping')
+                    shop = '0'
+
+            if shop == '0':
+                for x in i['gameplayTags']:
+                    result = x.find('Cosmetics.Set.')
+                    if result != -1:
+                        print('Found a set tag since the other two tabs dont work lol')
+                        shop = '3'
+                        break
+                if shop != '3':
+                    print('could not find ANY tags.')
+                    shop = '0'
+
+
+            source = i['gameplayTags'][0]
+
+            if name1 == 'VENOM':
+                source = i['gameplayTags'][2]
+        else:
+            pass
+            
+        if showitemsource == 'True':
+            font=ImageFont.truetype(loadFont,15)
+            thing1 = source.replace('Cosmetics.Source.', '')
+            #x = len(thing1)
+            if shop == '1':
+                thing1 = 'Cosmetics.Source.ItemShop'
+            elif shop == '2':
+                thing1 = f'Season{seasonnum}.BattlePass.Paid'
+            elif shop == '0':
+                thing1 = ''
+            elif shop == '3':
+                set = i['set']['value']
+                set1 = set.replace(' ', '')
+                set1 = set1.title()
+                thing1 = f'Cosmetics.Set.{set1}'
+            if thing1 != '0':
+                if watermark != '':
+                    thing = f'{thing1}'
+                    w,h=font.getsize(thing)
+                    draw=ImageDraw.Draw(img)
+                    draw.text((10,30),thing,font=font,fill='white')
+                else:
+                    thing = f'{thing1}'
+                    w,h=font.getsize(thing)
+                    draw=ImageDraw.Draw(img)
+                    draw.text((10,10),thing,font=font,fill='white')
+            else:
+                print('\nNot writing source as there is none.')
+        else:
+            print('Not writing source.')
+        
+        
+    os.remove('cache/BLANK'+i["id"]+'.png')
+    img.save('icons/'+i["id"]+'.png')
+    img.show()
+    os.remove('cache/F'+i["id"]+'.png')
+    print(Fore.GREEN + "\nDone loading image!")
+    end = time.time()
+    print(Fore.GREEN+"")
+    print("!  !  !  !  !  !  !")
+    print(f"IMAGE GENERATING COMPLETE - Generated image in {round(end - start, 2)} seconds!")
+    print("!  !  !  !  !  !  !")
+
+def npcs():
+    global showDescription
+
+    print('Do you want to generate all current NPCs or NPCs from this version?')
+    print('a = All NPCs\nn = New NPCs\n')
+    ask = input('>> ')
+    if ask == 'a':
+        print(Fore.CYAN + '\nGenerating all current NPCs...\n')
+
+        start = time.time()
+        response = requests.get('https://benbot.app/api/v1/files')
+
+        counter = 0
+
+        if showDescription == 'True' or 'False':
+            pass
+        else:
+            showDescription = 'False'
+
+        for i in response.json():
+            if i.startswith('FortniteGame/Plugins/GameFeatures/NPCLibrary/Content/NPCs/'):
+                if 'NPCCharacterData' in i:
+                    response = requests.get(f'https://benbot.app/api/v1/assetProperties?path={i}')
+                    x = response.json()['export_properties'][0]
+
+                    loc = x['POILocations']
+                    loc = str(loc)
+                    loc = loc.replace('Athena.Location.', '').replace("['", '').replace("']", '')
+                    name = x['DisplayName']['finalText']
+
+                    try:
+                        icon = x['SidePanelIcon']['assetPath']
+                    except:
+                        icon = ""
+
+                    if icon == "":
+                        icon = x['EntryListIcon']['assetPath']
+
+                    r = requests.get(f'https://benbot.app/api/v1/exportAsset?path={icon}&lang=en&noVariants=false&rawIcon=false', allow_redirects=True)
+                    open(f'cache/{name} icon.png', 'wb').write(r.content)
+
+                    print(
+                        f'{name} NPC:\n',
+                        f' - Found in {loc}'
+                    )
+
+                    h = f'{name} NPC:\n - Found in {loc}\n\n'
+
+                    background = Image.open(f'rarities/npc/background.png')
+                    border=Image.open(f'rarities/npc/border.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+
+                    img=Image.new("RGB",(512,512))
+                    img.paste(background)
+                    img.save('cache/temp.png')
+                    img=Image.open(f'cache/temp.png')
+
+                    foreground= Image.open(f'cache/{name} icon.png').resize((512, 512), Image.ANTIALIAS)
+                    img.paste(foreground, (0, 0), foreground)
+                    img.save('cache/temp.png')
+                    img.paste(border, (0, 0), border)
+                    img.save('cache/temp.png')
+
+                    #os.remove(f'cache/{name} icon.png')
+
+                    background = Image.open('cache/temp.png')
+
+                    loadFont = f'fonts/'+ imageFont
+
+                    if len(name) > 18:
+                        font=ImageFont.truetype(loadFont,51) 
+                    else:
+                        font=ImageFont.truetype(loadFont,57) 
+                    name1 = name.upper()
+                    namereal = f'{name1} NPC'
+
+                    w,h=font.getsize(namereal)
+                    draw=ImageDraw.Draw(background)
+                    w1, h1 = draw.textsize(namereal, font=font)
+                    draw.text(((512-w1)/2,406),namereal,font=font,fill='white')
+
+                    if showDescription != 'False':
+                        try:
+                            description = x['GeneralDescription']['finalText']
+                            font=ImageFont.truetype(loadFont,15)
+                            w,h=font.getsize(description)
+                            draw=ImageDraw.Draw(background)
+                            draw.text((10,9),description,font=font,fill='white')
+                        except:
+                            pass
+                    else:
+                        pass
+
+                    loc = f'Found in {loc}'
+
+                    loadFont = 'fonts/OpenSans-Regular.ttf'
+
+                    if len(loc) > 75:
+                        font = ImageFont.truetype(loadFont,9)
+                    else:
+                        font = ImageFont.truetype(loadFont,14)
+                    w,h=font.getsize(loc)
+                    draw=ImageDraw.Draw(background)
+                    w1, h1 = draw.textsize(loc, font=font)
+                    draw.text(((512-w1)/2,470),loc,font=font,fill='white')
+
+                    counter = counter + 1
+                    background.save(f'icons/{name} NPC.png')
+
+                    print('  - Loaded image!\n')
+
+        end = time.time()
+
+        print(f'Done loading images in {round(end - start, 2)} seconds!')
+        try:
+            shutil.rmtree('cache')
+            os.makedirs('cache')
+        except:
+            os.makedirs('cache')
+
+        time.sleep(5)
+    else:
+        response = requests.get('https://benbot.app/api/v1/status')
+        currentfnversion = response.json()['currentFortniteVersion']
+        currentfnversion = currentfnversion.replace('++Fortnite+Release-', '').replace('-CL-16593740-Windows', '')
+        print(Fore.CYAN + f'\nGenerating all new NPCs from the latest Fortnite Version ({currentfnversion})...\n')
+
+        start = time.time()
+        response = requests.get(f'https://benbot.app/api/v1/files/added')
+
+        counter = 0
+
+        if showDescription == 'True' or 'False':
+            pass
+        else:
+            showDescription = 'False'
+
+        for i in response.json():
+            if i.startswith('FortniteGame/Plugins/GameFeatures/NPCLibrary/Content/NPCs/'):
+                if 'NPCCharacterData' in i:
+                    response = requests.get(f'https://benbot.app/api/v1/assetProperties?path={i}')
+                    x = response.json()['export_properties'][0]
+
+                    loc = x['POILocations']
+                    loc = str(loc)
+                    loc = loc.replace('Athena.Location.', '').replace("['", '').replace("']", '')
+                    name = x['DisplayName']['finalText']
+
+                    try:
+                        icon = x['SidePanelIcon']['assetPath']
+                    except:
+                        icon = ""
+
+                    if icon == "":
+                        icon = x['EntryListIcon']['assetPath']
+
+                    r = requests.get(f'https://benbot.app/api/v1/exportAsset?path={icon}&lang=en&noVariants=false&rawIcon=false', allow_redirects=True)
+                    open(f'cache/{name} icon.png', 'wb').write(r.content)
+
+                    print(
+                        f'{name} NPC:\n',
+                        f' - Found in {loc}'
+                    )
+
+                    h = f'{name} NPC:\n - Found in {loc}\n\n'
+
+                    background = Image.open(f'rarities/npc/background.png')
+                    border=Image.open(f'rarities/npc/border.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+
+                    img=Image.new("RGB",(512,512))
+                    img.paste(background)
+                    img.save('cache/temp.png')
+                    img=Image.open(f'cache/temp.png')
+
+                    foreground= Image.open(f'cache/{name} icon.png').resize((512, 512), Image.ANTIALIAS)
+                    img.paste(foreground, (0, 0), foreground)
+                    img.save('cache/temp.png')
+                    img.paste(border, (0, 0), border)
+                    img.save('cache/temp.png')
+
+                    #os.remove(f'cache/{name} icon.png')
+
+                    background = Image.open('cache/temp.png')
+
+                    loadFont = f'fonts/'+ imageFont
+
+                    if len(name) > 18:
+                        font=ImageFont.truetype(loadFont,51) 
+                    else:
+                        font=ImageFont.truetype(loadFont,57) 
+                    name1 = name.upper()
+                    namereal = f'{name1} NPC'
+
+                    w,h=font.getsize(namereal)
+                    draw=ImageDraw.Draw(background)
+                    w1, h1 = draw.textsize(namereal, font=font)
+                    draw.text(((512-w1)/2,406),namereal,font=font,fill='white')
+
+                    if showDescription != 'False':
+                        try:
+                            description = x['GeneralDescription']['finalText']
+                            font=ImageFont.truetype(loadFont,15)
+                            w,h=font.getsize(description)
+                            draw=ImageDraw.Draw(background)
+                            draw.text((10,9),description,font=font,fill='white')
+                        except:
+                            pass
+                    else:
+                        pass
+
+                    loc = f'Found in {loc}'
+
+                    loadFont = 'fonts/OpenSans-Regular.ttf'
+
+                    if len(loc) > 75:
+                        font = ImageFont.truetype(loadFont,9)
+                    else:
+                        font = ImageFont.truetype(loadFont,14)
+                    w,h=font.getsize(loc)
+                    draw=ImageDraw.Draw(background)
+                    w1, h1 = draw.textsize(loc, font=font)
+                    draw.text(((512-w1)/2,470),loc,font=font,fill='white')
+
+                    counter = counter + 1
+                    background.save(f'icons/{name} NPC.png')
+
+                    print('  - Loaded image!\n')
+
+        end = time.time()
+
+        print(f'Done loading images in {round(end - start, 2)} seconds!')
+
+        time.sleep(5)
+
+def newcnew_fnbrapi():
+    delete_contents()
+    print('Cleared Contents\nLoaded New Icons | API = Fortnite-API')
+    
+    centerline = 256
+    response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/new?lang={language}')
+    new = response.json()['data']
+    print(f"Version = {new['build']}\n")
+ 
+    print(f"Generating {len(new['items'])} new cosmetics from Fortnite-API...\n")
+
+    counter = 1
+    start1 = time.time()
+    iconType = 'new'
+
+    # Gets season number
+    data = requests.get('https://benbot.app/api/v1/status')
+    seasonnum = data.json()['currentFortniteVersionNumber']
+
     for i in new['items']:
+        start = time.time()
+        print(Fore.BLUE + f"Loading image for {i['id']}")
+        if useFeaturedIfAvaliable == 'True':
+            if i["images"]["featured"] != None:
+                url = i["images"]["featured"]
+            else:
+                if i['images']['icon'] != None:
+                    url = i['images']['icon']
+                else:
+                    url = 'https://i.ibb.co/KyvMydQ/do-Not-Delete.png'
+        else:
+            if i['images']['icon'] != None:
+                    url = i['images']['icon']
+            else:
+                url = 'https://i.ibb.co/KyvMydQ/do-Not-Delete.png'
+        try:
+            r = requests.get(url)
+        except:
+            print('a')
+        open('cache/icontemp.png', 'wb').write(r.content)
+        iconImg = Image.open('cache/icontemp.png')
+        iconImg.resize((512,512),PIL.Image.ANTIALIAS)
+
+
+        rarity = i["rarity"]['value']
+        rarity = rarity.lower()
+        
+        try:
+            background = Image.open(f'rarities/{iconType}/{rarity}.png')
+            border=Image.open(f'rarities/{iconType}/border{rarity}.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+        except:
+            background = Image.open(f'rarities/{iconType}/common.png')
+            border=Image.open(f'rarities/{iconType}/bordercommon.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+        img=Image.new("RGB",(512,512))
+        img.paste(background)
+        img.save('cache/temp.png')
+        img=Image.open(f'cache/temp.png')
+        foreground= Image.open('cache/icontemp.png').resize((512, 512), Image.ANTIALIAS).convert('RGBA')
+        img.paste(foreground, (0, 0), foreground)
+        img.save('cache/temp.png')
+        img.paste(border, (0, 0), border)
+        img.save('cache/temp.png')
+        background = Image.open('cache/temp.png')
+
+        # Loads Name
+        if i['name'] != None:
+            name = i['name']
+        else:
+            name = 'TBD'
+        
+        loadFont = 'fonts/'+imageFont
+
+        x = len(name)
+
+        if x>17:
+            font=ImageFont.truetype(loadFont,45)
+            movedescup = 'true'
+            loc = 440 # Puts location at a higher level
+        else:
+            font=ImageFont.truetype(loadFont,60) 
+            movedescup = 'false'
+            loc = 450 # Puts location at a lower level
+
+        name = name.upper() 
+        w,h=font.getsize(name)
+        draw=ImageDraw.Draw(background)
+        w1, h1 = draw.textsize(name, font=font)
+        draw.text((centerline,loc),name,font=font,fill='white', anchor='ms') # Writes name
+
+        # Loads Desc
+        if i['description'] != None:
+            desc = i['description']
+        else:
+            desc = 'TBD'
+
+        loadFont = 'fonts/OpenSans-Regular.ttf'
+        
+        try:
+            set = i['set']['text']
+        except:
+            set = None
+        if set == None:
+            set = None
+        else:
+            set = set
+
+        x = len(desc)
+        if x>95:
+            font=ImageFont.truetype(loadFont,10)
+            draw=ImageDraw.Draw(background)
+            line = 470
+            draw.text(
+                (centerline,line),
+                desc,
+                font=font,
+                fill='white', 
+                anchor='ms') # Writes name
+        else:
+            if x>45:
+                #print('above')
+                font=ImageFont.truetype(loadFont,14)
+                draw=ImageDraw.Draw(background)
+                if set != None:
+                    line = 474
+                else:
+                    line = 480
+                if movedescup == 'true':
+                    line = line-8
+                draw.text(
+                    (centerline,line),
+                    desc,
+                    font=font,
+                    fill='white', 
+                    anchor='ms') # Writes name
+            else:
+                #print('below')
+                font=ImageFont.truetype(loadFont,16)
+                draw=ImageDraw.Draw(background)
+                if set != None:
+                    line = 475
+                else:
+                    line = 480
+
+                if movedescup == 'true':
+                    line = line-2
+                draw.text(
+                    (centerline,line),
+                    desc,
+                    font=font,
+                    fill='white', 
+                    anchor='ms') # Writes name   
+
+        # Loads Item Set Text
+        if set != None:
+            font=ImageFont.truetype(loadFont, 18)
+            draw=ImageDraw.Draw(background)
+            draw.text(
+                (centerline, 500),
+                set,
+                font=font,
+                fill='white',
+                anchor='ms') # Writes set
+
+        # Loads watermark
+        loadFont = 'fonts/'+imageFont # Puts font back to original
+        if watermark != '':
+            font=ImageFont.truetype(loadFont,25)
+            draw=ImageDraw.Draw(background)
+            draw.text((10,9),watermark,font=font,fill='white')
+
+        # Loads gameplay tag
+        if showitemsource != 'False':
+            text = ''
+            for x in i['gameplayTags']:
+                if 'Cosmetics.Source.ItemShop' in x:
+                    text = 'Cosmetics.Source.ItemShop'
+                    break
+                if '.BattlePass.Paid' in x:
+                    text = f'Cosmetics.Source.Season{seasonnum}.BattlePass.Paid'
+                    break
+                if 'Cosmetics.Set.' in x:
+                    # Creates Set
+                    try:
+                        set = i['set']['value'].replace(' ', '')
+                    except:
+                        pass
+                    text = f'Cosmetics.Set.{set}'
+                    break
+            font=ImageFont.truetype(loadFont, 15)
+            if watermark != '':
+                draw=ImageDraw.Draw(background)
+                draw.text((10,30),text,font=font,fill='white')
+            else:
+                if text != None or text != '':
+                    draw=ImageDraw.Draw(background)
+                    draw.text((10,10),text,font=font,fill='white')
+        background.save('icons/'+i["id"]+'.png')
+        end = time.time()
+
+        # Finishing Time
+        percentage = counter/len(new['items'])
+        realpercentage = percentage * 100
+        print(Fore.CYAN + f"Generated image for {i['id']}")
+        print(Fore.CYAN + f"{counter}/{len(new['items'])} - {round(realpercentage)}%\n")
+        counter = counter + 1
+
+    end1 = time.time()
+    print("!  !  !  !  !  !  !")
+    print(f"IMAGE GENERATING COMPLETE - Generated image in {round(end1 - start1, 2)} seconds!")
+    if MergeImagesAuto != 'False':
+        print('SAVED MERGED IMAGE!')
+    print("!  !  !  !  !  !  !")
+
+
+    if MergeImagesAuto != 'False':
+        print('\nMerging images...')
+        if 'image' in mergewatermark:
+            addwatermark()
+        merger(mergewatermark, loc1)
+
+        version = new['build'].replace('++Fortnite+Release-', '').replace('-CL-17328477-Windows', '')
+        #print(x)
+        lol = len(os.listdir('icons'))
+        if mergewatermark == '':
+            lol = lol-1
+        print('\nSaved image!')
+        if automergetweet != 'False':
+            if twitAPIKey != 'XXX':
+                print('\nTweeting out image....')
+                try:
+                    api.update_with_media(f'merged/merge.jpg', f'[{namelol}] Found {lol} Leaked cosmetics from Patch {version}.')
+                except:
+                    print(Fore.YELLOW + '\nFile size is too big, compressing image.')
+                    compressnewcosmetics_new(lol)
+                    api.update_with_media(f'merged/merge.jpg', f'[{namelol}] Found {lol} Leaked cosmetics from Patch {version}.')
+                    time.sleep(5)
+                print(Fore.GREEN + '\nTweeted image successfully!')
+        else:
+            print(Fore.YELLOW+'Not tweeting images.')
+            time.sleep(2)
+            exit()
+    else:
+        print('Not auto merging images.')
+        print('Exiting...')
+        time.sleep(2)
+        exit()
+
+def set_search():
+    try:
+        shutil.rmtree('icons')
+        os.makedirs('icons')
+    except:
+        os.makedirs('icons')
+    print(Fore.GREEN + '\nCleared Content\nWhat set do you want to grab?' + Fore.CYAN)
+    ask = input('>> ')
+    fontSize = 40
+    response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/search/all?set={ask}&lang={language}')
+    if response.json()['status'] == 404:
+        print(Fore.RED + 'Item Set does not exist.')
+        set_search()
+    new = response.json()['data']
+
+    print(Fore.GREEN + f'\nLoaded set [{ask}] with Fortnite-API')
+    print(f'Loaded [{len(new)}] cosmetics in set\n')
+    loop = False
+    counter = 1
+    start = time.time()
+    iconType = 'new'
+    for i in new:
         start = time.time()
         try:
             print(Fore.BLUE + "Loading image for "+i["id"])
@@ -2243,16 +3545,16 @@ def newcnew():
             time.sleep(5)
             exit()
         if useFeaturedIfAvaliable == 'True':
-            if i["icons"]["featured"] != None:
-                url = i["icons"]["featured"]
+            if i["images"]["featured"] != None:
+                url = i["images"]["featured"]
             else:
-                if i['icons']['icon'] != None:
-                    url = i["icons"]["icon"]
+                if i['images']['icon'] != None:
+                    url = i["images"]["icon"]
                 else:
                     url = 'https://i.ibb.co/KyvMydQ/do-Not-Delete.png'
         elif useFeaturedIfAvaliable == 'False':
-            if i['icons']['icon'] != None:
-                url = i["icons"]["icon"]
+            if i['images']['icon'] != None:
+                url = i["images"]["icon"]
             else:
                 url = 'https://i.ibb.co/KyvMydQ/do-Not-Delete.png'
         placeholderImg = Image.open('assets/doNotDelete.png')
@@ -2279,31 +3581,8 @@ def newcnew():
             except:
                 pass
 
-        rarity = i["rarity"]
+        rarity = i["rarity"]['value']
         rarity = rarity.lower()
-        try:
-            series = i['series']['name']
-            if series == 'Icon Series':
-                rarity = 'icon'
-            elif series == 'MARVEL SERIES':
-                rarity = 'marvel'
-            elif series == 'Gaming Legends Series':
-                rarity = 'gaminglegends'
-            elif series == 'DC SERIES':
-                rarity = 'dc' 
-            elif series == 'Lava Series':
-                rarity = 'lava'
-            elif series == 'Shadow Series':
-                rarity = 'shadow'
-            elif rarity == 'Star Wars Series':
-                rarity = 'starwars'
-            elif rarity == 'Slurp Series':
-                rarity = 'slurp'
-            elif rarity == 'DARK SERIES':
-                rarity = 'dark'
-        except:
-            pass
-            foreground = Image.open('cache/icontemp.png')
         
         # Background making stuff by Swift-nite#3722 - Your a huge help, thanks! :banana:
         try:
@@ -2316,7 +3595,7 @@ def newcnew():
         img.paste(background)
         img.save('cache/temp.png')
         img=Image.open(f'cache/temp.png')
-        foreground= Image.open('cache/icontemp.png').resize((512, 512), Image.ANTIALIAS)
+        foreground= Image.open('cache/icontemp.png').resize((512, 512), Image.ANTIALIAS).convert('RGBA')
         img.paste(foreground, (0, 0), foreground)
         img.save('cache/temp.png')
         img.paste(border, (0, 0), border)
@@ -2381,26 +3660,53 @@ def newcnew():
                     pass
             bigaf = ''
             # I should comment some of this stuff #
-            if i['setText'] != None:
-                if desc1 != '':
-                    if descup != 'true':
+            try:
+                if i['set']['text'] != None:
+                    if desc1 != '':
+                        if descup != 'true':
+                            if desc1 == 'aaaa':
+                                # IF DESC IS BIG AF THEN DO THIS #
+                                bigaf = '1'
+                                pass
+                            else:
+                                # This means it is not big af
+                                #print('a')
+                                draw.text(((512-w1)/2,455),desc,font=font,fill='white')
+                        else:
+                            # This means if it equals none then it 
+                            #print('bc')
+                            if xx>70:
+                                font=ImageFont.truetype(loadFont,14)
+                            else:
+                                font=ImageFont.truetype(loadFont,20)
+                                w,h=font.getsize(desc)
+                                draw=ImageDraw.Draw(background)
+                                w1, h1 = draw.textsize(desc, font=font)
+                            draw.text(((512-w1)/2,448),desc,font=font,fill='white')
+                    else:
                         if desc1 == 'aaaa':
-                            # IF DESC IS BIG AF THEN DO THIS #
-                            bigaf = '1'
                             pass
                         else:
-                            # This means it is not big af
-                            draw.text(((512-w1)/2,455),desc,font=font,fill='white')
-                    else:
-                        # This means if it equals none then it 
-                        draw.text(((512-w1)/2,454),desc,font=font,fill='white')
+                            bigaf = '69'
+                            pass
                 else:
-                    if desc1 == 'aaaa':
-                        pass
+                    if desc1 != '':
+                        if desc1 == 'aaaa':
+                            if xx<80:
+                                font=ImageFont.truetype(loadFont,10)
+                                w,h=font.getsize(desc)
+                                draw=ImageDraw.Draw(background)
+                                w1, h1 = draw.textsize(desc, font=font)
+                                draw.text(((512-w1)/2,465),desc,font=font,fill='white')
+                            else:
+                                pass
+                        else:
+                            print('aaaa')
+                            draw.text(((512-w1)/2,465),desc,font=font,fill='white')
                     else:
-                        bigaf = '69'
-                        pass
-            else:
+                        print('bbb')
+                        draw.text(((512-w1)/2,470),desc,font=font,fill='white')
+            except:
                 if desc1 != '':
                     if desc1 == 'aaaa':
                         if xx<80:
@@ -2412,25 +3718,39 @@ def newcnew():
                         else:
                             pass
                     else:
+                        #print('aab')
                         draw.text(((512-w1)/2,465),desc,font=font,fill='white')
                 else:
+                    #print('beb')
+                    desc1 = 'nope'
                     draw.text(((512-w1)/2,470),desc,font=font,fill='white')
-    
-            if i['setText'] != None:
-                set = i["setText"]
-                font=ImageFont.truetype(loadFont,16)
-                w,h=font.getsize(set)
-                draw=ImageDraw.Draw(background)
-                w1, h1 = draw.textsize(set, font=font)
-                if desc1 != '':
-                    if bigaf == '1':
-                        draw.text(((512-w1)/2,465),set,font=font,fill='white')
-                    else:
-                        # Alright, this should be if the description is too big then it does this i guess #
-                        draw.text(((512-w1)/2,480),set,font=font,fill='white')
+
+            if desc1 == '':
+                #print('b')
+                if xx1>17:
+                    draw.text(((512-w1)/2,440),desc,font=font,fill='white')
                 else:
-                    # Same thing as the one above but just adding an else because if its normal its not '' #
-                    draw.text(((512-w1)/2,480),set,font=font,fill='white')
+                    draw.text(((512-w1)/2,457),desc,font=font,fill='white')
+
+            try:
+                if i['set']['text'] != None:
+                    set = i["set"]['text']
+                    font=ImageFont.truetype(loadFont,16)
+                    w,h=font.getsize(set)
+                    draw=ImageDraw.Draw(background)
+                    w1, h1 = draw.textsize(set, font=font)
+                    if desc1 != '':
+                        if bigaf == '1':
+                            print('AAAAAAAAA')
+                            draw.text(((512-w1)/2,465),set,font=font,fill='white')
+                        else:
+                            # Alright, this should be if the description is too big then it does this i guess #
+                            draw.text(((512-w1)/2,480),set,font=font,fill='white')
+                    else:
+                        # Same thing as the one above but just adding an else because if its normal its not '' #
+                        draw.text(((512-w1)/2,480),set,font=font,fill='white')
+            except:
+                pass
     
     
             loadFont = 'fonts/'+imageFont
@@ -2448,56 +3768,65 @@ def newcnew():
             #i = response.json()
             
             shop = ''
+            #if i['gameplayTags'] == None:
+            #    showitemsource = 'False'
+
             if showitemsource != 'False':
-                for x in i['gameplayTags']:
-                    result = x.find('Cosmetics.Source.ItemShop')
-                    if result != -1:
-                        #print('Found an Item Shop tag.')
-                        shop = '1'
-                    else:
+                bruh = ''
+                if i['gameplayTags'] == None:
+                    bruh = 'no tags'
+                if bruh != 'no tags':
+                    for x in i['gameplayTags']:
+                        result = x.find('Cosmetics.Source.ItemShop')
+                        if result != -1:
+                            #print('Found an Item Shop tag.')
+                            shop = '1'
+                        else:
+                            pass
+                        
+                    if shop != '1':
+                        shop = '69'
+                        #print('did not find an item shop tag')
+        
+                    if shop == '69':
+                        for x in i['gameplayTags']:
+                            result = x.find('BattlePass.Paid')
+                            if result != -1:
+                                #print('Found a battle pass tag.')
+                                shop = '2'
+                                resp1 = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/search?name={name1}')
+                                try:
+                                    seasonnum = resp1.json()['data']['introduction']['backendValue']
+                                except:
+                                    pass
+                                break
+                        if shop != '2':
+                            #print('Did not find a battle pass tag, skipping')
+                            shop = '0'
+        
+                    if shop == '0':
+                        for x in i['gameplayTags']:
+                            result = x.find('Cosmetics.Set.')
+                            if result != -1:
+                                #print('Found a set tag since the other two tabs dont work lol')
+                                shop = '3'
+                                break
+                        if shop != '3':
+                            #print('could not find ANY tags.')
+                            shop = '0'
+        
+                    try:
+                        source = i['gameplayTags'][0]
+                    except:
                         pass
-                    
-                if shop != '1':
-                    shop = '69'
-                    #print('did not find an item shop tag')
-    
-                if shop == '69':
-                    for x in i['gameplayTags']:
-                        result = x.find('BattlePass.Paid')
-                        if result != -1:
-                            #print('Found a battle pass tag.')
-                            shop = '2'
-                            resp1 = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/search?name={name1}')
-                            try:
-                                seasonnum = resp1.json()['data']['introduction']['backendValue']
-                            except:
-                                pass
-                            break
-                    if shop != '2':
-                        #print('Did not find a battle pass tag, skipping')
-                        shop = '0'
-    
-                if shop == '0':
-                    for x in i['gameplayTags']:
-                        result = x.find('Cosmetics.Set.')
-                        if result != -1:
-                            #print('Found a set tag since the other two tabs dont work lol')
-                            shop = '3'
-                            break
-                    if shop != '3':
-                        #print('could not find ANY tags.')
-                        shop = '0'
-    
-                try:
-                    source = i['gameplayTags'][0]
-                except:
+        
+                    if name1 == 'VENOM':
+                        source = i['gameplayTags'][2]
+                else:
                     pass
-    
-                if name1 == 'VENOM':
-                    source = i['gameplayTags'][2]
             else:
                 pass
-                
+            
             if showitemsource == 'True':
                 font=ImageFont.truetype(loadFont,15)
                 thing1 = source.replace('Cosmetics.Source.', '')
@@ -2505,12 +3834,18 @@ def newcnew():
                 if shop == '1':
                     thing1 = 'Cosmetics.Source.ItemShop'
                 elif shop == '2':
-                    thing1 = f'Season{seasonnum}.BattlePass.Paid'
+                    try:
+                        thing1 = f'Season{seasonnum}.BattlePass.Paid'
+                    except:
+                        thing1 = f'SeasonTBD.BattlePass.Paid'
                 elif shop == '0':
                     thing1 = ''
                 elif shop == '3':
-                    set = i['set']
-                    set1 = set.replace(' ', '')
+                    set = i['set']['value']
+                    try:
+                        set1 = set.replace(' ', '')
+                    except:
+                        pass
                     set1 = set1.title()
                     thing1 = f'Cosmetics.Set.{set1}'
                 if thing1 != '0':
@@ -2532,371 +3867,7 @@ def newcnew():
         
         #os.remove('cache/BLANK'+i["id"]+'.png')
         background.save('icons/'+i["id"]+'.png')
-        i = response.json()
-        percentage = counter/len(i['items'])
-        realpercentage = percentage * 100
-        print(Fore.CYAN + f"Generated image for {id}")
-        print(Fore.CYAN + f"{counter}/{len(i['items'])} - {round(realpercentage)}%")
-        print("")
-        counter = counter + 1
-        end = time.time()
-
-    if MergeImagesAuto != 'False':
-        print('\nMerging images...')
-        if mergewatermark != '':
-            r = requests.get(mergewatermark, allow_redirects=True)
-            open('icons/zzzwatermark.png', 'wb').write(r.content)
-        else:
-            pass
-        images = [file for file in listdir('icons')]
-        count = int(round(math.sqrt(len(images)+0.5), 0))
-        #print(len(images), count)
-        lol = len(images) - 1
-        print(f'\nFound {lol} images in "Icons" folder.')
-        finalImg = Image.new("RGB", (512*count, 512*count))
-        #draw = ImageDraw.Draw(finalImg)
-        x = 0
-        y = 0
-        counter = 0
-        for img in images:
-            tImg = Image.open(f"icons/{img}").convert("RGBA")
-            if counter >= count:
-                y += 512
-                x = 0
-                counter = 0
-            finalImg.paste(tImg, (x, y), tImg)
-            x += 512
-            counter += 1
-        finalImg.show()
-        finalImg.save(f'merged/MERGED {lol}.png')
-        response = requests.get('https://benbot.app/api/v1/status')
-        version = response.json()['currentFortniteVersionNumber']
-        #print(x)
-        lol = len(images) - 1
-        print('\nSaved image!')
-        if twitAPIKey != 'XXX':
-            print('\nTweeting out image....')
-            try:
-                api.update_with_media(f'merged/MERGED {lol}.png', f'[{namelol}] Found {lol} Leaked cosmetics from Patch {version}.')
-            except:
-                print(Fore.YELLOW + '\nFile size is too big, compressing image.')
-                foo = Image.open(f'merged/MERGED {lol}.png')
-                x, y = foo.size
-                x2, y2 = math.floor(x/2), math.floor(y/2)
-                foo = foo.resize((x2,y2),Image.ANTIALIAS)
-                foo.save(f'merged/MERGED {lol}.png',quality=65)
-                print(Fore.GREEN + 'Compressed!')
-                api.update_with_media(f'merged/MERGED {lol}.png', f'[{namelol}] Found {lol} Leaked cosmetics from Patch {version}.')
-                time.sleep(5)
-            print(Fore.GREEN + '\nTweeted image successfully!')
-        else:
-            print(Fore.YELLOW+'Not tweeting images.')
-    else:
-        print('Not auto merging images.')
-        print('Exiting...')
-        time.sleep(2)
-        exit()
-
-
-
-def dynpak2():
-    try:
-        shutil.rmtree('icons')
-        os.makedirs('icons')
-    except:
-        os.makedirs('icons')
-    print('Cleared "icons" folder contents.')
-    print('Loaded New Icons | API = BenBot\n')
-    print('What pak number do you want to grab?')
-    paktrue = input('>> ')
-    fontSize = 40
-    response = requests.get(f'https://benbot.app/api/v1/cosmetics/br/dynamic/{paktrue}?lang={language}')
-    new = response.json()
-
-    print(f"\nGenerating {len(new)} new cosmetics from BenBot...")
-    print('')
-    loop = False
-    counter = 1
-    start = time.time()
-    iconType = 'new'
-    new = response.json()
-    for i in new:
-        start = time.time()
-        try:
-            print(Fore.BLUE + "Loading image for "+i["id"])
-        except:
-            print(Fore.RED + f'Unable to retreive item.')
-            time.sleep(5)
-            exit()
-        if useFeaturedIfAvaliable == 'True':
-            if i["icons"]["featured"] != None:
-                url = i["icons"]["featured"]
-            else:
-                url = i["icons"]["icon"]
-        elif useFeaturedIfAvaliable == 'False':
-            url = i["icons"]["icon"]
-        placeholderImg = Image.open('assets/doNotDelete.png')
-        r = requests.get(url, allow_redirects=True)
-        open(f'cache/{i["id"]}.png', 'wb').write(r.content)
-        iconImg = Image.open(f'cache/{i["id"]}.png')
-        try:
-            diff = ImageChops.difference(placeholderImg, iconImg)
-        except:
-            print(Fore.RED + 'Could not grab icon as there is an error with the image.')
-            time.sleep(5)
-            exit()
-        if diff.getbbox():
-            r = requests.get(url, allow_redirects=True)
-            open(f'cache/{i["id"]}.png', 'wb').write(r.content)
-            img=Image.open(f'cache/{i["id"]}.png')
-            img=img.resize((512,512),PIL.Image.ANTIALIAS)
-            img.save(f'cache/{i["id"]}.png')
-        else:
-            try:
-                r = requests.get(placeholderUrl, allow_redirects=True)
-                open(f'cache/{i["id"]}.png', 'wb').write(r.content)
-                img=Image.open(f'cache/{i["id"]}.png')
-                img=img.resize((512,512),PIL.Image.ANTIALIAS)
-                img.save(f'cache/{i["id"]}.png')
-            except:
-                print('')
-        rarity = i["rarity"]
-        rarity = rarity.lower()
-        try:
-            series = i['series']['name']
-            if series == 'Icon Series':
-                rarity = 'icon'
-            elif series == 'MARVEL SERIES':
-                rarity = 'marvel'
-            elif series == 'Gaming Legends Series':
-                rarity = 'gaminglegends'
-            elif series == 'DC SERIES':
-                rarity = 'dc' 
-            elif series == 'Lava Series':
-                rarity = 'lava'
-            elif series == 'Shadow Series':
-                rarity = 'shadow'
-            elif rarity == 'Star Wars Series':
-                rarity = 'starwars'
-            elif rarity == 'Slurp Series':
-                rarity = 'slurp'
-            elif rarity == 'DARK SERIES':
-                rarity = 'dark'
-        except:
-            pass 
-        foreground = Image.open('cache/'+i["id"]+'.png')
-        try:
-            background = Image.open(f'rarities/{iconType}/{rarity}.png')
-            border = Image.open(f'rarities/{iconType}/border{rarity}.png')
-        except:
-            background = Image.open(f'rarities/{iconType}/common.png')
-            border = Image.open(f'rarities/{iconType}/bordercommon.png')
-        Image.alpha_composite(background, foreground).save('cache/F'+i["id"]+'.png')
-        os.remove('cache/'+i["id"]+'.png')
-        background = Image.open('cache/F'+i["id"]+'.png')
-        Image.alpha_composite(background, border).save('cache/BLANK'+i["id"]+'.png')
-        img=Image.open('cache/BLANK'+i["id"]+'.png')
-        name1= i["name"]
-        loadFont = 'fonts/'+imageFont
-        if len(name1) > 20:
-            fontSize = 30
-        if len(name1) > 30:
-            fontSize = 2
-        elif iconType == 'new':
-            descup = 'undefined'
-            xx1 = len(name1)
-            if xx1>17:
-                font=ImageFont.truetype(loadFont,45) 
-                #print('Name is greater than 16 characters.\n')
-                descup = 'true'
-            else:
-                font=ImageFont.truetype(loadFont,60) 
-                descup = 'false'
-            name1 = name1.upper()
-            w,h=font.getsize(name1)
-            draw=ImageDraw.Draw(img)
-            w1, h1 = draw.textsize(name1, font=font)
-            draw.text(((512-w1)/2,406),name1,font=font,fill='white')
-    
-            fontSize = 4
-    
-            loadFont = 'fonts/OpenSans-Regular.ttf'
-            desc = i["description"]
-            xx = len(desc)
-            desc1 = 'a'
-            if xx>35:
-                desc1 = ''
-            if desc1 != '':
-                font=ImageFont.truetype(loadFont,16)
-                w,h=font.getsize(desc)
-                draw=ImageDraw.Draw(img)
-                w1, h1 = draw.textsize(desc, font=font)
-            else:
-                font=ImageFont.truetype(loadFont,14)
-                w,h=font.getsize(desc)
-                draw=ImageDraw.Draw(img)
-                w1, h1 = draw.textsize(desc, font=font)
-                if xx>70:
-                    desc1 = 'aaaa'
-                    #print('owo uwu owo uwu')
-                else:
-                    pass
-            bigaf = ''
-            # I should comment some of this stuff #
-            if i['setText'] != None:
-                if desc1 != '':
-                    if descup != 'true':
-                        if desc1 == 'aaaa':
-                            # IF DESC IS BIG AF THEN DO THIS #
-                            bigaf = '1'
-                            pass
-                        else:
-                            # This means it is not big af
-                            draw.text(((512-w1)/2,455),desc,font=font,fill='white')
-                    else:
-                        # This means if it equals none then it 
-                        draw.text(((512-w1)/2,454),desc,font=font,fill='white')
-                else:
-                    if desc1 == 'aaaa':
-                        pass
-                    else:
-                        bigaf = '69'
-                        pass
-            else:
-                if desc1 != '':
-                    if desc1 == 'aaaa':
-                        if xx<80:
-                            font=ImageFont.truetype(loadFont,10)
-                            w,h=font.getsize(desc)
-                            draw=ImageDraw.Draw(img)
-                            w1, h1 = draw.textsize(desc, font=font)
-                            draw.text(((512-w1)/2,465),desc,font=font,fill='white')
-                        else:
-                            pass
-                    else:
-                        draw.text(((512-w1)/2,465),desc,font=font,fill='white')
-                else:
-                    draw.text(((512-w1)/2,470),desc,font=font,fill='white')
-
-            if i['setText'] != None:
-                set = i["setText"]
-                font=ImageFont.truetype(loadFont,16)
-                w,h=font.getsize(set)
-                draw=ImageDraw.Draw(img)
-                w1, h1 = draw.textsize(set, font=font)
-                if desc1 != '':
-                    if bigaf == '1':
-                        draw.text(((512-w1)/2,465),set,font=font,fill='white')
-                    else:
-                        # Alright, this should be if the description is too big then it does this i guess #
-                        draw.text(((512-w1)/2,480),set,font=font,fill='white')
-                else:
-                    # Same thing as the one above but just adding an else because if its normal its not '' #
-                    draw.text(((512-w1)/2,480),set,font=font,fill='white')
-    
-    
-            loadFont = 'fonts/'+imageFont
-    
-            id = i["id"]
-    
-            #showitemsource = 'True'
-    
-            if watermark != '':
-                font=ImageFont.truetype(loadFont,25)
-                w,h=font.getsize(watermark)
-                draw=ImageDraw.Draw(img)
-                draw.text((10,9),watermark,font=font,fill='white')
-    
-            #i = response.json()
-            
-            shop = ''
-            if showitemsource != 'False':
-                for x in i['gameplayTags']:
-                    result = x.find('Cosmetics.Source.ItemShop')
-                    if result != -1:
-                        #print('Found an Item Shop tag.')
-                        shop = '1'
-                    else:
-                        pass
-                    
-                if shop != '1':
-                    shop = '69'
-                    #print('did not find an item shop tag')
-    
-                if shop == '69':
-                    for x in i['gameplayTags']:
-                        result = x.find('BattlePass.Paid')
-                        if result != -1:
-                            #print('Found a battle pass tag.')
-                            shop = '2'
-                            resp1 = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/search?name={name1}')
-                            try:
-                                seasonnum = resp1.json()['data']['introduction']['backendValue']
-                            except:
-                                pass
-                            break
-                    if shop != '2':
-                        #print('Did not find a battle pass tag, skipping')
-                        shop = '0'
-    
-                if shop == '0':
-                    for x in i['gameplayTags']:
-                        result = x.find('Cosmetics.Set.')
-                        if result != -1:
-                            #print('Found a set tag since the other two tabs dont work lol')
-                            shop = '3'
-                            break
-                    if shop != '3':
-                        #print('could not find ANY tags.')
-                        shop = '0'
-    
-                try:
-                    source = i['gameplayTags'][0]
-                except:
-                    pass
-    
-                if name1 == 'VENOM':
-                    source = i['gameplayTags'][2]
-            else:
-                pass
-                
-            if showitemsource == 'True':
-                font=ImageFont.truetype(loadFont,15)
-                thing1 = source.replace('Cosmetics.Source.', '')
-                #x = len(thing1)
-                if shop == '1':
-                    thing1 = 'Cosmetics.Source.ItemShop'
-                elif shop == '2':
-                    thing1 = f'Season{seasonnum}.BattlePass.Paid'
-                elif shop == '0':
-                    thing1 = ''
-                elif shop == '3':
-                    set = i['set']
-                    set1 = set.replace(' ', '')
-                    set1 = set1.title()
-                    thing1 = f'Cosmetics.Set.{set1}'
-                if thing1 != '0':
-                    if watermark != '':
-                        thing = f'{thing1}'
-                        w,h=font.getsize(thing)
-                        draw=ImageDraw.Draw(img)
-                        draw.text((10,30),thing,font=font,fill='white')
-                    else:
-                        thing = f'{thing1}'
-                        w,h=font.getsize(thing)
-                        draw=ImageDraw.Draw(img)
-                        draw.text((10,10),thing,font=font,fill='white')
-                else:
-                    #print('\nNot writing source as there is none.')
-                    pass
-            else:
-                print('Not writing source.')
-        
-        
-        os.remove('cache/BLANK'+i["id"]+'.png')
-        img.save('icons/'+i["id"]+'.png')
-        os.remove('cache/F'+i["id"]+'.png')
-        i = response.json()
+        i = response.json()['data']
         percentage = counter/len(i)
         realpercentage = percentage * 100
         print(Fore.CYAN + f"Generated image for {id}")
@@ -2907,67 +3878,45 @@ def dynpak2():
 
     if MergeImagesAuto != 'False':
         print('\nMerging images...')
-        if mergewatermark != '':
-            r = requests.get(mergewatermark, allow_redirects=True)
-            open('icons/zzzwatermark.png', 'wb').write(r.content)
-            print(Fore.CYAN + f"Added Watermark to image."+Fore.GREEN)
-        else:
-            pass
-        images = [file for file in listdir('icons')]
-        count = int(round(math.sqrt(len(images)+0.5), 0))
-        #print(len(images), count)
-        lol = len(images) - 1
-        print(f'\nFound {lol} images in "Icons" folder.')
-        finalImg = Image.new("RGBA", (512*count, 512*count))
-        #draw = ImageDraw.Draw(finalImg)
-        x = 0
-        y = 0
-        counter = 0
-        for img in images:
-            tImg = Image.open(f"icons/{img}")
-            if counter >= count:
-                y += 512
-                x = 0
-                counter = 0
-            finalImg.paste(tImg, (x, y), tImg)
-            x += 512
-            counter += 1
-        finalImg.show()
-        finalImg.save(f'merged/MERGED {lol}.png')
+        merger(mergewatermark, loc1)
         response = requests.get('https://benbot.app/api/v1/status')
         version = response.json()['currentFortniteVersionNumber']
-        #print(x)
+        lol = len(os.listdir('icons'))
+        if mergewatermark == '':
+            lol = lol-1
         print('\nSaved image!')
-        if twitAPIKey != 'XXX':
-            print('\nDo you want to Tweet out this image? - y/n')
-            ask = input('>> ')
-            if ask == 'y':
+        if automergetweet != 'False':
+            if twitAPIKey != 'XXX':
                 print('\nTweeting out image....')
-                lol = len(images) - 1
                 try:
-                    api.update_with_media(f'merged/MERGED {lol}.png', f'[{namelol}] Found {lol} Cosmetics in Pak {paktrue}.')
+                    api.update_with_media(f'merged/MERGED {lol}.png', f'[{namelol}] Found {lol} Leaked cosmetics from Patch {version}.')
                 except:
                     print(Fore.YELLOW + '\nFile size is too big, compressing image.')
-                    foo = Image.open(f'merged/MERGED {lol}.png')
-                    x, y = foo.size
-                    x2, y2 = math.floor(x/2), math.floor(y/2)
-                    foo = foo.resize((x2,y2),Image.ANTIALIAS)
-                    foo.save(f'merged/MERGED {x}.png',quality=65)
-                    print(Fore.GREEN + 'Compressed!')
-                    api.update_with_media(f'merged/MERGED {lol}.png', f'[{namelol}] Found {lol} Cosmetics in Pak {paktrue}.')
+                    compressnewcosmetics_new(lol)
+                    api.update_with_media(f'merged/MERGED {lol}.png', f'[{namelol}] Found {lol} Leaked cosmetics from Patch {version}.')
                     time.sleep(5)
                 print(Fore.GREEN + '\nTweeted image successfully!')
             else:
-                print('Not tweeting.')
+                print(Fore.YELLOW+'Not tweeting images.')
+        else:
+            print('not tweeting')
     else:
         print('Not auto merging images.')
-        
+
+    set_search()
+
 
 print(Fore.GREEN + "\n- - - - - MENU - - - - -")
 print("")
-print(Fore.RED+'!!NOTICE!! '+Fore.GREEN+'We have just introduced new icons into AutoLeak! These are in beta, but you\ncan test them out by changing the iconType in settings.json to "new"!\n')
+
+notice = response.json()['notice']
+if notice == None or '':
+    pass
+else:
+    print(Fore.RED+'!!NOTICE!! '+Fore.GREEN+f'{notice}\n')
+
 print(Fore.YELLOW + "(1)" +Fore.GREEN + " - Start update mode")
-print(Fore.YELLOW + "(2)" +Fore.GREEN + " - Generate new cosmetics")
+print(Fore.YELLOW + "(2)" +Fore.GREEN + " - Generate new cosmetics\n")
 print("(3) - Tweet current build")
 print("(4) - Tweet current AES key")
 print("(5) - Search for a cosmetic")
@@ -2980,6 +3929,8 @@ print("(11) - Grab all cosmetics from a specific pak")
 print("(12) - Checks for a change in notices")
 print("(13) - Checks for a change in staging servers")
 print("(14) - Search for any weapon of choice.")
+print("(15) - "+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Generate current NPCs')
+print("(16) - "+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Search by set')
 
 print("")
 option_choice = input(">> ")
@@ -3000,7 +3951,7 @@ elif option_choice == "7":
 elif option_choice == "8":
     merge_images()
 elif option_choice == "9":
-    shop_sections()
+    shop_sections(sections_image, BotDelay, BG_Color, api, namelol, watermark, language)
 elif option_choice == "10":
     shop()
 elif option_choice == "11":
@@ -3011,8 +3962,12 @@ elif option_choice == "13":
     staging_servers()
 elif option_choice == "14":
     weapons()
+elif option_choice == "15":
+    npcs()
+elif option_choice == '16':
+    set_search()
 else:
-    print(Fore.RED+"\nPlease enter a number between 1 and 14")
+    print(Fore.RED+"\nPlease enter a number between 1 and 15")
     time.sleep(2)
     
 # Search for a cosmetic (NEW ICONS)") - newcbeta()
