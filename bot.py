@@ -3441,21 +3441,24 @@ def newcnew_fnbrapi():
         # Loads gameplay tag
         if showitemsource != 'False':
             text = ''
-            for x in i['gameplayTags']:
-                if 'Cosmetics.Source.ItemShop' in x:
-                    text = 'Cosmetics.Source.ItemShop'
-                    break
-                if '.BattlePass.Paid' in x:
-                    text = f'Cosmetics.Source.Season{seasonnum}.BattlePass.Paid'
-                    break
-                if 'Cosmetics.Set.' in x:
-                    # Creates Set
-                    try:
-                        set = i['set']['value'].replace(' ', '')
-                    except:
-                        pass
-                    text = f'Cosmetics.Set.{set}'
-                    break
+            try:
+                for x in i['gameplayTags']:
+                    if 'Cosmetics.Source.ItemShop' in x:
+                        text = 'Cosmetics.Source.ItemShop'
+                        break
+                    if '.BattlePass.Paid' in x:
+                        text = f'Cosmetics.Source.Season{seasonnum}.BattlePass.Paid'
+                        break
+                    if 'Cosmetics.Set.' in x:
+                        # Creates Set
+                        try:
+                            set = i['set']['value'].replace(' ', '')
+                        except:
+                            pass
+                        text = f'Cosmetics.Set.{set}'
+                        break
+            except:
+                pass
             font=ImageFont.truetype(loadFont, 15)
             if watermark != '':
                 draw=ImageDraw.Draw(background)
