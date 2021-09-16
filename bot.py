@@ -94,7 +94,11 @@ data = requests.get('https://benbot.app/api/v1/status')
 seasonnum = data.json()['currentFortniteVersionNumber']
 
 # Used to communicate with updates
-response = requests.get('https://pastebin.com/raw/zku0yz9q')
+try:
+    response = requests.get('https://pastebin.com/raw/zku0yz9q')
+except:
+    response requests.get('https://gist.githubusercontent.com/FortniteFevers/3415159ceebc4af1cf9d198f042473e7/raw/9fe3a0000e540baa90b7f9baff677d630486af87/AutoLeak%2520Code')
+    
 ln1 = response.json()["1"]
 ln2 = response.json()["2"]
 ln3 = response.json()["3"]
