@@ -65,19 +65,6 @@ initialCheckDelay = 2
 
 import platform # If softwere is linux, it does not run ctypes
 x = platform.system()
-if x == 'Windows':
-    if currentVersion != 'BETA':
-        # Starting Popup
-        import ctypes
-
-        rannumber = random.randint(1, 2)
-        def Mbox(title, text, style):
-            return ctypes.windll.user32.MessageBoxW(0, text, title, style)
-        #if rannumber == 1:
-        #    Mbox('AutoLeak - Created by Fevers.', f'Hey There! Welcome to AutoLeak, the easiest way to Auto-Leak Fortnite. \nMake sure to join our discord by clicking the OK button!\n\n\nYou are on AutoLeak version v{currentVersion}!', 0)
-        #    webbrowser.open_new('https://discord.gg/UZgHArwp4f')
-        #else:
-        #    pass
 
 if x == 'Windows':
     import pyfiglet
