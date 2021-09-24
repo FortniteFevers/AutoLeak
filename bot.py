@@ -43,15 +43,19 @@ import datetime
 from datetime import date, datetime
 import random
 from modules.shopsections import shop_sections
-from googletrans import Translator
-translator = Translator()
+
+try:
+    from googletrans import Translator
+    translator = Translator()
+except:
+    pass
 
 now = datetime.now()
-
 current_time = now.strftime("%H:%M")
 
 from modules.compressor import compressnewcosmetics_normal, compress_brnews, compress_normal, pak_compress, compressnewcosmetics_new
 from modules.merger import merger
+from modules.npcs import npcsdef
 
 from os import listdir
 from colorama import *
@@ -81,11 +85,11 @@ data = requests.get('https://benbot.app/api/v1/status')
 seasonnum = data.json()['currentFortniteVersionNumber']
 
 # Used to communicate with updates
+response = requests.get('https://pastebin.com/raw/zku0yz9q')
 try:
-    response = requests.get('https://pastebin.com/raw/zku0yz9q')
+    ln1 = response.json()["1"]
 except:
-    response requests.get('https://gist.githubusercontent.com/FortniteFevers/3415159ceebc4af1cf9d198f042473e7/raw/9fe3a0000e540baa90b7f9baff677d630486af87/AutoLeak%2520Code')
-    
+    response = requests.get('https://gist.githubusercontent.com/FortniteFevers/3415159ceebc4af1cf9d198f042473e7/raw/7a8b4ec685c10bfedd4aafc1b0f86f349d4cb7b4/AutoLeak%2520Code')
 ln1 = response.json()["1"]
 ln2 = response.json()["2"]
 ln3 = response.json()["3"]
@@ -121,7 +125,6 @@ else:
 print("")
 print(Style.RESET_ALL + "------------------------------------------------------------------------------------------------")
 print("")
-time.sleep(1)
 # Used to communicate with settings.json, grab all user inputs from it.
 
 with open("settings.json") as settings:
@@ -932,7 +935,8 @@ def generate_cosmetics():
     if automergetweet != 'False':                  
         if MergeImagesAuto != 'False':
             print('\nMerging images...')
-            addwatermark()
+            if 'image' in mergewatermark:
+                addwatermark()
             merger(mergewatermark, loc1)
             
             xlol = len(os.listdir('icons'))
@@ -1694,7 +1698,6 @@ def dynamic_pak():
 
 def notices():
     count = 1
-    response = requests.get('https://fn-api.com/api/emergencyNotices')
     apiurl = 'https://fn-api.com/api/emergencyNotices'
     
     response = requests.get(apiurl)
@@ -1702,7 +1705,10 @@ def notices():
     while 1:
         response = requests.get(apiurl)
         if response:
-            noticesDataLoop = response.json()['data']
+            try:
+                noticesDataLoop = response.json()['data']
+            except:
+                notices()
             print("Checking for change in Notices... ("+str(count)+")")
             count = count + 1
             response = requests.get(apiurl)
@@ -1729,36 +1735,37 @@ def notices():
         time.sleep(BotDelay)
 
 def staging_servers():
-    count = 1
-    response = requests.get('https://api.peely.de/v1/staging')
-    apiurl = 'https://api.peely.de/v1/staging'
-    
-    response = requests.get(apiurl)
-    stagingData = response.json()['data']['staging']
-
-    while 1:
-        response = requests.get(apiurl)
-        if response:
-            stagingDataLoop = response.json()['data']['staging']
-            print("Checking for change in Staging Servers... ("+str(count)+")")
-            count = count + 1
-            response = requests.get(apiurl)
-
-            if stagingData != stagingDataLoop:
-                
-                print(f"The staging servers have been changed at {current_time}...")
-
-                staging = response.json()['data']['staging']
-                print(f'\nThe staging servers are on {staging}.')
-                print('\nTweeting the current staging servers.')
-                api = tweepy.API(auth)
-                api.update_status('#Fortnite Version Uptate:\n\nPatch v'+str(staging)+' has been added to the pre-release staging servers. Epic is currently testing this update version, and will most likely release within the upcoming week(s).')
-                print('\nSuccesfully tweeted the staging servers.')
-                staging_servers()
-        else:
-            print("FAILED TO GRAB STAGING SERVERS DATA: URL DOWN")
-
-        time.sleep(BotDelay)
+    print(Fore.RED + "COMMAND NOT WORKING")
+    #count = 1
+    #response = requests.get('https://api.peely.de/v1/staging')
+    #apiurl = 'https://api.peely.de/v1/staging'
+    #
+    #response = requests.get(apiurl)
+    #stagingData = response.json()['data']['staging']
+#
+    #while 1:
+    #    response = requests.get(apiurl)
+    #    if response:
+    #        stagingDataLoop = response.json()['data']['staging']
+    #        print("Checking for change in Staging Servers... ("+str(count)+")")
+    #        count = count + 1
+    #        response = requests.get(apiurl)
+#
+    #        if stagingData != stagingDataLoop:
+    #            
+    #            print(f"The staging servers have been changed at {current_time}...")
+#
+    #            staging = response.json()['data']['staging']
+    #            print(f'\nThe staging servers are on {staging}.')
+    #            print('\nTweeting the current staging servers.')
+    #            api = tweepy.API(auth)
+    #            api.update_status('#Fortnite Version Uptate:\n\nPatch v'+str(staging)+' has been added to the pre-release staging servers. Epic is currently testing this update version, and will most likely release within the upcoming week(s).')
+    #            print('\nSuccesfully tweeted the staging servers.')
+    #            staging_servers()
+    #    else:
+    #        print("FAILED TO GRAB STAGING SERVERS DATA: URL DOWN")
+#
+    #    time.sleep(BotDelay)
 
 def weapons():
     #print('\nWhat weapon do you want to grab?')
@@ -2203,7 +2210,7 @@ def newcnew():
     if benbot == 'True':
         pass
     else:
-        newcnew_fnbrapi()
+        return newcnew_fnbrapi()
     centerline = 256
     try:
         shutil.rmtree('icons')
@@ -2444,7 +2451,8 @@ def newcnew():
 
     if MergeImagesAuto != 'False':
         print('\nMerging images...')
-        addwatermark()
+        if 'image' in mergewatermark:
+            addwatermark()
         merger(mergewatermark, loc1)
         response = requests.get('https://benbot.app/api/v1/status')
         version = response.json()['currentFortniteVersionNumber']
@@ -2673,10 +2681,10 @@ def dynpak2():
                 if 'Cosmetics.Source.ItemShop' in x:
                     text = 'Cosmetics.Source.ItemShop'
                     break
-                if '.BattlePass.Paid' in x:
+                elif '.BattlePass.Paid' in x:
                     text = f'Cosmetics.Source.Season{seasonnum}.BattlePass.Paid'
                     break
-                if 'Cosmetics.Set.' in x:
+                elif 'Cosmetics.Set.' in x:
                     # Creates Set
                     try:
                         set = i['set'].replace(' ', '')
@@ -2709,7 +2717,8 @@ def dynpak2():
 
     if MergeImagesAuto != 'False':
         print('\nMerging images...')
-        addwatermark()
+        if 'image' in mergewatermark:
+            addwatermark()
         merger(mergewatermark, loc1)
         response = requests.get('https://benbot.app/api/v1/status')
         version = response.json()['currentFortniteVersionNumber']
@@ -2724,12 +2733,13 @@ def dynpak2():
                     lol = len(os.listdir('icons'))
                     if mergewatermark == '':
                         lol = lol-1
+                    merger(loc1, mergewatermark)
                     try:
-                        api.update_with_media(f'merged/merged.jpg', f'[{namelol}] Found {lol} Cosmetics in Pak {paktrue}.')
+                        api.update_with_media(f'merged/merge.jpg', f'[{namelol}] Found {lol} Cosmetics in Pak {paktrue}.')
                     except:
                         print(Fore.YELLOW + '\nFile size is too big, compressing image.')
                         compressnewcosmetics_new(lol)
-                        api.update_with_media(f'merged/merged.jpg', f'[{namelol}] Found {lol} Cosmetics in Pak {paktrue}.')
+                        api.update_with_media(f'merged/merge.jpg', f'[{namelol}] Found {lol} Cosmetics in Pak {paktrue}.')
                         time.sleep(5)
                     print(Fore.GREEN + '\nTweeted image successfully!')
                 else:
@@ -3028,236 +3038,9 @@ def newiconsfnapi():
 
 def npcs():
     global showDescription
-
-    print('Do you want to generate all current NPCs or NPCs from this version?')
-    print('a = All NPCs\nn = New NPCs\n')
-    ask = input('>> ')
-    if ask == 'a':
-        print(Fore.CYAN + '\nGenerating all current NPCs...\n')
-
-        start = time.time()
-        response = requests.get('https://benbot.app/api/v1/files')
-
-        counter = 0
-
-        if showDescription == 'True' or 'False':
-            pass
-        else:
-            showDescription = 'False'
-
-        for i in response.json():
-            if i.startswith('FortniteGame/Plugins/GameFeatures/NPCLibrary/Content/NPCs/'):
-                if 'NPCCharacterData' in i:
-                    response = requests.get(f'https://benbot.app/api/v1/assetProperties?path={i}')
-                    x = response.json()['export_properties'][0]
-
-                    loc = x['POILocations']
-                    loc = str(loc)
-                    loc = loc.replace('Athena.Location.', '').replace("['", '').replace("']", '')
-                    name = x['DisplayName']['finalText']
-
-                    try:
-                        icon = x['SidePanelIcon']['assetPath']
-                    except:
-                        icon = ""
-
-                    if icon == "":
-                        icon = x['EntryListIcon']['assetPath']
-
-                    r = requests.get(f'https://benbot.app/api/v1/exportAsset?path={icon}&lang=en&noVariants=false&rawIcon=false', allow_redirects=True)
-                    open(f'cache/{name} icon.png', 'wb').write(r.content)
-
-                    print(
-                        f'{name} NPC:\n',
-                        f' - Found in {loc}'
-                    )
-
-                    h = f'{name} NPC:\n - Found in {loc}\n\n'
-
-                    background = Image.open(f'rarities/npc/background.png')
-                    border=Image.open(f'rarities/npc/border.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-
-                    img=Image.new("RGB",(512,512))
-                    img.paste(background)
-                    img.save('cache/temp.png')
-                    img=Image.open(f'cache/temp.png')
-
-                    foreground= Image.open(f'cache/{name} icon.png').resize((512, 512), Image.ANTIALIAS)
-                    img.paste(foreground, (0, 0), foreground)
-                    img.save('cache/temp.png')
-                    img.paste(border, (0, 0), border)
-                    img.save('cache/temp.png')
-
-                    #os.remove(f'cache/{name} icon.png')
-
-                    background = Image.open('cache/temp.png')
-
-                    loadFont = f'fonts/'+ imageFont
-
-                    if len(name) > 18:
-                        font=ImageFont.truetype(loadFont,51) 
-                    else:
-                        font=ImageFont.truetype(loadFont,57) 
-                    name1 = name.upper()
-                    namereal = f'{name1} NPC'
-
-                    w,h=font.getsize(namereal)
-                    draw=ImageDraw.Draw(background)
-                    w1, h1 = draw.textsize(namereal, font=font)
-                    draw.text(((512-w1)/2,406),namereal,font=font,fill='white')
-
-                    if showDescription != 'False':
-                        try:
-                            description = x['GeneralDescription']['finalText']
-                            font=ImageFont.truetype(loadFont,15)
-                            w,h=font.getsize(description)
-                            draw=ImageDraw.Draw(background)
-                            draw.text((10,9),description,font=font,fill='white')
-                        except:
-                            pass
-                    else:
-                        pass
-
-                    loc = f'Found in {loc}'
-
-                    loadFont = 'fonts/OpenSans-Regular.ttf'
-
-                    if len(loc) > 75:
-                        font = ImageFont.truetype(loadFont,9)
-                    else:
-                        font = ImageFont.truetype(loadFont,14)
-                    w,h=font.getsize(loc)
-                    draw=ImageDraw.Draw(background)
-                    w1, h1 = draw.textsize(loc, font=font)
-                    draw.text(((512-w1)/2,470),loc,font=font,fill='white')
-
-                    counter = counter + 1
-                    background.save(f'icons/{name} NPC.png')
-
-                    print('  - Loaded image!\n')
-
-        end = time.time()
-
-        print(f'Done loading images in {round(end - start, 2)} seconds!')
-        try:
-            shutil.rmtree('cache')
-            os.makedirs('cache')
-        except:
-            os.makedirs('cache')
-
-        time.sleep(5)
-    else:
-        response = requests.get('https://benbot.app/api/v1/status')
-        currentfnversion = response.json()['currentFortniteVersion']
-        currentfnversion = currentfnversion.replace('++Fortnite+Release-', '').replace('-CL-16593740-Windows', '')
-        print(Fore.CYAN + f'\nGenerating all new NPCs from the latest Fortnite Version ({currentfnversion})...\n')
-
-        start = time.time()
-        response = requests.get(f'https://benbot.app/api/v1/files/added')
-
-        counter = 0
-
-        if showDescription == 'True' or 'False':
-            pass
-        else:
-            showDescription = 'False'
-
-        for i in response.json():
-            if i.startswith('FortniteGame/Plugins/GameFeatures/NPCLibrary/Content/NPCs/'):
-                if 'NPCCharacterData' in i:
-                    response = requests.get(f'https://benbot.app/api/v1/assetProperties?path={i}')
-                    x = response.json()['export_properties'][0]
-
-                    loc = x['POILocations']
-                    loc = str(loc)
-                    loc = loc.replace('Athena.Location.', '').replace("['", '').replace("']", '')
-                    name = x['DisplayName']['finalText']
-
-                    try:
-                        icon = x['SidePanelIcon']['assetPath']
-                    except:
-                        icon = ""
-
-                    if icon == "":
-                        icon = x['EntryListIcon']['assetPath']
-
-                    r = requests.get(f'https://benbot.app/api/v1/exportAsset?path={icon}&lang=en&noVariants=false&rawIcon=false', allow_redirects=True)
-                    open(f'cache/{name} icon.png', 'wb').write(r.content)
-
-                    print(
-                        f'{name} NPC:\n',
-                        f' - Found in {loc}'
-                    )
-
-                    h = f'{name} NPC:\n - Found in {loc}\n\n'
-
-                    background = Image.open(f'rarities/npc/background.png')
-                    border=Image.open(f'rarities/npc/border.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-
-                    img=Image.new("RGB",(512,512))
-                    img.paste(background)
-                    img.save('cache/temp.png')
-                    img=Image.open(f'cache/temp.png')
-
-                    foreground= Image.open(f'cache/{name} icon.png').resize((512, 512), Image.ANTIALIAS)
-                    img.paste(foreground, (0, 0), foreground)
-                    img.save('cache/temp.png')
-                    img.paste(border, (0, 0), border)
-                    img.save('cache/temp.png')
-
-                    #os.remove(f'cache/{name} icon.png')
-
-                    background = Image.open('cache/temp.png')
-
-                    loadFont = f'fonts/'+ imageFont
-
-                    if len(name) > 18:
-                        font=ImageFont.truetype(loadFont,51) 
-                    else:
-                        font=ImageFont.truetype(loadFont,57) 
-                    name1 = name.upper()
-                    namereal = f'{name1} NPC'
-
-                    w,h=font.getsize(namereal)
-                    draw=ImageDraw.Draw(background)
-                    w1, h1 = draw.textsize(namereal, font=font)
-                    draw.text(((512-w1)/2,406),namereal,font=font,fill='white')
-
-                    if showDescription != 'False':
-                        try:
-                            description = x['GeneralDescription']['finalText']
-                            font=ImageFont.truetype(loadFont,15)
-                            w,h=font.getsize(description)
-                            draw=ImageDraw.Draw(background)
-                            draw.text((10,9),description,font=font,fill='white')
-                        except:
-                            pass
-                    else:
-                        pass
-
-                    loc = f'Found in {loc}'
-
-                    loadFont = 'fonts/OpenSans-Regular.ttf'
-
-                    if len(loc) > 75:
-                        font = ImageFont.truetype(loadFont,9)
-                    else:
-                        font = ImageFont.truetype(loadFont,14)
-                    w,h=font.getsize(loc)
-                    draw=ImageDraw.Draw(background)
-                    w1, h1 = draw.textsize(loc, font=font)
-                    draw.text(((512-w1)/2,470),loc,font=font,fill='white')
-
-                    counter = counter + 1
-                    background.save(f'icons/{name} NPC.png')
-
-                    print('  - Loaded image!\n')
-
-        end = time.time()
-
-        print(f'Done loading images in {round(end - start, 2)} seconds!')
-
-        time.sleep(5)
+    loadFont = 'fonts/'+imageFont
+    delete_contents()
+    return npcsdef(showDescription, imageFont, apikey, loadFont)
 
 def newcnew_fnbrapi():
     delete_contents()
