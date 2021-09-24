@@ -393,6 +393,17 @@ with open("settings.json") as settings:
     except:
         print(Fore.RED+f'Incorrect value for "Background Color", defaulting to "Blue"')
         BG_Color = '394ff7'
+
+    try:
+        sideFont = data['sideFont']
+        if sideFont != '':
+                print(Fore.GREEN+f'Loaded "Side Font" as "{sideFont}"')
+        else:
+            print(Fore.YELLOW+'Incorrect value for "Side Font", defaulting to OpenSans-Regular.ttf.')
+            sideFont = 'OpenSans-Regular.ttf'
+    except:
+        print(Fore.YELLOW+'Incorrect value for "Side Font", defaulting to OpenSans-Regular.ttf.')
+        sideFont = "OpenSans-Regular.ttf"
     
     sections_image = sections_image.title()
 
@@ -2017,7 +2028,7 @@ def newcbeta():
 
         fontSize = 4
 
-        loadFont = 'fonts/OpenSans-Regular.ttf'
+        loadFont = f'fonts/{sideFont}'
         desc = i["description"]
         if desc == None:
             desc = 'TBD'
@@ -2333,7 +2344,7 @@ def newcnew():
         else:
             desc = 'TBD'
 
-        loadFont = 'fonts/OpenSans-Regular.ttf'
+        loadFont = f'fonts/{sideFont}'
         
         set = i['setText']
         if set == None:
@@ -2389,7 +2400,7 @@ def newcnew():
 
         # Loads Item Set Text
         if set != None:
-            font=ImageFont.truetype(loadFont, 18)
+            font=ImageFont.truetype(loadFont, 15)
             draw=ImageDraw.Draw(background)
             draw.text(
                 (centerline, 500),
@@ -2602,7 +2613,7 @@ def dynpak2():
         else:
             desc = 'TBD'
 
-        loadFont = 'fonts/OpenSans-Regular.ttf' # Loads desc and other font
+        loadFont = f'fonts/{sideFont}' # Loads desc and other font
         
         set = i['setText']
         if set == None:
@@ -2751,7 +2762,7 @@ def dynpak2():
 def newiconsfnapi():
     print('Loaded New Icons | API = Fortnite-API\n')
     start = time.time()
-    print(Fore.YELLOW+'\nType the name of the cosmetic you want to grab below:\n')
+    print(Fore.YELLOW+'Type the name of the cosmetic you want to grab below:\n')
     ask = input(Fore.GREEN + '>> ')
 
     response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/search?name={ask}&lang={language}')
@@ -2773,268 +2784,196 @@ def newiconsfnapi():
         print(Fore.RED + f'Unable to retreive {ask}.')
         time.sleep(5)
         exit()
-
-    try:
-        print(Fore.BLUE + "Loading image for "+i["id"])
-    except:
-        print(Fore.RED + f'Unable to retreive {ask}.')
-        time.sleep(5)
-        exit()
+    centerline = 256
+    print(Fore.BLUE + f"Loading image for {i['id']}")
     if useFeaturedIfAvaliable == 'True':
         if i["images"]["featured"] != None:
             url = i["images"]["featured"]
         else:
-            url = i["images"]["icon"]
-    elif useFeaturedIfAvaliable == 'False':
-        url = i["images"]["icon"]
-        
-    placeholderImg = Image.open('assets/doNotDelete.png')
-    r = requests.get(url, allow_redirects=True)
-    open(f'cache/{i["id"]}.png', 'wb').write(r.content)
-    iconImg = Image.open(f'cache/{i["id"]}.png')
-    try:
-        diff = ImageChops.difference(placeholderImg, iconImg)
-    except:
-        print(Fore.RED + 'Could not grab icon as there is an error with the image.')
-        time.sleep(5)
-        exit()
-    if diff.getbbox():
-        r = requests.get(url, allow_redirects=True)
-        open(f'cache/{i["id"]}.png', 'wb').write(r.content)
-        img=Image.open(f'cache/{i["id"]}.png')
-        img=img.resize((512,512),PIL.Image.ANTIALIAS)
-        img.save(f'cache/{i["id"]}.png')
+            if i['images']['icon'] != None:
+                url = i['images']['icon']
+            else:
+                url = 'https://i.ibb.co/KyvMydQ/do-Not-Delete.png'
     else:
-        try:
-            r = requests.get(placeholderUrl, allow_redirects=True)
-            open(f'cache/{i["id"]}.png', 'wb').write(r.content)
-            img=Image.open(f'cache/{i["id"]}.png')
-            img=img.resize((512,512),PIL.Image.ANTIALIAS)
-            img.save(f'cache/{i["id"]}.png')
-        except:
-            print('')
+        if i['images']['icon'] != None:
+                url = i['images']['icon']
+        else:
+            url = 'https://i.ibb.co/KyvMydQ/do-Not-Delete.png'
+    try:
+        r = requests.get(url)
+    except:
+        print('a')
+    open('cache/icontemp.png', 'wb').write(r.content)
+    iconImg = Image.open('cache/icontemp.png')
+    iconImg.resize((512,512),PIL.Image.ANTIALIAS)
+
+
     rarity = i["rarity"]['value']
-    foreground = Image.open('cache/'+i["id"]+'.png')
+    rarity = rarity.lower()
+    
     try:
         background = Image.open(f'rarities/{iconType}/{rarity}.png')
-        border = Image.open(f'rarities/{iconType}/border{rarity}.png')
+        border=Image.open(f'rarities/{iconType}/border{rarity}.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
     except:
         background = Image.open(f'rarities/{iconType}/common.png')
-        border = Image.open(f'rarities/{iconType}/bordercommon.png')
-    Image.alpha_composite(background, foreground).save('cache/F'+i["id"]+'.png')
-    os.remove('cache/'+i["id"]+'.png')
-    background = Image.open('cache/F'+i["id"]+'.png')
-    Image.alpha_composite(background, border).save('cache/BLANK'+i["id"]+'.png')
-    img=Image.open('cache/BLANK'+i["id"]+'.png')
-    name1= i["name"]
+        border=Image.open(f'rarities/{iconType}/bordercommon.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+    img=Image.new("RGB",(512,512))
+    img.paste(background)
+    img.save('cache/temp.png')
+    img=Image.open(f'cache/temp.png')
+    foreground= Image.open('cache/icontemp.png').resize((512, 512), Image.ANTIALIAS).convert('RGBA')
+    img.paste(foreground, (0, 0), foreground)
+    img.save('cache/temp.png')
+    img.paste(border, (0, 0), border)
+    img.save('cache/temp.png')
+    background = Image.open('cache/temp.png')
+
+    # Loads Name
+    if i['name'] != None:
+        name = i['name']
+    else:
+        name = 'TBD'
+    
     loadFont = 'fonts/'+imageFont
-    if len(name1) > 20:
-        fontSize = 30
-    if len(name1) > 30:
-        fontSize = 2
-    if iconType == 'new':
-        descup = 'undefined'
-        xx1 = len(name1)
-        if xx1>17:
-            font=ImageFont.truetype(loadFont,45) 
-            print('Name is greater than 16 characters.\n')
-            descup = 'true'
-        else:
-            font=ImageFont.truetype(loadFont,60) 
-            descup = 'false'
-        name1 = name1.upper()
-        w,h=font.getsize(name1)
-        draw=ImageDraw.Draw(img)
-        w1, h1 = draw.textsize(name1, font=font)
-        draw.text(((512-w1)/2,406),name1,font=font,fill='white')
 
-        fontSize = 4
+    x = len(name)
 
-        loadFont = 'fonts/OpenSans-Regular.ttf'
-        desc = i["description"]
-        xx = len(desc)
-        desc1 = 'a'
-        if xx>35:
-            desc1 = ''
-            # Description is greater than 35. #
-        if desc1 != '':
-            font=ImageFont.truetype(loadFont,16)
-            w,h=font.getsize(desc)
-            draw=ImageDraw.Draw(img)
-            w1, h1 = draw.textsize(desc, font=font)
-        else:
+    if x>17:
+        font=ImageFont.truetype(loadFont,45)
+        movedescup = 'true'
+        loc = 440 # Puts location at a higher level
+    else:
+        font=ImageFont.truetype(loadFont,60) 
+        movedescup = 'false'
+        loc = 450 # Puts location at a lower level
+
+    name = name.upper() 
+    w,h=font.getsize(name)
+    draw=ImageDraw.Draw(background)
+    w1, h1 = draw.textsize(name, font=font)
+    draw.text((centerline,loc),name,font=font,fill='white', anchor='ms') # Writes name
+
+    # Loads Desc
+    if i['description'] != None:
+        desc = i['description']
+    else:
+        desc = 'TBD'
+
+    loadFont = f'fonts/{sideFont}'
+    
+    try:
+        set = i['set']['text']
+    except:
+        set = None
+    if set == None:
+        set = None
+    else:
+        set = set
+
+    x = len(desc)
+    if x>95:
+        font=ImageFont.truetype(loadFont,10)
+        draw=ImageDraw.Draw(background)
+        line = 470
+        draw.text(
+            (centerline,line),
+            desc,
+            font=font,
+            fill='white', 
+            anchor='ms') # Writes name
+    else:
+        if x>45:
+            #print('above')
             font=ImageFont.truetype(loadFont,14)
-            w,h=font.getsize(desc)
-            draw=ImageDraw.Draw(img)
-            w1, h1 = draw.textsize(desc, font=font)
-
-            if xx>75:
-                desc1 = 'aaaa'
+            draw=ImageDraw.Draw(background)
+            if set != None:
+                line = 474
             else:
-                pass
-        bigaf = ''
-        # I should comment some of this stuff #
-        if i['set']['text'] != None:
-            if desc1 != '':
-                if descup != 'true':
-                    if desc1 == 'aaaa':
-                        # IF DESC IS BIG AF THEN DO THIS #
-                        bigaf = '1'
-                        pass
-                    else:
-                        # This means it is not big af
-                        draw.text(((512-w1)/2,455),desc,font=font,fill='white')
-                else:
-                    # This means if it equals none then it 
-                    draw.text(((512-w1)/2,454),desc,font=font,fill='white')
-            else:
-                if desc1 == 'aaaa':
-                    pass
-                else:
-                   # Idek just do this crap #
-                    if name1 != 'PEELY':
-                        draw.text(((512-w1)/2,460),desc,font=font,fill='white')
-                    else:
-                        bigaf = '69'
-                        pass
+                line = 480
+            if movedescup == 'true':
+                line = line-8
+            draw.text(
+                (centerline,line),
+                desc,
+                font=font,
+                fill='white', 
+                anchor='ms') # Writes name
         else:
-            if desc1 != '':
-                if desc1 == 'aaaa':
-                    if xx<80:
-                        font=ImageFont.truetype(loadFont,10)
-                        w,h=font.getsize(desc)
-                        draw=ImageDraw.Draw(img)
-                        w1, h1 = draw.textsize(desc, font=font)
-                        draw.text(((512-w1)/2,465),desc,font=font,fill='white')
-                    else:
-                        pass
-                else:
-                    draw.text(((512-w1)/2,465),desc,font=font,fill='white')
-            else:
-                draw.text(((512-w1)/2,470),desc,font=font,fill='white')
-
-        if i['set']['text'] != None:
-            set = i['set']['text']
+            #print('below')
             font=ImageFont.truetype(loadFont,16)
-            w,h=font.getsize(set)
-            draw=ImageDraw.Draw(img)
-            w1, h1 = draw.textsize(set, font=font)
-            if desc1 != '':
-                if bigaf == '1':
-                    draw.text(((512-w1)/2,465),set,font=font,fill='white')
-                else:
-                    # Alright, this should be if the description is too big then it does this i guess #
-                    draw.text(((512-w1)/2,480),set,font=font,fill='white')
+            draw=ImageDraw.Draw(background)
+            if set != None:
+                line = 475
             else:
-                # Same thing as the one above but just adding an else because if its normal its not '' #
-                if bigaf != '69':
-                    draw.text(((512-w1)/2,480),set,font=font,fill='white')
-                else:
-                    draw.text(((512-w1)/2,465),set,font=font,fill='white')
+                line = 480
 
+            if movedescup == 'true':
+                line = line-2
+            draw.text(
+                (centerline,line),
+                desc,
+                font=font,
+                fill='white', 
+                anchor='ms') # Writes name   
 
-        loadFont = 'fonts/'+imageFont
+    # Loads Item Set Text
+    if set != None:
+        font=ImageFont.truetype(loadFont, 15)
+        draw=ImageDraw.Draw(background)
+        draw.text(
+            (centerline, 500),
+            set,
+            font=font,
+            fill='white',
+            anchor='ms') # Writes set
 
-        id = i["id"]
+    # Loads watermark
+    loadFont = 'fonts/'+imageFont # Puts font back to original
+    if watermark != '':
+        font=ImageFont.truetype(loadFont,25)
+        draw=ImageDraw.Draw(background)
+        draw.text((10,9),watermark,font=font,fill='white')
 
-        #showitemsource = 'True'
-
-        if watermark != '':
-            font=ImageFont.truetype(loadFont,25)
-            w,h=font.getsize(watermark)
-            draw=ImageDraw.Draw(img)
-            draw.text((10,9),watermark,font=font,fill='white')
-
-        i = response.json()['data']
-        
-        shop = ''
-        if showitemsource != 'False':
+    # Loads gameplay tag
+    if showitemsource != 'False':
+        text = ''
+        try:
             for x in i['gameplayTags']:
-                result = x.find('Cosmetics.Source.ItemShop')
-                if result != -1:
-                    print('Found an Item Shop tag.')
-                    shop = '1'
-                else:
-                    pass
-
-            if shop != '1':
-                shop = '69'
-                print('did not find an item shop tag')
-
-            if shop == '69':
-                for x in i['gameplayTags']:
-                    result = x.find('BattlePass.Paid')
-                    if result != -1:
-                        print('Found a battle pass tag.')
-                        shop = '2'
-                        resp1 = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/search?name={ask}')
-                        seasonnum = resp1.json()['data']['introduction']['backendValue']
-                        break
-                if shop != '2':
-                    print('Did not find a battle pass tag, skipping')
-                    shop = '0'
-
-            if shop == '0':
-                for x in i['gameplayTags']:
-                    result = x.find('Cosmetics.Set.')
-                    if result != -1:
-                        print('Found a set tag since the other two tabs dont work lol')
-                        shop = '3'
-                        break
-                if shop != '3':
-                    print('could not find ANY tags.')
-                    shop = '0'
-
-
-            source = i['gameplayTags'][0]
-
-            if name1 == 'VENOM':
-                source = i['gameplayTags'][2]
-        else:
+                if 'Cosmetics.Source.ItemShop' in x:
+                    text = 'Cosmetics.Source.ItemShop'
+                    break
+                elif '.BattlePass.Paid' in x:
+                    text = f'Cosmetics.Source.Season{seasonnum}.BattlePass.Paid'
+                    break
+                elif 'Cosmetics.Set.' in x:
+                    # Creates Set
+                    try:
+                        set = i['set']['value'].replace(' ', '')
+                    except:
+                        pass
+                    text = f'Cosmetics.Set.{set}'
+                    break
+        except:
             pass
-            
-        if showitemsource == 'True':
-            font=ImageFont.truetype(loadFont,15)
-            thing1 = source.replace('Cosmetics.Source.', '')
-            #x = len(thing1)
-            if shop == '1':
-                thing1 = 'Cosmetics.Source.ItemShop'
-            elif shop == '2':
-                thing1 = f'Season{seasonnum}.BattlePass.Paid'
-            elif shop == '0':
-                thing1 = ''
-            elif shop == '3':
-                set = i['set']['value']
-                set1 = set.replace(' ', '')
-                set1 = set1.title()
-                thing1 = f'Cosmetics.Set.{set1}'
-            if thing1 != '0':
-                if watermark != '':
-                    thing = f'{thing1}'
-                    w,h=font.getsize(thing)
-                    draw=ImageDraw.Draw(img)
-                    draw.text((10,30),thing,font=font,fill='white')
-                else:
-                    thing = f'{thing1}'
-                    w,h=font.getsize(thing)
-                    draw=ImageDraw.Draw(img)
-                    draw.text((10,10),thing,font=font,fill='white')
-            else:
-                print('\nNot writing source as there is none.')
+        font=ImageFont.truetype(loadFont, 15)
+        if watermark != '':
+            draw=ImageDraw.Draw(background)
+            draw.text((10,30),text,font=font,fill='white')
         else:
-            print('Not writing source.')
+            if text != None or text != '':
+                draw=ImageDraw.Draw(background)
+                draw.text((10,10),text,font=font,fill='white')
+    background.save('icons/'+i["id"]+'.png')
+    end = time.time()
+
+    # Finishing Time
+    print(Fore.CYAN + f"Generated image for {i['id']} in {round(end - start, 2)} seconds.")
         
         
-    os.remove('cache/BLANK'+i["id"]+'.png')
-    img.save('icons/'+i["id"]+'.png')
-    img.show()
-    os.remove('cache/F'+i["id"]+'.png')
-    print(Fore.GREEN + "\nDone loading image!")
+    background.show()
     end = time.time()
     print(Fore.GREEN+"")
-    print("!  !  !  !  !  !  !")
-    print(f"IMAGE GENERATING COMPLETE - Generated image in {round(end - start, 2)} seconds!")
-    print("!  !  !  !  !  !  !")
+    newiconsfnapi()
 
 def npcs():
     global showDescription
@@ -3137,7 +3076,7 @@ def newcnew_fnbrapi():
         else:
             desc = 'TBD'
 
-        loadFont = 'fonts/OpenSans-Regular.ttf'
+        loadFont = f'fonts/{sideFont}'
         
         try:
             set = i['set']['text']
@@ -3196,7 +3135,7 @@ def newcnew_fnbrapi():
 
         # Loads Item Set Text
         if set != None:
-            font=ImageFont.truetype(loadFont, 18)
+            font=ImageFont.truetype(loadFont, 15)
             draw=ImageDraw.Draw(background)
             draw.text(
                 (centerline, 500),
@@ -3408,7 +3347,7 @@ def set_search():
     
             fontSize = 4
     
-            loadFont = 'fonts/OpenSans-Regular.ttf'
+            loadFont = f'fonts/{sideFont}'
             desc = i["description"]
 
             if desc != None:
