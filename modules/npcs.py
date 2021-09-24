@@ -17,7 +17,7 @@ def add_border(input_image, output_image, border, color=0): # Adds border to ima
 
 def npcsdef(showDescription, imageFont, apikey, loadFont):
     print('How do you want to use the NPC bot?\n')
-    print('a = Generate all NPCs icons\nc = Generate current NPCs icons\nloc = Generate NPC locations')
+    print('a = Generate all NPCs icons\nc = Generate current NPCs icons\nloc = Generate a image of NPC locations')
     ask = input('>> ')
     if ask == 'a':
         print(Fore.CYAN + '\nGenerating all current NPCs...\n')
@@ -250,6 +250,10 @@ def npcsdef(showDescription, imageFont, apikey, loadFont):
             os.remove('Assets/plotted_done.png')
         except:
             pass
+            if apikey == '':
+                print('Please enter an API key from fortniteapi.io to run this function')
+                time.sleep(2)
+                exit()
         headers = {'Authorization': apikey}
         try:
             mapimage = Image.open('Assets/Apollo_Terrain_Minimap.png')
@@ -263,11 +267,6 @@ def npcsdef(showDescription, imageFont, apikey, loadFont):
         img.save('Assets/cache.png')
 
         print('\nGenerating all current NPC plotted locations... Please give us a moment.')
-
-        if apikey == '':
-            print('API key is none. Can not run.')
-            time.sleep(2)
-            exit()
 
         response = requests.get('https://fortniteapi.io/v2/game/npc/list?enabled=true&scale=2048', headers=headers) # I could of just exported the assets of the file and scale it but im lazy so yea
         
