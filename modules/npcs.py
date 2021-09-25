@@ -295,11 +295,11 @@ def npcsdef(showDescription, imageFont, apikey, loadFont):
                 font=ImageFont.truetype(loadFont,25)
                 draw=ImageDraw.Draw(mapimage)
                 if namereplace != True:
-                    draw.text((x+25,y-12),f'{name}',font=font,fill=(255, 201, 23), stroke_width=3, stroke_fill=(0, 0, 0), anchor='ms')
+                    draw.text((x+3,y-50),f'{name}',font=font,fill=(255, 201, 23), stroke_width=3, stroke_fill=(0, 0, 0), anchor='ms')
                 else:
-                    draw.text((x+25,y-42),f'{name}',font=font,fill=(255, 201, 23), stroke_width=3, stroke_fill=(0, 0, 0), anchor='ms')
+                    draw.text((x+3,y-80),f'{name}',font=font,fill=(255, 201, 23), stroke_width=3, stroke_fill=(0, 0, 0), anchor='ms')
                 foreground= Image.open('cache/temp.png').resize((60, 60), Image.ANTIALIAS)
-                mapimage.paste(foreground, (x, y), foreground)
+                mapimage.paste(foreground, (x-30, y-35), foreground)
                 mapimage.save('Assets/cache.png')
                 #print(f'Point {point} -  {x}, {y}') # Prints Locations
             except:
