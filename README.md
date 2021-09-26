@@ -1,8 +1,8 @@
 # AutoLeak
 
-AutoLeak is a terminal-based utility to generate all of the latest leaks in Fortnite, with some bonus features as well.
+AutoLeak is a Terminal-Based utility that interacts with API's. AutoLeak can generate leaked cosmetics, merge images, search for cosmetics in a dynamic pak file, and interact with Twitter, if you have Twitter API keys. AutoLeak is also fully customizable, as you can add watermarks, change the API you want to use, choose one of the three icon types we offer, or change the placeholder image of a cosmetic. It's all up to YOU on how you want AutoLeak to look like!
 
-Make sure to check out our Wiki, with info on how to utilitize [**settings.json**](https://github.com/FortniteFevers/AutoLeak/wiki/Settings.json-Info)
+Make sure to check out our Wiki, with info on how to utilitize [**settings.json**](https://github.com/FortniteFevers/AutoLeak/wiki/Settings.json-Info), and information on the latest AutoLeak versions.
 
 ---
 (this README is in beta, not finished yet.)
