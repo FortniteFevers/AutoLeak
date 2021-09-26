@@ -10,6 +10,11 @@ Make sure to check out our Wiki, with info on how to utilitize [**settings.json*
 # Whats new in version 1.4?
 - [Click me for a list of 1.4 changes and fixes.](https://github.com/FortniteFevers/AutoLeak/wiki/1.4-Changes)
 
+# Are you having issues with modules not being installed?
+- [Click me for a tutorial on how to fix this!]()
+
+   ^ I'll add a link to this once I publish the tutorial
+
 
 # Features
 AutoLeak is a program with many features.
