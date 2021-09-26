@@ -2986,7 +2986,7 @@ def newcnew_fnbrapi():
     print('Cleared Contents\nLoaded New Icons | API = Fortnite-API')
     
     centerline = 256
-    response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/new?lang={language}')
+    response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/new?language={language}')
     new = response.json()['data']
     print(f"Version = {new['build']}\n")
  
