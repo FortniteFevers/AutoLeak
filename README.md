@@ -46,3 +46,5 @@ After this, run 'startprogram.bat' and enter in a number (Each number correlates
 # Languages
 The following languages are supported: ar / de / en / es / es-419 / fr / it / ja / ko / pl / pt-BR / ru / tr / zh-CN / zh-Hant
 - Change these within your settings.json file!
+
+<em>AutoLeak wouldn't be what it is by these incredible APIs. [Fortnite-API](https://fortnite-api.com/), [BenBot](https://benbot.stoplight.io/docs/benbot-docs), and [Fortniteapi.io](https://fortniteapi.io/).</em>
