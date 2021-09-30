@@ -192,14 +192,14 @@ with open("settings.json") as settings:
 
     try:
         iconType = data["iconType"]
-        if iconType == 'standard' or iconType == 'clean' or iconType == 'new':
+        if iconType == 'standard' or iconType == 'clean' or iconType == 'new' or iconType == 'cataba':
             print(Fore.GREEN + 'Loaded "iconType" as "'+iconType+'"')
         else:
-            iconType = 'standard'
-            print(Fore.YELLOW + 'Incorrect value for iconType was given so I have loaded "iconType" as "standard"')
+            iconType = 'new'
+            print(Fore.YELLOW + 'Incorrect value for iconType was given so I have loaded "iconType" as "new"')
     except:
-        iconType = 'standard'
-        print(Fore.RED + 'Failed to load "iconType", defaulted to "standard"')
+        iconType = 'new'
+        print(Fore.RED + 'Failed to load "iconType", defaulted to "new"')
 
     try:
         benbot = data['BenBot']
@@ -419,206 +419,80 @@ headers = {'Authorization': apikey}
 
 # Defines update mode
 def update_mode():
-    
-    #Grabs Build
     if benbot == 'False':
-        response = requests.get('https://fortnite-api.com/v2/aes')
-        updateCompare = response.json()['data']['build']
-    else:
-        response = requests.get('https://benbot.app/api/v1/newCosmetics')
-        updateCompare = response.json()['currentVersion']
+        response = requests.get('https://fortnite-api.com/v2/cosmetics/br/new')
+        oldhash = response.json()['data']['hash']
 
-    # Grabes AES
-    if benbot == 'False':
-        aesCompare = response.json()['data']['mainKey']
-    else:
-        rrr = requests.get('https://benbot.app/api/v1/aes')
-        aesCompate = rrr.json()['mainKey']
+        count = 1
 
-    count = 1
-    initialCheckDelay = BotDelay
-    while 1: # While 1 checks for a Fortnite Update
-        if benbot == 'False':
-            response = requests.get('https://fortnite-api.com/v2/aes')
-        else:
-            response = requests.get('https://benbot.app/api/v1/newCosmetics')
-        if response:
-            print(Fore.YELLOW+ f'Waiting for Fortnite update -> [Count: {count}] BenBot = {benbot}')
-            if benbot == 'False':
-                status = response.json()["status"]
-                if status != 200:
-                    if status == 503:
-                        error = response.json()["error"]
-                        print(Fore.RED + f"ERROR: {error} please wait...")
-                    else:
-                        print(Fore.RED + "Error in AES Endpoint (Status is not 200 or 503) - Retrying... (This is an error with fortnite-api.com)")
-                    time.sleep(initialCheckDelay)
-            else:
-                if benbot == 'False':
-                    versionLoop = response.json()["data"]["build"]
-                else:
-                    versionLoop = response.json()['currentVersion']
+        while 1:
+            response = requests.get('https://fortnite-api.com/v2/cosmetics/br/new')
+            if response:
+                try:
+                    newhash = response.json()['data']['hash'] 
+                except:
+                    catabaupdate()
+                print(f'Checking for a change in cosmetics... ({count})')
                 count = count + 1
-                if updateCompare != versionLoop:
-                    while 2: # If it detects an update, THEN post build and map.
-                        print("")
-                        print(Fore.GREEN+"Detected windows update! Starting "+name+"...")
+                if newhash != oldhash:
+                    print('A new update has been pushed. Generating cosmetics.')
+                    if iconType == 'new':
+                        return newcnew()
+                    elif iconType == 'standard':
+                        return generate_cosmetics()
+                    elif iconType == 'clean':
+                        return generate_cosmetics()
+                    elif iconType == 'cataba':
+                        catabaicons()
+                    
+                    if automergetweet == 'True':
+                        try:
+                            api.update_with_media('merged/merge.jpg', 'A new update has been pushed out, heres all of the new cosmetics:')
+                        except:
+                            compressnewcosmetics_new()
+                            api.update_with_media('merged/merge.jpg', 'A new update has been pushed out, heres all of the new cosmetics:')
+                        print('Tweeted new cosmetics')
+                    print('Done generating cosmetics.')
+            else:
+                print("FAILED TO GRAB NOTICES DATA: URL DOWN")
+            time.sleep(BotDelay)
+    if benbot == 'True':
+        response = requests.get('https://benbot.app/api/v1/newCosmetics')
+        currentv = response.json()['currentVersion']
 
-                        if tweetUpdate == 'True':
-                            api.update_status('['+name+'] New Update Detected!\n\n'+str(versionLoop)+'\n\n'+footer)
-                            print(Fore.GREEN+"Tweeted 'Status 1' (Includes: Update notification)")
+        count = 1
 
-                        #==========#
-
-                        if tweetUpdate == 'True':
-                            try:
-                                #=== MAP ===#
-                                print('\nTweeting map...')
-                                response = requests.get('https://fortnite-api.com/v1/map')
-                                map = response.json()['data']['images']['blank']
-                                r = requests.get(map, allow_redirects=True)
-                                open('map.png', 'wb').write(r.content)
-                                print("Opened map.png")
-                                img=Image.open('map.png')
-                                img=img.resize((1200,1200),PIL.Image.ANTIALIAS)
-                                img.save('map.png')
-                                response = requests.get('https://benbot.app/api/v1/status')
-                                version = response.json()['currentFortniteVersionNumber']
-                                api.update_with_media('smallmap.png', f'#Fortnite Map Update:\n\nBattle Royale map for v{version}0.')
-                                #=== MAP ===#
-                            except:
-                                pass
-                            try:
-                                #=== VERSIONBOT ===#
-                                response = requests.get('https://benbot.app/api/v1/aes')
-                                aes = response.json()['mainKey']
-                                response = requests.get('https://benbot.app/api/v1/status')
-                                version = response.json()['currentFortniteVersionNumber']
-                                build = response.json()['currentFortniteVersion']
-                                paks = response.json()['totalPakCount']
-                                dynamicpaks = response.json()['dynamicPakCount']
-                                print(f'\nThe current version v'+str(version)+'0'+' has been succesfully retrived!')
-                                print('The AES key, Paks, and Build have now been retreived also.')
-                                time.sleep(1)
-                                api.update_status('A #Fortnite update has been detected... \n\nVersion Number: v'+str(version)+'0'+'\n\nBuild: '+str(build)+':\n\n'+str(paks)+' - Pak Files\n\n'+str(dynamicpaks)+' - Dynamic Pak Files'+'\n\n'+str(aes)+' - AES key')
-                                #=== VERSIONBOT ===#
-                            except:
-                                pass
-                        count = 1 
-                        while 3: # While 3 posts the AES key.
-                            if benbot == 'False':
-                                response = requests.get('https://fortnite-api.com/v2/aes')
-                            else:
-                                response = requests.get('https://benbot.app/api/v1/aes')
-                            if response:
-                                if benbot == 'False':
-                                    status = response.json()["status"]
-                                    if status != 200:
-                                        if status == 503:
-                                            error = response.json()["error"]
-                                            print(Fore.RED + f"ERROR: {error} please wait...")
-                                        else:
-                                            print(Fore.RED + "Error in AES Endpoint (Status is not 200 or 503) - Retrying... (This is an error with fortnite-api.com)")
-                                        time.sleep(initialCheckDelay)
-                                else:
-
-                                    print(Fore.YELLOW+ f"Waiting for AES update -> [Count: "+str(count)+"]")
-
-                                    if benbot == 'False':
-                                        mainKey = response.json()["data"]["mainKey"]
-                                        mainKeyVersion1 = response.json()["data"]["build"].replace('++Fortnite+Release-', '')
-                                        mainKeyVersion = mainKeyVersion1.replace('-Windows', '')
-                                    else:
-                                        mainKey = response.json()["mainKey"]
-                                        mainKeyVersion1 = response.json()["version"].replace('++Fortnite+Release-', '')
-                                        mainKeyVersion = mainKeyVersion1.replace('-Windows', '')
-                                    count = count + 1
-
-                                    if aesCompare != mainKey:
-
-                                        print(Fore.GREEN+"Detected aes update!")
-
-                                        if tweetAes == 'True':
-                                            api.update_status('['+name+'] AES Key for v'+str(mainKeyVersion)+':\n\n0x'+str(mainKey)+'\n\n'+footer)
-                                            print(Fore.GREEN + "Tweeted 'Status 2' (Includes: AES Key)")
-
-                                        count = 1
-                                        while 4: # While 4 checks if BenBot and/or Fortnite-API has updated with the new cosmetics.
-                                            if benbot == 'False' or 'false':
-                                                print('Loaded Fortnite-API.')
-                                                response = requests.get('https://fortnite-api.com/v2/cosmetics/br/new?language='+language)
-                                                if response:
-                                                    status = response.json()["status"]
-                                                    if status != 200:
-                                                        if status == 503:
-                                                            error = response.json()["error"]
-                                                            print(Fore.RED + f"ERROR: {error} please wait...")
-                                                        else:
-                                                            print(Fore.RED + "Error in Cosmetics Endpoint (Status is not 200 or 503) - Retrying... (This is an error with fortnite-api.com)")
-                                                        time.sleep(initialCheckDelay)
-                                                    else:
-
-                                                        print(Fore.YELLOW+ "Waiting for endpoint update -> [Count: "+str(count)+"]")
-
-                                                        response = requests.get('https://fortnite-api.com/v2/cosmetics/br/new?language='+language)
-                                                        newBuild = response.json()["data"]["build"]
-
-                                                        count = count + 1
-                                                        if versionLoop == newBuild:
-                                                            generate_cosmetics()
-                                                            return
-
-                                                        else:
-                                                            time.sleep(initialCheckDelay)
-
-                                                else:
-                                                    print(Fore.RED + "Error in COSMETICS Endpoint (Page Down) - Retrying... (This is an error with fortnite-api.com)")
-                                                    time.sleep(initialCheckDelay)
-                                            else: # Then loads BenBot to generate the new cosmetics.
-                                                print('Loaded BenBot.')
-                                                response = requests.get('https://benbot.app/api/v1/newCosmetics')
-                                                if response:
-                                                    currentVersion = response.json()["currentVersion"]
-                                                    oldVersion = response.json()['previousVersion']
-
-                                                    # If the old version does NOT equal the current version, then an error has occured as the API should of updated already.
-
-                                                    if oldVersion != currentVersion:
-                                                        if currentVersion == oldVersion:
-                                                            print(Fore.RED + f"ERROR: please wait...")
-                                                        else:
-                                                            print(Fore.RED + "Error in Cosmetics Endpoint (Status is not 200 or 503) - Retrying... (This is an error with BenBot...)")
-                                                        time.sleep(initialCheckDelay)
-                                                    
-                                                    # Everything went to plan, so do this now.
-                                                    else:
-                                                        print(Fore.YELLOW+ "Waiting for endpoint update -> [Count: "+str(count)+"]")
-
-                                                        response = requests.get('https://benbot.app/api/v1/newCosmetics')
-                                                        newBuild = response.json()["currentVersion"]
-
-                                                        count = count + 1
-                                                        if versionLoop == newBuild:
-                                                            generate_cosmetics()
-                                                            return
-
-                                                        else:
-                                                            time.sleep(initialCheckDelay)
-
-                                                else:
-                                                    print(Fore.RED + "Error in COSMETICS Endpoint (Page Down) - Retrying... (This is an error with fortnite-api.com)")
-                                                    time.sleep(initialCheckDelay)
-                                                
-
-                                    time.sleep(initialCheckDelay)
-                            else:
-                                print(Fore.RED + "Error in AES Endpoint 2 (Page Down) - Retrying... (This is an error with fortnite-api.com)")
-                                time.sleep(initialCheckDelay)
-
-                time.sleep(initialCheckDelay)
-        else:
-            print(Fore.RED + "Error in AES Endpoint 1 (Page Down) - Retrying... (This is an error with fortnite-api.com)")
-            time.sleep(initialCheckDelay)
+        while 1:
+            response = requests.get('https://benbot.app/api/v1/newCosmetics')
+            if response:
+                try:
+                    previousv = response.json()['previousVersion']
+                except:
+                    catabaupdate()
+                print(f'Checking for a change in cosmetics... ({count})')
+                count = count + 1
+                if previousv == currentv:
+                    print('A new update has been pushed. Generating cosmetics.')
+                    if iconType == 'new':
+                        return newcnew()
+                    elif iconType == 'standard':
+                        return generate_cosmetics()
+                    elif iconType == 'clean':
+                        return generate_cosmetics()
+                    elif iconType == 'cataba':
+                        catabaicons()
+                    
+                    if automergetweet == 'True':
+                        try:
+                            api.update_with_media('merged/merge.jpg', 'A new update has been pushed out, heres all of the new cosmetics:')
+                        except:
+                            compressnewcosmetics_new()
+                            api.update_with_media('merged/merge.jpg', 'A new update has been pushed out, heres all of the new cosmetics:')
+                        print('Tweeted new cosmetics')
+                    print('Done generating cosmetics.')
+            else:
+                print("FAILED TO GRAB NOTICES DATA: URL DOWN")
+            time.sleep(BotDelay)
 
 def generate_cosmetics():
     if iconType == 'new':
@@ -626,6 +500,10 @@ def generate_cosmetics():
         exit()
     else:
         pass
+
+    if iconType == 'cataba':
+        return catabaicons()
+
     if benbot == 'False':
             print('Loading Fortnite-API...\n')
             fontSize = 40
@@ -1006,6 +884,8 @@ def tweet_build():
 def search_cosmetic():
     if iconType == 'new':
         newcbeta()
+    elif iconType == 'cataba':
+        return catabasearch()
     else:
         pass
     fontSize = 40
@@ -2986,7 +2866,7 @@ def newcnew_fnbrapi():
     print('Cleared Contents\nLoaded New Icons | API = Fortnite-API')
     
     centerline = 256
-    response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/new?language={language}')
+    response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/new?lang={language}')
     new = response.json()['data']
     print(f"Version = {new['build']}\n")
  
@@ -3621,7 +3501,338 @@ def set_search():
 
     set_search()
 
+def catabaupdate():
+    response = requests.get('https://fortnite-api.com/v2/cosmetics/br/new')
+    oldhash = response.json()['data']['hash']
 
+    count = 1
+
+    while 1:
+        response = requests.get('https://fortnite-api.com/v2/cosmetics/br/new')
+        if response:
+            try:
+                newhash = response.json()['data']['hash'] 
+            except:
+                catabaupdate()
+            print(f'Checking for a change in cosmetics... ({count})')
+            count = count + 1
+            if newhash != oldhash:
+                print('A new update has been pushed. Generating cosmetics.')
+                catabaicons()
+                try:
+                    api.update_with_media('merged/merge.jpg', 'A new update has been pushed out, heres all of the new cosmetics:')
+                except:
+                    compressnewcosmetics_new()
+                    api.update_with_media('merged/merge.jpg', 'A new update has been pushed out, heres all of the new cosmetics:')
+                print('Done :)')
+                return catabaupdate()
+        else:
+            print("FAILED TO GRAB NOTICES DATA: URL DOWN")
+        time.sleep(5)
+
+def catabaicons():
+    delete_contents()
+    print(Fore.YELLOW + 'THIS IS A WORK IN PROGRESS, NOT FULLY FINISHED YET.' + Fore.GREEN)
+    if benbot == 'False':
+        response = requests.get('https://fortnite-api.com/v2/cosmetics/br/new')
+        version = response.json()['data']['build']
+        print('\nGenerating cosmetics for version',version)
+        counter = 0
+        for i in response.json()['data']['items']:
+            name = i['name']
+            id = i['id']
+            description = i['description']
+            backendtype = i['type']['value']
+            backendtype = backendtype.upper()
+
+            if useFeaturedIfAvaliable == 'True':
+                if i["images"]["featured"] != None:
+                    url = i["images"]["featured"]
+                else:
+                    if i['images']['icon'] != None:
+                        url = i['images']['icon']
+                    else:
+                        url = 'https://i.ibb.co/KyvMydQ/do-Not-Delete.png'
+            else:
+                if i['images']['icon'] != None:
+                        url = i['images']['icon']
+                else:
+                    url = 'https://i.ibb.co/KyvMydQ/do-Not-Delete.png'
+            try:
+                r = requests.get(url)
+            except:
+                print('a')
+            open(f'cache/{id}temp.png', 'wb').write(r.content)
+            iconImg = Image.open(f'cache/{id}temp.png')
+            iconImg.resize((512,512),PIL.Image.ANTIALIAS)
+
+
+            rarity = i["rarity"]['value']
+            rarity = rarity.lower()
+
+            raritybackground = Image.open(f'rarities/cataba/{rarity}.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+            background = Image.open(f'rarities/cataba/{rarity}_background.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+
+            img=Image.new("RGB",(512,512))
+            img.paste(raritybackground)
+            try:
+                overlay = Image.open(f'rarities/cataba/{rarity}_overlay.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+            except:
+                overlay = Image.open(f'rarities/cataba/common_overlay.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+            img.paste(overlay, (0,0), overlay)
+            iconImg= Image.open(f'cache/{id}temp.png').resize((512, 512), Image.ANTIALIAS).convert('RGBA')
+            img.paste(iconImg, (0,0), iconImg)
+            img.paste(background, (0,0), background)
+            try:
+                rarityoverlay = Image.open(f'rarities/cataba/{rarity}_rarity.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+            except:
+                rarityoverlay = Image.open(f'rarities/cataba/placeholder_rarity.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+            img.paste(rarityoverlay, (0,0), rarityoverlay)
+            img.save(f'cache/{id}.png')
+            loadFont = 'fonts/BurbankBigRegular-BlackItalic.otf'
+            font=ImageFont.truetype(loadFont,31)
+
+            background = Image.open(f'cache/{id}.png')
+            name=name.upper()
+            draw=ImageDraw.Draw(background)
+            draw.text((256,472),name,font=font,fill='white', anchor='ms') # Writes name
+
+            description=description.upper()
+            font=ImageFont.truetype(loadFont,10)
+            draw=ImageDraw.Draw(background)
+            draw.text((256,501),description,font=font,fill='white', anchor='ms') # Writes description
+
+            font=ImageFont.truetype(loadFont,14)
+            draw=ImageDraw.Draw(background)
+            draw.text((6,495),backendtype,font=font,fill='white') # Writes backend type        
+
+            background.save(f'icons/{id}.png')
+            os.remove(f'cache/{id}temp.png')
+            os.remove(f'cache/{id}.png')
+            counter = counter + 1
+            i = response.json()['data']['items']
+            percentage = counter/len(i)
+            realpercentage = percentage * 100
+            print(f"{counter}/{len(i)} - {round(realpercentage)}%")
+    if benbot == 'True':
+        response = requests.get('https://benbot.app/api/v1/newCosmetics')
+        version = response.json()['currentVersion']
+        print('\nGenerating cosmetics for version',version)
+        counter = 0
+        for i in response.json()['items']:
+            name = i['name']
+            id = i['id']
+            description = i['description']
+            backendtype = i['backendType']
+            if backendtype == 'AthenaCharacter':
+                backendtype = 'OUTFIT'
+            elif backendtype == 'AthenaBackpack':
+                backendtype = 'BACKPACK'
+            elif backendtype == 'AthenaDance':
+                backendtype = 'EMOTE'
+            elif backendtype == 'AthenaPickaxe':
+                backendtype = 'PICKAXE'
+            elif backendtype == 'AthenaLoadingScreen':
+                backendtype = 'LOADING SCREEN'
+            elif backendtype == 'AthenaItemWrap':
+                backendtype = 'WRAP'
+            else:
+                backendtype = 'N/A'
+            backendtype = backendtype.upper()
+
+            if useFeaturedIfAvaliable == 'True':
+                if i["icons"]["featured"] != None:
+                    url = i["icons"]["featured"]
+                else:
+                    if i['icons']['icon'] != None:
+                        url = i['icons']['icon']
+                    else:
+                        url = 'https://i.ibb.co/KyvMydQ/do-Not-Delete.png'
+            else:
+                if i['icons']['icon'] != None:
+                    url = i['icons']['icon']
+                else:
+                    url = 'https://i.ibb.co/KyvMydQ/do-Not-Delete.png'
+            try:
+                r = requests.get(url)
+            except:
+                print('a')
+            open(f'cache/{id}temp.png', 'wb').write(r.content)
+            iconImg = Image.open(f'cache/{id}temp.png')
+            iconImg.resize((512,512),PIL.Image.ANTIALIAS)
+
+
+            rarity = i["rarity"]
+            rarity = rarity.lower()
+            if i['series'] != None:
+                try:
+                    series = i['series']['name']
+                    if series == 'Icon Series':
+                        rarity = 'icon'
+                    elif series == 'MARVEL SERIES':
+                        rarity = 'marvel'
+                    elif series == 'Gaming Legends Series':
+                        rarity = 'gaminglegends'
+                    elif series == 'DC SERIES':
+                        rarity = 'dc' 
+                    elif series == 'Lava Series':
+                        rarity = 'lava'
+                    elif series == 'Shadow Series':
+                        rarity = 'shadow'
+                    elif rarity == 'Star Wars Series':
+                        rarity = 'starwars'
+                    elif rarity == 'Slurp Series':
+                        rarity = 'slurp'
+                    elif rarity == 'DARK SERIES':
+                        rarity = 'dark'
+                except:
+                    pass
+
+            raritybackground = Image.open(f'rarities/cataba/{rarity}.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+            background = Image.open(f'rarities/cataba/{rarity}_background.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+
+            img=Image.new("RGB",(512,512))
+            img.paste(raritybackground)
+            try:
+                overlay = Image.open(f'rarities/cataba/{rarity}_overlay.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+            except:
+                overlay = Image.open(f'rarities/cataba/common_overlay.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+            img.paste(overlay, (0,0), overlay)
+            iconImg= Image.open(f'cache/{id}temp.png').resize((512, 512), Image.ANTIALIAS).convert('RGBA')
+            img.paste(iconImg, (0,0), iconImg)
+            img.paste(background, (0,0), background)
+            try:
+                rarityoverlay = Image.open(f'rarities/cataba/{rarity}_rarity.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+            except:
+                rarityoverlay = Image.open(f'rarities/cataba/placeholder_rarity.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+            img.paste(rarityoverlay, (0,0), rarityoverlay)
+            img.save(f'cache/{id}.png')
+            loadFont = 'fonts/BurbankBigRegular-BlackItalic.otf'
+            font=ImageFont.truetype(loadFont,31)
+
+            background = Image.open(f'cache/{id}.png')
+            name=name.upper()
+            draw=ImageDraw.Draw(background)
+            draw.text((256,472),name,font=font,fill='white', anchor='ms') # Writes name
+
+            description=description.upper()
+            font=ImageFont.truetype(loadFont,10)
+            draw=ImageDraw.Draw(background)
+            draw.text((256,501),description,font=font,fill='white', anchor='ms') # Writes description
+
+            font=ImageFont.truetype(loadFont,14)
+            draw=ImageDraw.Draw(background)
+            draw.text((6,495),backendtype,font=font,fill='white') # Writes backend type        
+
+            background.save(f'icons/{id}.png')
+            os.remove(f'cache/{id}temp.png')
+            os.remove(f'cache/{id}.png')
+            counter = counter + 1
+            i = response.json()['items']
+            percentage = counter/len(i)
+            realpercentage = percentage * 100
+            print(f"{counter}/{len(i)} - {round(realpercentage)}%")
+    print('Done!')
+    if MergeImagesAuto != 'False':
+        print('\nMerging images...')
+        if 'image' in mergewatermark:
+            addwatermark()
+        merger(mergewatermark, loc1)
+
+
+def catabasearch():
+    print(Fore.GREEN+'\nWhat cosmetic do you want to lookup? (Enter name or enter an ID by doing ID:CID_Example_ID)')
+    name = input('>> ')
+    if 'ID:' in name:
+        name = name.replace('ID:','')
+        response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/search?language={language}&id={name}')
+    else:
+        response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/search?language={language}&name={name}')
+    if response.json()['status'] == 404:
+        print('ERROR: 404')
+        catabasearch()
+    i = response.json()['data']
+    start = time.time()
+    name = i['name']
+    id = i['id']
+    description = i['description']
+    backendtype = i['type']['value']
+    backendtype = backendtype.upper()
+
+    if useFeaturedIfAvaliable == 'True':
+        if i["images"]["featured"] != None:
+            url = i["images"]["featured"]
+        else:
+            if i['images']['icon'] != None:
+                url = i['images']['icon']
+            else:
+                url = 'https://i.ibb.co/KyvMydQ/do-Not-Delete.png'
+    else:
+        if i['images']['icon'] != None:
+                url = i['images']['icon']
+        else:
+            url = 'https://i.ibb.co/KyvMydQ/do-Not-Delete.png'
+    try:
+        r = requests.get(url)
+    except:
+        print('a')
+    open(f'cache/{id}temp.png', 'wb').write(r.content)
+    iconImg = Image.open(f'cache/{id}temp.png')
+    iconImg.resize((512,512),PIL.Image.ANTIALIAS)
+
+
+    rarity = i["rarity"]['value']
+    rarity = rarity.lower()
+
+    raritybackground = Image.open(f'rarities/cataba/{rarity}.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+    background = Image.open(f'rarities/cataba/{rarity}_background.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+
+    img=Image.new("RGB",(512,512))
+    img.paste(raritybackground)
+    try:
+        overlay = Image.open(f'rarities/cataba/{rarity}_overlay.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+    except:
+        overlay = Image.open(f'rarities/cataba/common_overlay.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+    img.paste(overlay, (0,0), overlay)
+    iconImg= Image.open(f'cache/{id}temp.png').resize((512, 512), Image.ANTIALIAS).convert('RGBA')
+    img.paste(iconImg, (0,0), iconImg)
+    img.paste(background, (0,0), background)
+    try:
+        rarityoverlay = Image.open(f'rarities/cataba/{rarity}_rarity.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+    except:
+        rarityoverlay = Image.open(f'rarities/cataba/placeholder_rarity.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+    img.paste(rarityoverlay, (0,0), rarityoverlay)
+    img.save(f'cache/{id}.png')
+    loadFont = 'fonts/BurbankBigRegular-BlackItalic.otf'
+    font=ImageFont.truetype(loadFont,31)
+
+    background = Image.open(f'cache/{id}.png')
+    name=name.upper()
+    draw=ImageDraw.Draw(background)
+    draw.text((256,472),name,font=font,fill='white', anchor='ms') # Writes name
+
+    description=description.upper()
+    font=ImageFont.truetype(loadFont,10)
+    draw=ImageDraw.Draw(background)
+    draw.text((256,501),description,font=font,fill='white', anchor='ms') # Writes description
+
+    font=ImageFont.truetype(loadFont,14)
+    draw=ImageDraw.Draw(background)
+    draw.text((6,495),backendtype,font=font,fill='white') # Writes backend type        
+
+    background.save(f'icons/{id}.png')
+    os.remove(f'cache/{id}temp.png')
+    os.remove(f'cache/{id}.png')
+    end = time.time()
+    print(Fore.CYAN+"")
+    print("!  !  !  !  !  !  !")
+    print(f"IMAGE GENERATING COMPLETE - Generated image in {round(end - start, 2)} seconds!")
+    print("!  !  !  !  !  !  !")
+    time.sleep(2)
+    img = Image.open(f'icons/{id}.png')
+    img.show()
+
+##############################################
 print(Fore.GREEN + "\n- - - - - MENU - - - - -")
 print("")
 
@@ -3647,6 +3858,8 @@ print("(13) - Checks for a change in staging servers")
 print("(14) - Search for any weapon of choice.")
 print("(15) - "+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Generate current NPCs')
 print("(16) - "+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Search by set')
+#print("(17) - Cataba Icons Test")
+#print("(18) - Cataba Icons update mode")
 
 print("")
 option_choice = input(">> ")
@@ -3682,6 +3895,10 @@ elif option_choice == "15":
     npcs()
 elif option_choice == '16':
     set_search()
+#elif option_choice == '17':
+#    catabaicons()
+#elif option_choice == '18':
+#    catabaupdate()
 else:
     print(Fore.RED+"\nPlease enter a number between 1 and 15")
     time.sleep(2)
