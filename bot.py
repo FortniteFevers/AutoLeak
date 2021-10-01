@@ -1338,9 +1338,8 @@ def news_feed():
                     api.update_with_media("Compressed_news.png",f"#Fortnite News Update: {title}\n\n'{desc}'\n[{namelol}]")
                 print("Tweeted image!")
                 
-                response = requests.get(apiurl)
-                newsData = response.json()["data"]["hash"]
-                news_feed()
+
+                return news_feed()
     
         else:
             print("FAILED TO GRAB NEWS DATA: URL DOWN")
