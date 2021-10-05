@@ -42,7 +42,7 @@ import math
 import datetime
 from datetime import date, datetime
 import random
-from modules.shopsections import shop_sections
+from ALmodules.shopsections import shop_sections
 
 try:
     from googletrans import Translator
@@ -53,9 +53,9 @@ except:
 now = datetime.now()
 current_time = now.strftime("%H:%M")
 
-from modules.compressor import compressnewcosmetics_normal, compress_brnews, compress_normal, pak_compress, compressnewcosmetics_new
-from modules.merger import merger
-from modules.npcs import npcsdef
+from ALmodules.compressor import compressnewcosmetics_normal, compress_brnews, compress_normal, pak_compress, compressnewcosmetics_new
+from ALmodules.merger import merger
+from ALmodules.npcs import npcsdef
 
 from os import listdir
 from colorama import *
@@ -1303,7 +1303,10 @@ def news_feed():
     while 1:
         response = requests.get(apiurl)
         if response:
-            newsDataLoop = response.json()["data"]["hash"]
+            try:
+                newsDataLoop = response.json()["data"]["hash"]
+            except:
+                news_feed()
             print("Checking for change in news feed... ("+str(count)+")")
             count = count + 1
     
@@ -1626,37 +1629,34 @@ def notices():
         time.sleep(BotDelay)
 
 def staging_servers():
-    print(Fore.RED + "COMMAND NOT WORKING")
-    #count = 1
-    #response = requests.get('https://api.peely.de/v1/staging')
-    #apiurl = 'https://api.peely.de/v1/staging'
-    #
-    #response = requests.get(apiurl)
-    #stagingData = response.json()['data']['staging']
-#
-    #while 1:
-    #    response = requests.get(apiurl)
-    #    if response:
-    #        stagingDataLoop = response.json()['data']['staging']
-    #        print("Checking for change in Staging Servers... ("+str(count)+")")
-    #        count = count + 1
-    #        response = requests.get(apiurl)
-#
-    #        if stagingData != stagingDataLoop:
-    #            
-    #            print(f"The staging servers have been changed at {current_time}...")
-#
-    #            staging = response.json()['data']['staging']
-    #            print(f'\nThe staging servers are on {staging}.')
-    #            print('\nTweeting the current staging servers.')
-    #            api = tweepy.API(auth)
-    #            api.update_status('#Fortnite Version Uptate:\n\nPatch v'+str(staging)+' has been added to the pre-release staging servers. Epic is currently testing this update version, and will most likely release within the upcoming week(s).')
-    #            print('\nSuccesfully tweeted the staging servers.')
-    #            staging_servers()
-    #    else:
-    #        print("FAILED TO GRAB STAGING SERVERS DATA: URL DOWN")
-#
-    #    time.sleep(BotDelay)
+    
+    count = 1
+    apiurl = 'https://fortnite-public-service-stage.ol.epicgames.com/fortnite/api/version' # Epic Games Staging URL
+    response = requests.get(apiurl)
+    oldVersion = response.json()['version']
+
+    while 1:
+        response = requests.get(apiurl)
+        if response:
+            try:
+                newVersion = response.json()['version']
+            except:
+                return staging_servers()
+            print("Checking for change in Staging Servers... ("+str(count)+")")
+            count = count + 1
+            response = requests.get(apiurl)
+
+            if newVersion != oldVersion:
+
+                print(f'\nThe staging servers  have been updated and are on {newVersion}.')
+                api = tweepy.API(auth)
+                api.update_status(f'#Fortnite Version Uptate:\n\nPatch v{newVersion} has been added to the pre-release staging servers. Epic is currently testing this update version, and will most likely release within the upcoming week(s).')
+                print('\nSuccesfully tweeted the staging servers.')
+                staging_servers()
+        else:
+            print("FAILED TO GRAB STAGING SERVERS DATA: URL DOWN")
+
+        time.sleep(BotDelay)
 
 def weapons():
     #print('\nWhat weapon do you want to grab?')
@@ -3831,6 +3831,9 @@ def catabasearch():
     time.sleep(2)
     img = Image.open(f'icons/{id}.png')
     img.show()
+    if twitsearch == 'True':
+        api.update_with_media(f'icons/{id}.png', f'{name} - {backendtype}')
+    catabasearch()
 
 ##############################################
 print(Fore.GREEN + "\n- - - - - MENU - - - - -")
@@ -3895,10 +3898,6 @@ elif option_choice == "15":
     npcs()
 elif option_choice == '16':
     set_search()
-#elif option_choice == '17':
-#    catabaicons()
-#elif option_choice == '18':
-#    catabaupdate()
 else:
     print(Fore.RED+"\nPlease enter a number between 1 and 15")
     time.sleep(2)
