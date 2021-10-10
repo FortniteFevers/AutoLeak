@@ -1,0 +1,44 @@
+{
+  "name": "AutoLeak", // Not used much. Mostly useless.
+  "footer": "#Fortnite", // Not used much. Used as a footer for Tweets.
+  "language": "en", // Language used in AutoLeak. (Works with Shop Sections, cosmetic generation, news, etc.)
+
+  "imageFont": "BurbankBigCondensed-Black.otf", // The main font AutoLeak uses for generating images.
+  "sideFont": "OpenSans-Regular.ttf", // The secondary font Autoleak uses for generating images.
+
+  "placeholderUrl": "https://i.ibb.co/svXhCgN/ph.png", // If a cosmetic has a placeholder image or no image at all, Autoleak will use this Image URL instead of the default.
+
+  "watermark": "", // A watermark added on top of generated icons.
+  "useFeaturedIfAvaliable": "True", // If true, the program will use Featured icons if availible. If False, it will always use image icons.
+  "iconType": "cataba", // Choose between  -  (standard) (clean) (new) (cataba)
+  "showitemsource": "True", // Shows the gameplay tag of a item when using new iconType.
+
+
+  // These are keys provided by the Twitter API to tweet out stuff to your twitter when needed. (API LINK: https://developer.twitter.com/en/portal/dashboard)
+  "twitAPIKey": "",
+  "twitAPISecretKey": "",
+  "twitAccessToken": "",
+  "twitAccessTokenSecret": "",
+  ///////////
+
+
+  "BenBot": "False", // Switches between BenBot and Fortnite-API. False = Fortnite-API, True = BenBot.
+  "BotDelay": 10, // The delay AutoLeak uses when checking for new leaks updates, news updates, etc...
+  "apikey": "", // An API key provided by fortniteapi.io. *NOT REQUIRED*
+
+  "CreatorCode": "", // Your creator code goes here. This is used for Item Shop posts, news posts, etc. NOT REQUIRED!
+
+  "tweetUpdate": "False", // When using Update mode, it will tweet out the build, map, and other necessary info when a new update is detected.
+  "tweetAes": "False", // When using Update mode, it will tweet out the updates AES key when a new update is detected.
+
+  "TweetSearch": "False", // When searching for a cosmetic it will tweet it out. User will be promoted, so if you turn this on you still have an option. - True/False
+
+  "MergeImages": "True", // Merges images when generating new cosmetics from an update or dynamic pak.
+  "MergeWatermarkUrl": "image/watermarklol.png", // Please see how to use this here: https://github.com/FortniteFevers/AutoLeak/wiki/How-to-use-MergeWatermarkUrl
+  "AutoTweetMerged": "False", // When AutoLeak merges an image for generating cosmetics, update mode, pak, etc, it automatically tweets it out. Must have Twitter API keys.
+
+  "ShowDescOnNPCs": "True", // Used for the NPC's command. Shows the NPC description when generating NPC icons.
+
+  "ShopSections_Image": "True", // Used for the ShopSections command (Twitter API keys are required). Set to True to tweet out an image of the sections, set to False to only tweet out text.
+  "ImageColor": "" // Used for the ShopSections command if ShopSections_Image is set to true. Enter a hex color code to set the background color.
+}
