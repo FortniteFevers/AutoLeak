@@ -1,5 +1,5 @@
 requests
-tweepy
+tweepy==3.9.0
 pillow
 colorama
 datetime
