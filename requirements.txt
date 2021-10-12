@@ -3,3 +3,6 @@ tweepy
 pillow
 colorama
 datetime
+pyfiglet
+googletrans
+mailbox
