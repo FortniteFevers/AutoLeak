@@ -454,6 +454,7 @@ def update_mode():
                             api.update_with_media('merged/merge.jpg', 'A new update has been pushed out, heres all of the new cosmetics:')
                         print('Tweeted new cosmetics')
                     print('Done generating cosmetics.')
+                    exit()
             else:
                 print("FAILED TO GRAB NOTICES DATA: URL DOWN")
             time.sleep(BotDelay)
@@ -491,6 +492,7 @@ def update_mode():
                             api.update_with_media('merged/merge.jpg', 'A new update has been pushed out, heres all of the new cosmetics:')
                         print('Tweeted new cosmetics')
                     print('Done generating cosmetics.')
+                    exit()
             else:
                 print("FAILED TO GRAB NOTICES DATA: URL DOWN")
             time.sleep(BotDelay)
