@@ -43,6 +43,7 @@ import datetime
 from datetime import date, datetime
 import random
 from ALmodules.shopsections import shop_sections
+from mailbox import mbox, mboxMessage
 
 try:
     from googletrans import Translator
@@ -119,7 +120,7 @@ if latestVersion == currentVersion:
 else:
     if currentVersion != 'BETA':
         print(Fore.RED + '--> You are currently running v'+currentVersion+' of AutoLeak, v'+latestVersion+' is now avaliable - Please check #updates in the AutoLeak discord server for the update!')
-        Mbox("VERSION ERROR", f"Hey there!\n\nWe have noticed you are running a pervious version of AutoLeak!\n\nYou are on version {currentVersion}, and {latestVersion} is now avalible!\nPlease check #updates in the AutoLeak discord server for the update!\n\nYou can still use this version, but make sure to download the latest version after!", 0)
+        mbox("VERSION ERROR", f"Hey there!\n\nWe have noticed you are running a pervious version of AutoLeak!\n\nYou are on version {currentVersion}, and {latestVersion} is now avalible!\nPlease check #updates in the AutoLeak discord server for the update!\n\nYou can still use this version, but make sure to download the latest version after!", 0)
     else:
         print(Fore.CYAN + "Welcome to AutoLeak Beta! Thanks for signing up and helping us with developing this program!\nIf there are any errors, make sure to dm Fevers#3474 on Discord.")
 print("")
