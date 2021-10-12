@@ -56,6 +56,7 @@ current_time = now.strftime("%H:%M")
 from ALmodules.compressor import compressnewcosmetics_normal, compress_brnews, compress_normal, pak_compress, compressnewcosmetics_new
 from ALmodules.merger import merger
 from ALmodules.npcs import npcsdef
+from ALmodules.shop import genshopbenbot
 
 from os import listdir
 from colorama import *
@@ -1370,62 +1371,54 @@ def merge_images():
             print(Fore.RED + 'Not Tweeting.')
 
 def shop():
-    count = 1
-    apiurl = 'https://fortnite-api.com/v2/shop/br'
-
-    jsondata = requests.get(apiurl)
-    data = jsondata.json
-    
-    response = requests.get(apiurl)
-    shopData = response.json()['data']['hash']
-
-    while 1:
-        response = requests.get(apiurl)
-        if response:
-            shopDataLoop = response.json()['data']['hash']
-            print("Checking for change in Item Shop... ("+str(count)+")")
-            count = count + 1
-            response = requests.get(apiurl)
-
-            if shopData != shopDataLoop:
-                
-                print(f"Shop have changed at {current_time}...")
-                response = requests.get(apiurl)
-                print()
+    print('\nDo you want to generate the shop (1) or start Update Mode (2)')
+    ask = input('>> ')
+    if ask == '1':
+        d2 = now.strftime("%B %d, %Y")
+        genshopbenbot()
+        merger(mergewatermark, loc1)
+        if twitAPIKey != 'XXX':
+            print('\n\nDo you want to tweet this?\n(1): Yes\n(2): No')
+            ask = input('>> ')
+            if ask == '1':
                 if CreatorCode != '':
-                    url = f'https://api.nitestats.com/v1/shop/image?footer=Creator%20Code%3A%20{CreatorCode}'
+                    api.update_with_media(f"merged/merge.jpg", f'#Fortnite Item Shop for {d2}.\n\nSupport-a-Creator Code: {CreatorCode}')
                 else:
-                    url = f'https://api.nitestats.com/v1/shop/image?'
-                r = requests.get(url, allow_redirects=True)
-                open('shop.png', 'wb').write(r.content)
-                print('\nSaved Shop!')
-                today = date.today()
-                d2 = today.strftime("%B %d, %Y")
-                try:
+                    api.update_with_media(f"merged/merge.jpg", f'#Fortnite Item Shop for {d2}.')
+    else:
+        count = 1
+        apiurl = 'https://fortnite-api.com/v2/shop/br'
+
+        jsondata = requests.get(apiurl)
+        data = jsondata.json
+
+        response = requests.get(apiurl)
+        shopData = response.json()['data']['hash']
+
+        while 1:
+            response = requests.get(apiurl)
+            if response:
+                shopDataLoop = response.json()['data']['hash']
+                print("Checking for change in Item Shop... ("+str(count)+")")
+                count = count + 1
+                response = requests.get(apiurl)
+
+                if shopData != shopDataLoop:
+                    delete_contents()
+                    print(f"Shop have changed at {current_time}...")
+                    genshopbenbot()
+                    merger(mergewatermark, loc1)
+                    d2 = now.strftime("%B %d, %Y")
                     if CreatorCode != '':
-                        api.update_with_media(f"shop.png", f'#Fortnite Item Shop for {d2}.\n\nSupport-a-Creator Code: {CreatorCode}')
+                        api.update_with_media(f"merged/merge.jpg", f'#Fortnite Item Shop for {d2}.\n\nSupport-a-Creator Code: {CreatorCode}')
                     else:
-                        api.update_with_media(f"shop.png", f'#Fortnite Item Shop for {d2}.')
-                except:
-                    time.sleep(100)
-                    open('shop.png', 'wb').write(r.content)
-                    print('\nSaved Shop!')
-                    try:
-                        if CreatorCode != '':
-                            api.update_with_media(f"shop.png", f'#Fortnite Item Shop for {d2}.\n\nSupport-a-Creator Code: {CreatorCode}')
-                        else:
-                            api.update_with_media(f"shop.png", f'#Fortnite Item Shop for {d2}.')
-                    except:
-                        time.sleep(100)
-                        if CreatorCode != '':
-                            api.update_with_media(f"shop.png", f'#Fortnite Item Shop for {d2}.\n\nSupport-a-Creator Code: {CreatorCode}')
-                        else:
-                            api.update_with_media(f"shop.png", f'#Fortnite Item Shop for {d2}.')
+                        api.update_with_media(f"merged/merge.jpg", f'#Fortnite Item Shop for {d2}.')
+                    print('done')
 
-        else:
-            print("FAILED TO GRAB SHOP DATA: URL DOWN")
+            else:
+                print("FAILED TO GRAB SHOP DATA: URL DOWN")
 
-        time.sleep(BotDelay)
+            time.sleep(BotDelay)
 
 def dynamic_pak():
     if iconType == 'new':
