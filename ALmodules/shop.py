@@ -326,7 +326,13 @@ def genshopbenbot():
                 rarity = i['rarity']['value']
                 name = i['name']
                 description = i['description']
-                url = i['images']['icon']
+                if i["images"]["featured"] != None:
+                    url = i["images"]["featured"]
+                else:
+                    if i['images']['icon'] != None:
+                        url = i['images']['icon']
+                    else:
+                        url = 'https://i.ibb.co/KyvMydQ/do-Not-Delete.png'
                 id = i['id']
                 r = requests.get(url)
                 open(f'cache/{id}temp.png', 'wb').write(r.content)
