@@ -3957,6 +3957,7 @@ print("(13) - Checks for a change in staging servers")
 print("(14) - Search for any weapon of choice.")
 print("(15) - "+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Generate current NPCs')
 print("(16) - "+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Search by set')
+print("(17) - "+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Generate new variants')
 #print("(17) - Cataba Icons Test")
 #print("(18) - Cataba Icons update mode")
 
