@@ -56,6 +56,7 @@ current_time = now.strftime("%H:%M")
 from ALmodules.compressor import compressnewcosmetics_normal, compress_brnews, compress_normal, pak_compress, compressnewcosmetics_new
 from ALmodules.merger import merger
 from ALmodules.npcs import npcsdef
+from ALmodules.shop import genshopbenbot
 
 from os import listdir
 from colorama import *
@@ -453,6 +454,7 @@ def update_mode():
                             api.update_with_media('merged/merge.jpg', 'A new update has been pushed out, heres all of the new cosmetics:')
                         print('Tweeted new cosmetics')
                     print('Done generating cosmetics.')
+                    exit()
             else:
                 print("FAILED TO GRAB NOTICES DATA: URL DOWN")
             time.sleep(BotDelay)
@@ -480,6 +482,7 @@ def update_mode():
                     elif iconType == 'clean':
                         return generate_cosmetics()
                     elif iconType == 'cataba':
+                        generate_variants()
                         catabaicons()
                     
                     if automergetweet == 'True':
@@ -1338,8 +1341,9 @@ def news_feed():
                     api.update_with_media("Compressed_news.png",f"#Fortnite News Update: {title}\n\n'{desc}'\n[{namelol}]")
                 print("Tweeted image!")
                 
-
-                return news_feed()
+                response = requests.get(apiurl)
+                newsData = response.json()["data"]["hash"]
+                news_feed()
     
         else:
             print("FAILED TO GRAB NEWS DATA: URL DOWN")
@@ -1369,12 +1373,38 @@ def merge_images():
             print(Fore.RED + 'Not Tweeting.')
 
 def shop():
+    delete_contents()
+    print('\nDo you want to generate the shop (1) or start Update Mode (2)')
+    ask = input('>> ')
+    if ask == '1':
+        d2 = now.strftime("%B %d, %Y")
+        genshopbenbot()
+        addwatermark()
+        merger(mergewatermark, loc1)
+        if twitAPIKey != 'XXX':
+            print('\n\nDo you want to tweet this?\n(1): Yes\n(2): No')
+            ask = input('>> ')
+            try:
+                if CreatorCode != '':
+                    api.update_with_media(f"merged/merge.jpg", f'#Fortnite Item Shop for {d2}.\n\nSupport-a-Creator Code: {CreatorCode}')
+                else:
+                    api.update_with_media(f"merged/merge.jpg", f'#Fortnite Item Shop for {d2}.')
+            except:
+                compressnewcosmetics_normal()
+                if CreatorCode != '':
+                    api.update_with_media(f"merged/merge.jpg", f'#Fortnite Item Shop for {d2}.\n\nSupport-a-Creator Code: {CreatorCode}')
+                else:
+                    api.update_with_media(f"merged/merge.jpg", f'#Fortnite Item Shop for {d2}.')
+    else:
+        return shopupdate()
+
+def shopupdate():
     count = 1
     apiurl = 'https://fortnite-api.com/v2/shop/br'
 
     jsondata = requests.get(apiurl)
     data = jsondata.json
-    
+
     response = requests.get(apiurl)
     shopData = response.json()['data']['hash']
 
@@ -1387,39 +1417,24 @@ def shop():
             response = requests.get(apiurl)
 
             if shopData != shopDataLoop:
-                
+                delete_contents()
                 print(f"Shop have changed at {current_time}...")
-                response = requests.get(apiurl)
-                print()
-                if CreatorCode != '':
-                    url = f'https://api.nitestats.com/v1/shop/image?footer=Creator%20Code%3A%20{CreatorCode}'
-                else:
-                    url = f'https://api.nitestats.com/v1/shop/image?'
-                r = requests.get(url, allow_redirects=True)
-                open('shop.png', 'wb').write(r.content)
-                print('\nSaved Shop!')
-                today = date.today()
-                d2 = today.strftime("%B %d, %Y")
+                genshopbenbot()
+                merger(mergewatermark, loc1)
+                d2 = now.strftime("%B %d, %Y")
                 try:
                     if CreatorCode != '':
-                        api.update_with_media(f"shop.png", f'#Fortnite Item Shop for {d2}.\n\nSupport-a-Creator Code: {CreatorCode}')
+                        api.update_with_media(f"merged/merge.jpg", f'#Fortnite Item Shop for {d2}.\n\nSupport-a-Creator Code: {CreatorCode}')
                     else:
-                        api.update_with_media(f"shop.png", f'#Fortnite Item Shop for {d2}.')
+                        api.update_with_media(f"merged/merge.jpg", f'#Fortnite Item Shop for {d2}.')
                 except:
-                    time.sleep(100)
-                    open('shop.png', 'wb').write(r.content)
-                    print('\nSaved Shop!')
-                    try:
-                        if CreatorCode != '':
-                            api.update_with_media(f"shop.png", f'#Fortnite Item Shop for {d2}.\n\nSupport-a-Creator Code: {CreatorCode}')
-                        else:
-                            api.update_with_media(f"shop.png", f'#Fortnite Item Shop for {d2}.')
-                    except:
-                        time.sleep(100)
-                        if CreatorCode != '':
-                            api.update_with_media(f"shop.png", f'#Fortnite Item Shop for {d2}.\n\nSupport-a-Creator Code: {CreatorCode}')
-                        else:
-                            api.update_with_media(f"shop.png", f'#Fortnite Item Shop for {d2}.')
+                    compressnewcosmetics_normal()
+                    if CreatorCode != '':
+                        api.update_with_media(f"merged/merge.jpg", f'#Fortnite Item Shop for {d2}.\n\nSupport-a-Creator Code: {CreatorCode}')
+                    else:
+                        api.update_with_media(f"merged/merge.jpg", f'#Fortnite Item Shop for {d2}.')
+                print('done')
+                shopupdate()
 
         else:
             print("FAILED TO GRAB SHOP DATA: URL DOWN")
@@ -1628,37 +1643,34 @@ def notices():
         time.sleep(BotDelay)
 
 def staging_servers():
-    print(Fore.RED + "COMMAND NOT WORKING")
-    #count = 1
-    #response = requests.get('https://api.peely.de/v1/staging')
-    #apiurl = 'https://api.peely.de/v1/staging'
-    #
-    #response = requests.get(apiurl)
-    #stagingData = response.json()['data']['staging']
-#
-    #while 1:
-    #    response = requests.get(apiurl)
-    #    if response:
-    #        stagingDataLoop = response.json()['data']['staging']
-    #        print("Checking for change in Staging Servers... ("+str(count)+")")
-    #        count = count + 1
-    #        response = requests.get(apiurl)
-#
-    #        if stagingData != stagingDataLoop:
-    #            
-    #            print(f"The staging servers have been changed at {current_time}...")
-#
-    #            staging = response.json()['data']['staging']
-    #            print(f'\nThe staging servers are on {staging}.')
-    #            print('\nTweeting the current staging servers.')
-    #            api = tweepy.API(auth)
-    #            api.update_status('#Fortnite Version Uptate:\n\nPatch v'+str(staging)+' has been added to the pre-release staging servers. Epic is currently testing this update version, and will most likely release within the upcoming week(s).')
-    #            print('\nSuccesfully tweeted the staging servers.')
-    #            staging_servers()
-    #    else:
-    #        print("FAILED TO GRAB STAGING SERVERS DATA: URL DOWN")
-#
-    #    time.sleep(BotDelay)
+    
+    count = 1
+    apiurl = 'https://fortnite-public-service-stage.ol.epicgames.com/fortnite/api/version' # Epic Games Staging URL
+    response = requests.get(apiurl)
+    oldVersion = response.json()['version']
+
+    while 1:
+        response = requests.get(apiurl)
+        if response:
+            try:
+                newVersion = response.json()['version']
+            except:
+                return staging_servers()
+            print("Checking for change in Staging Servers... ("+str(count)+")")
+            count = count + 1
+            response = requests.get(apiurl)
+
+            if newVersion != oldVersion:
+
+                print(f'\nThe staging servers  have been updated and are on {newVersion}.')
+                api = tweepy.API(auth)
+                api.update_status(f'#Fortnite Version Uptate:\n\nPatch v{newVersion} has been added to the pre-release staging servers. Epic is currently testing this update version, and will most likely release within the upcoming week(s).')
+                print('\nSuccesfully tweeted the staging servers.')
+                staging_servers()
+        else:
+            print("FAILED TO GRAB STAGING SERVERS DATA: URL DOWN")
+
+        time.sleep(BotDelay)
 
 def weapons():
     #print('\nWhat weapon do you want to grab?')
@@ -3833,6 +3845,120 @@ def catabasearch():
     time.sleep(2)
     img = Image.open(f'icons/{id}.png')
     img.show()
+    if twitsearch == 'True':
+        api.update_with_media(f'icons/{id}.png', f'{name} - {backendtype}')
+    catabasearch()
+
+def generate_variants():
+    delete_contents()
+    response = requests.get('https://benbot.app/api/v1/status')
+    currentversion = response.json()['currentFortniteVersionNumber']
+    currentbuild = response.json()['currentFortniteVersion']
+    print(f'Generating variants for version {currentversion}({currentbuild})\n')
+
+    response = requests.get('https://benbot.app/api/v1/files/added')
+    count = 0
+    for i in response.json():
+        if i.startswith('FortniteGame/Content/Athena/Items/CosmeticVariantTokens/'):
+            path = i.replace('.uasset', '')
+            response = requests.get(f'https://benbot.app/api/v1/assetProperties?path={path}')
+            data = response.json()['export_properties'][0]
+            id = data['cosmetic_item']
+
+            try:
+                rarity = data['Rarity']
+                rarity = rarity.replace('EFortRarity::', '')
+                rarity = rarity.lower()
+            except:
+                rarity = 'common'
+
+            try:
+                series = data['Series']
+                if series == 'Icon Series':
+                        rarity = 'icon'
+                elif series == 'MarvelSeries':
+                    rarity = 'marvel'
+                elif series == 'Gaming Legends Series':
+                    rarity = 'gaminglegends'
+                elif series == 'DC SERIES':
+                    rarity = 'dc' 
+                elif series == 'Lava Series':
+                    rarity = 'lava'
+                elif series == 'Shadow Series':
+                    rarity = 'shadow'
+                elif rarity == 'Star Wars Series':
+                    rarity = 'starwars'
+                elif rarity == 'Slurp Series':
+                    rarity = 'slurp'
+                elif rarity == 'DARK SERIES':
+                    rarity = 'dark'
+            except:
+                pass
+
+            name = data['DisplayName']['finalText']
+
+            description = data['Description']['finalText']
+            backendtype = 'ITEM VARIANT'
+
+            assetpath = data['LargePreviewImage']['assetPath']
+            url = f'https://benbot.app/api/v1/exportAsset?path={assetpath}'
+
+            print(f'Generating {id}...')
+            r = requests.get(url)
+            open(f'cache/{id}temp.png', 'wb').write(r.content)
+            iconImg = Image.open(f'cache/{id}temp.png')
+            iconImg.resize((512,512),PIL.Image.ANTIALIAS)
+
+            raritybackground = Image.open(f'rarities/cataba/{rarity}.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+            background = Image.open(f'rarities/cataba/{rarity}_background.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+
+            img=Image.new("RGB",(512,512))
+            img.paste(raritybackground)
+            try:
+                overlay = Image.open(f'rarities/cataba/{rarity}_overlay.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+            except:
+                overlay = Image.open(f'rarities/cataba/common_overlay.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+            img.paste(overlay, (0,0), overlay)
+            iconImg= Image.open(f'cache/{id}temp.png').resize((512, 512), Image.ANTIALIAS).convert('RGBA')
+            img.paste(iconImg, (0,0), iconImg)
+            img.paste(background, (0,0), background)
+            try:
+                rarityoverlay = Image.open(f'rarities/cataba/{rarity}_rarity.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+            except:
+                rarityoverlay = Image.open(f'rarities/cataba/placeholder_rarity.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+            img.paste(rarityoverlay, (0,0), rarityoverlay)
+            img.save(f'cache/{id}.png')
+            loadFont = 'fonts/BurbankBigRegular-BlackItalic.otf'
+            if len(name)>30:
+                font=ImageFont.truetype(loadFont,20)
+            else:
+                font=ImageFont.truetype(loadFont,31)
+
+            background = Image.open(f'cache/{id}.png')
+            name=name.upper()
+            draw=ImageDraw.Draw(background)
+            draw.text((256,472),name,font=font,fill='white', anchor='ms') # Writes name
+
+            description=description.upper()
+            font=ImageFont.truetype(loadFont,10)
+            draw=ImageDraw.Draw(background)
+            draw.text((256,501),description,font=font,fill='white', anchor='ms') # Writes description
+
+            font=ImageFont.truetype(loadFont,14)
+            draw=ImageDraw.Draw(background)
+            draw.text((6,495),backendtype,font=font,fill='white') # Writes backend type        
+
+            count = count + 1
+            background.save(f'icons/{id}{count}.png')
+            os.remove(f'cache/{id}temp.png')
+            os.remove(f'cache/{id}.png')
+            end = time.time()
+    print(f"Done generating variants for version {currentversion}")
+    addwatermark()
+    merger(loc1, mergewatermark)
+    if automergetweet == 'True':
+        api.update_with_media('merged/merge.jpg', f'All new variants added in v{currentversion}')
+        print('Tweeted image.')
 
 ##############################################
 print(Fore.GREEN + "\n- - - - - MENU - - - - -")
@@ -3860,6 +3986,7 @@ print("(13) - Checks for a change in staging servers")
 print("(14) - Search for any weapon of choice.")
 print("(15) - "+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Generate current NPCs')
 print("(16) - "+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Search by set')
+print("(17) - "+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Generate new variants')
 #print("(17) - Cataba Icons Test")
 #print("(18) - Cataba Icons update mode")
 
@@ -3897,10 +4024,8 @@ elif option_choice == "15":
     npcs()
 elif option_choice == '16':
     set_search()
-#elif option_choice == '17':
-#    catabaicons()
-#elif option_choice == '18':
-#    catabaupdate()
+elif option_choice == '17':
+    generate_variants()
 else:
     print(Fore.RED+"\nPlease enter a number between 1 and 15")
     time.sleep(2)
