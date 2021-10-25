@@ -482,6 +482,7 @@ def update_mode():
                     elif iconType == 'clean':
                         return generate_cosmetics()
                     elif iconType == 'cataba':
+                        generate_variants()
                         catabaicons()
                     
                     if automergetweet == 'True':
@@ -2879,7 +2880,7 @@ def newcnew_fnbrapi():
     print('Cleared Contents\nLoaded New Icons | API = Fortnite-API')
     
     centerline = 256
-    response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/new?lang={language}')
+    response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/new?language={language}')
     new = response.json()['data']
     print(f"Version = {new['build']}\n")
  
@@ -3856,6 +3857,7 @@ def generate_variants():
     print(f'Generating variants for version {currentversion}({currentbuild})\n')
 
     response = requests.get('https://benbot.app/api/v1/files/added')
+    count = 0
     for i in response.json():
         if i.startswith('FortniteGame/Content/Athena/Items/CosmeticVariantTokens/'):
             path = i.replace('.uasset', '')
@@ -3869,6 +3871,29 @@ def generate_variants():
                 rarity = rarity.lower()
             except:
                 rarity = 'common'
+
+            try:
+                series = data['Series']
+                if series == 'Icon Series':
+                        rarity = 'icon'
+                elif series == 'MarvelSeries':
+                    rarity = 'marvel'
+                elif series == 'Gaming Legends Series':
+                    rarity = 'gaminglegends'
+                elif series == 'DC SERIES':
+                    rarity = 'dc' 
+                elif series == 'Lava Series':
+                    rarity = 'lava'
+                elif series == 'Shadow Series':
+                    rarity = 'shadow'
+                elif rarity == 'Star Wars Series':
+                    rarity = 'starwars'
+                elif rarity == 'Slurp Series':
+                    rarity = 'slurp'
+                elif rarity == 'DARK SERIES':
+                    rarity = 'dark'
+            except:
+                pass
 
             name = data['DisplayName']['finalText']
 
@@ -3904,7 +3929,10 @@ def generate_variants():
             img.paste(rarityoverlay, (0,0), rarityoverlay)
             img.save(f'cache/{id}.png')
             loadFont = 'fonts/BurbankBigRegular-BlackItalic.otf'
-            font=ImageFont.truetype(loadFont,31)
+            if len(name)>30:
+                font=ImageFont.truetype(loadFont,20)
+            else:
+                font=ImageFont.truetype(loadFont,31)
 
             background = Image.open(f'cache/{id}.png')
             name=name.upper()
@@ -3920,7 +3948,8 @@ def generate_variants():
             draw=ImageDraw.Draw(background)
             draw.text((6,495),backendtype,font=font,fill='white') # Writes backend type        
 
-            background.save(f'icons/{id}.png')
+            count = count + 1
+            background.save(f'icons/{id}{count}.png')
             os.remove(f'cache/{id}temp.png')
             os.remove(f'cache/{id}.png')
             end = time.time()
@@ -3929,7 +3958,7 @@ def generate_variants():
     merger(loc1, mergewatermark)
     if automergetweet == 'True':
         api.update_with_media('merged/merge.jpg', f'All new variants added in v{currentversion}')
-        print('Tweeted.')
+        print('Tweeted image.')
 
 ##############################################
 print(Fore.GREEN + "\n- - - - - MENU - - - - -")
