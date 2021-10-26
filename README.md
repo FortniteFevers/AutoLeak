@@ -33,7 +33,7 @@ There's **MANY** more features as well, so make sure to check them out by downlo
 
 
 # Running AutoLeak
-To run AutoLeak, you have to have [Python 3.9](https://www.microsoft.com/en-us/p/python-39/9p7qfqmjrfp7) installed on your computer.
+To run AutoLeak, you have to have the latest version of [Python](https://www.python.org/downloads/) and the latest [python windows app](https://www.microsoft.com/en-us/search/shop/apps?q=python) installed on your Windows computer.
 
 After you have succesfully installed Python, you can go to this repl and save the repl as a .zip file.
 
