@@ -2,6 +2,7 @@ import requests
 from PIL import Image, ImageFont, ImageDraw
 import os
 import PIL
+from math import ceil
 
 def genshopbenbot():
     response = requests.get('https://benbot.app/api/v1/shop/br')
@@ -403,3 +404,24 @@ def genshopbenbot():
         #realpercentage = percentage * 100
         #print(f"{counter}/{len(i)} - {round(realpercentage)}%")
     print('\nLoaded bundles and other things.')
+
+def newgenshop():
+    print('Generating')
+    response = requests.get('https://fortnite-api.com/v2/shop/br/combined')
+
+    if response.json()['data']['featured']:
+        featured = response.json()['data']['featured']
+    else:
+        featured = []
+
+    if response.json()['data']['daily']:
+        daily = response.json()['data']['daily']
+    else:
+        daily = []
+    
+    rows = max(ceil(len(featured) / 5), ceil(len(daily) / 3))
+    height = 302 + (300 * rows)
+    shop_image = Image.new("RGB", (2544, height))
+    background = Image.open(f"CreatorCollabSeries.png").resize((shop_image.width, shop_image.height),PIL.Image.ANTIALIAS)
+
+    shop_image.paste(background, )

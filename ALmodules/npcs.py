@@ -258,18 +258,24 @@ def npcsdef(showDescription, imageFont, apikey, loadFont):
         try:
             mapimage = Image.open('Assets/Apollo_Terrain_Minimap.png')
         except:
-            response = requests.get('https://cdn.discordapp.com/attachments/810723511655202826/890775730026340392/Apollo_Terrain_Minimap.png')
-            open('Assets/Apollo_Terrain_Minimap.png', 'wb').write(response.content)
-            mapimage = Image.open('Assets/Apollo_Terrain_Minimap.png')
+            response = requests.get('https://fortnite-api.com/images/map.png')
+            open('assets/Apollo_Terrain_Minimap.png', 'wb').write(response.content)
+            mapimage = Image.open('assets/Apollo_Terrain_Minimap.png')
 
-        img = Image.new("RGB", (2048, 2048))
-        img.paste(mapimage, (0, 0), mapimage)
-        img.save('Assets/cache.png')
 
         print('\nGenerating all current NPC plotted locations... Please give us a moment.')
 
         response = requests.get('https://fortniteapi.io/v2/game/npc/list?enabled=true&scale=2048', headers=headers) # I could of just exported the assets of the file and scale it but im lazy so yea
         
+        if response.json()['result'] != True:
+            print(Fore.RED+'\nAPI Key error: Please get a Fortnite-API key at https://fortniteapi.io/')
+            exit()
+        
+        mapimage = Image.open('Assets/Apollo_Terrain_Minimap.png').convert('RGBA')
+        img = Image.new("RGB", (2048, 2048))
+        img.paste(mapimage, (0, 0), mapimage)
+        img.save('assets/cache.png')
+
         point = 0
         for i in response.json()['npc']:
             name = i['displayName']

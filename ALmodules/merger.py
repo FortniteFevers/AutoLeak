@@ -5,8 +5,8 @@ import glob
 from math import ceil, sqrt
 from typing import Union
 
-# Credits to https://github.com/MyNameIsDark01 for the Merger code.
-# This merger is under rights, you may not take this code and use it in your own project without proper credits to myself and Dark.
+# Credits to https://github.com/MyNameIsDark01 for the original Merger code.
+# This merger is under rights, you may not take this code and use it in your own project without proper credits to Fevers and Dark.
 
 def merger(loc1, mergewatermark, datas: Union[list, None] = None, save_as: str = 'merge.jpg'):
     if not datas:
