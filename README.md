@@ -6,7 +6,7 @@ Make sure to check out our Wiki, with info on how to utilitize [**settings.json*
 
 ---
 (this README is in beta, not finished yet.)
-#### AutoLeak 1.4 has just been released!
+#### AutoLeak Beta 1.4 has just been released!
 # Whats new in version 1.4?
 - [Click me for a list of 1.4 changes and fixes.](https://github.com/FortniteFevers/AutoLeak/wiki/1.4-Changes)
 
