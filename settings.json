@@ -1,6 +1,6 @@
 {
-  "how to use settings.json": "https://github.com/FortniteFevers/AutoLeak/wiki/Settings.json-With-Comments",
-  
+  "ShowValues_AtStart": false,
+
   "name": "AutoLeak",
   "footer": "#Fortnite",
   "language": "en",
@@ -12,7 +12,7 @@
 
   "watermark": "",
   "useFeaturedIfAvaliable": "True",
-  "iconType": "cataba",
+  "iconType": "large",
   "showitemsource": "True",
 
   "twitAPIKey": "",
@@ -33,7 +33,7 @@
 
   "MergeImages": "True",
   "MergeWatermarkUrl": "image/watermarklol.png",
-  "AutoTweetMerged": "False",
+  "AutoTweetMerged": "True",
 
   "ShowDescOnNPCs": "True",
 
