@@ -29,38 +29,48 @@ Software: AUTOLEAK
 
 currentVersion = 'BETA'
 
-import requests
-import tweepy
-import time
-import PIL
-import math
-from PIL import Image, ImageFont, ImageDraw, ImageChops
-import os
-import json
-import shutil
-import math
-import datetime
-from datetime import date, datetime
-import random
-from ALmodules.shopsections import shop_sections
-
 try:
+    import requests
+    import tweepy
+    import time
+    import PIL
+    import math
+    from PIL import Image, ImageFont, ImageDraw, ImageChops
+    import os
+    import json
+    import shutil
+    import math
+    import datetime
+    from datetime import date, datetime
+    import random
+    from os import listdir
+    from colorama import *
     from googletrans import Translator
-    translator = Translator()
-except:
-    pass
+    import platform
+    import tkinter as tk
+    import tkinter.messagebox
+    window = tk.Tk()
+    window.wm_withdraw()
+except ModuleNotFoundError as e:
+    print(f"Error: {e}")
+    error = tkinter.messagebox.showerror(title="ModuleNotFoundError",message=f"An error accured:\n{e}",parent=window)
+    if error == True:
+        exit()
+    else:
+        exit()
+
+translator = Translator()
+init()
 
 now = datetime.now()
 current_time = now.strftime("%H:%M")
 
+from ALmodules.shopsections import shop_sections
 from ALmodules.compressor import compressnewcosmetics_normal, compress_brnews, compress_normal, pak_compress, compressnewcosmetics_new
 from ALmodules.merger import merger
 from ALmodules.npcs import npcsdef
 from ALmodules.shop import genshopbenbot
-
-from os import listdir
-from colorama import *
-init()
+from ALmodules.largeIconType import largeicontype, largeicontype_search, large_merger, largeicontype_pak
 
 loop = True
 count = 1
@@ -72,10 +82,19 @@ import platform # If softwere is linux, it does not run ctypes
 x = platform.system()
 
 if x == 'Windows':
-    import pyfiglet
-    ascii_banner = pyfiglet.figlet_format("AUTOLEAK", font = "slant")
-    print(Fore.CYAN + ascii_banner + Fore.RESET)
-    print('Loading...')
+    autoleakcool = """
+    
+
+    ░█████╗░██╗░░░██╗████████╗░█████╗░██╗░░░░░███████╗░█████╗░██╗░░██╗
+    ██╔══██╗██║░░░██║╚══██╔══╝██╔══██╗██║░░░░░██╔════╝██╔══██╗██║░██╔╝
+    ███████║██║░░░██║░░░██║░░░██║░░██║██║░░░░░█████╗░░███████║█████═╝░
+    ██╔══██║██║░░░██║░░░██║░░░██║░░██║██║░░░░░██╔══╝░░██╔══██║██╔═██╗░
+    ██║░░██║╚██████╔╝░░░██║░░░╚█████╔╝███████╗███████╗██║░░██║██║░╚██╗
+    ╚═╝░░╚═╝░╚═════╝░░░░╚═╝░░░░╚════╝░╚══════╝╚══════╝╚═╝░░╚═╝╚═╝░░╚═╝
+
+    """
+    print(Fore.CYAN + autoleakcool + Fore.RESET)
+    print('                              Loading...')
     time.sleep(2)
     os.system("cls")
     os.system(
@@ -99,14 +118,15 @@ ln5 = response.json()["5"]
 ln6 = response.json()["6"]
 ln7 = response.json()["7"]
 latestVersion = response.json()["latestVersion"]
+betaText = response.json()['betatext']
 print("")
 print("------------------------------------------------------------------------------------------------")
 print("")
-print(ln1)                 #############################################################################
-print(ln2)                 #  DO NOT REMOVE THESE LINES OF CODE!                                       #
-print(ln3)                 #  IT IS UESD TO COMMUNICATE UPDATES WITH YOU WHEN YOU LAUNCH THE PROGRAM!  #
-print(ln4)                 #  IF YOU REMOVE IT YOU WILL NOT BE ALERTED WITH NEWS AND NEW UPDATES!      #
-print(ln5)                 #############################################################################
+print(ln1)
+print(ln2)
+print(ln3)
+print(ln4)
+print(ln5)
 print(ln6)
 print(ln7)
 print("")
@@ -120,9 +140,9 @@ if latestVersion == currentVersion:
 else:
     if currentVersion != 'BETA':
         print(Fore.RED + '--> You are currently running v'+currentVersion+' of AutoLeak, v'+latestVersion+' is now avaliable - Please check #updates in the AutoLeak discord server for the update!')
-        Mbox("VERSION ERROR", f"Hey there!\n\nWe have noticed you are running a pervious version of AutoLeak!\n\nYou are on version {currentVersion}, and {latestVersion} is now avalible!\nPlease check #updates in the AutoLeak discord server for the update!\n\nYou can still use this version, but make sure to download the latest version after!", 0)
+        #Mbox("VERSION ERROR", f"Hey there!\n\nWe have noticed you are running a pervious version of AutoLeak!\n\nYou are on version {currentVersion}, and {latestVersion} is now avalible!\nPlease check #updates in the AutoLeak discord server for the update!\n\nYou can still use this version, but make sure to download the latest version after!", 0)
     else:
-        print(Fore.CYAN + "Welcome to AutoLeak Beta! Thanks for signing up and helping us with developing this program!\nIf there are any errors, make sure to dm Fevers#3474 on Discord.")
+        print(Fore.CYAN + f"{betaText}")
 print("")
 print(Style.RESET_ALL + "------------------------------------------------------------------------------------------------")
 print("")
@@ -130,283 +150,543 @@ print("")
 
 with open("settings.json") as settings:
     data = json.load(settings)
+    if data['ShowValues_AtStart'] == True:
 
-    try:
-        name = data["name"]
-        namelol = data["name"]
-        print(Fore.GREEN + 'Loaded "name" as "'+name+'"')
-    except:
-        name = 'AutoLeak'
-        print(Fore.RED + 'Failed to load "name", defaulted to "AutoLeak"')
+        try:
+            name = data["name"]
+            namelol = data["name"]
+            print(Fore.GREEN + 'Loaded "name" as "'+name+'"')
+        except:
+            name = 'AutoLeak'
+            print(Fore.RED + 'Failed to load "name", defaulted to "AutoLeak"')
 
-    try:
-        footer = data["footer"]
-        print(Fore.GREEN + 'Loaded "footer" as "'+footer+'"')
-    except:
-        footer = '#Fortnite'
-        print(Fore.RED + 'Failed to load "footer", defaulted to "#Fortnite"')
+        try:
+            footer = data["footer"]
+            print(Fore.GREEN + 'Loaded "footer" as "'+footer+'"')
+        except:
+            footer = '#Fortnite'
+            print(Fore.RED + 'Failed to load "footer", defaulted to "#Fortnite"')
 
-    try:
-        global language
-        language = data["language"]
-        if language == 'ar' or language == 'de' or language == 'en' or language == 'es' or language == 'es-419' or language == 'fr' or language == 'it' or language == 'ja' or language == 'ko' or language == 'pl' or language == 'pt-BR' or language == 'de' or language == 'ru' or language == 'tr' or language == 'zh-CN' or language == 'zh-Hant':
-            print(Fore.GREEN + 'Loaded "language" as "'+language+'"')
-        else:
-            language = 'en'
-            print(Fore.YELLOW + 'Incorrect value for language was given so I have loaded "language" as "en"')
-
-    except:
-        language = 'en'
-        print(Fore.RED + 'Failed to load "language", defaulted to "en"')
-
-    try:
-        imageFont = data["imageFont"]
-        print(Fore.GREEN + 'Loaded "imageFont" as "'+imageFont+'"')
-    except:
-        imageFont = 'BurbankBigCondensed-Black.otf'
-        print(Fore.RED + 'Failed to load "imageFont", defaulted to "BurbankBigCondensed-Black.otf"')
-
-    try:
-        placeholderUrl = data["placeholderUrl"]
-        print(Fore.GREEN + 'Loaded "placeholderUrl" as "'+placeholderUrl+'"')
-    except:
-        placeholderUrl = 'https://i.imgur.com/W22Foja.png'
-        print(Fore.RED + 'Failed to load "placeholderUrl", set to default placeholder url.')
-
-    try:
-        watermark = data["watermark"]
-        print(Fore.GREEN + 'Loaded "watermark" as "'+watermark+'"')
-    except:
-        watermark = ''
-        print(Fore.RED + 'Failed to load "watermark", ignored, program will be ran without a watermark.')
-
-    try:
-        useFeaturedIfAvaliable = data["useFeaturedIfAvaliable"]
-        if useFeaturedIfAvaliable == 'True' or useFeaturedIfAvaliable == 'False':
-            print(Fore.GREEN + 'Loaded "useFeaturedIfAvaliable" as "'+useFeaturedIfAvaliable+'"')
-        else:
-            useFeaturedIfAvaliable = 'False'
-            print(Fore.YELLOW + 'Incorrect value for useFeaturedIfAvaliable was given so I have loaded "useFeaturedIfAvaliable" as "False"')
-    except:
-        useFeaturedIfAvaliable = 'False'
-        print(Fore.RED + 'Failed to load "useFeaturedIfAvaliable", defaulted to "False"')
-
-    try:
-        iconType = data["iconType"]
-        if iconType == 'standard' or iconType == 'clean' or iconType == 'new' or iconType == 'cataba':
-            print(Fore.GREEN + 'Loaded "iconType" as "'+iconType+'"')
-        else:
-            iconType = 'new'
-            print(Fore.YELLOW + 'Incorrect value for iconType was given so I have loaded "iconType" as "new"')
-    except:
-        iconType = 'new'
-        print(Fore.RED + 'Failed to load "iconType", defaulted to "new"')
-
-    try:
-        benbot = data['BenBot']
-        if benbot == 'True':
-            print(Fore.GREEN + f'Loaded BenBot API.')
-        if benbot == 'False':
-            print(Fore.GREEN + 'Loaded Fortnite-API.')
-    except:
-        benbot = 'False'
-        print(Fore.RED + 'Failed to load "ApiType", defaulting to "Fortnite-API"...')
-
-    try:
-        twitAPIKey = data["twitAPIKey"]
-        if twitAPIKey == '':
-            twitAPIKey = 'XXX'
-        print(Fore.GREEN + 'Loaded "twitAPIKey" as "'+twitAPIKey+'"')
-    except:
-        twitAPIKey = 'XXX'
-        print(Fore.RED + 'Failed to load "twitAPIKey", defaulted to "XXX"')
-
-    try:
-        twitAPISecretKey = data["twitAPISecretKey"]
-        print(Fore.GREEN + 'Loaded "twitAPISecretKey" as "'+twitAPISecretKey+'"')
-    except:
-        twitAPISecretKey = 'XXX'
-        print(Fore.RED + 'Failed to load "twitAPISecretKey", defaulted to "XXX"')
-
-    try:
-        twitAccessToken = data["twitAccessToken"]
-        print(Fore.GREEN + 'Loaded "twitAccessToken" as "'+twitAccessToken+'"')
-    except:
-        twitAccessToken = 'XXX'
-        print(Fore.RED + 'Failed to load "twitAccessToken", defaulted to "XXX"')
-
-    try:
-        twitAccessTokenSecret = data["twitAccessTokenSecret"]
-        print(Fore.GREEN + 'Loaded "twitAccessTokenSecret" as "'+twitAccessTokenSecret+'"')
-    except:
-        twitAccessTokenSecret = 'XXX'
-        print(Fore.RED + 'Failed to load "twitAccessTokenSecret", defaulted to "XXX"')
-
-    try:
-        tweetUpdate = data["tweetUpdate"]
-        if tweetUpdate == 'True' or tweetUpdate == 'False':
-            print(Fore.GREEN + 'Loaded "tweetUpdate" as "'+tweetUpdate+'"')
-        else:
-            tweetUpdate = 'False'
-            print(Fore.YELLOW + 'Incorrect value for tweetUpdate was given so I have loaded "tweetUpdate" as "False"')
-    except:
-        tweetUpdate = 'False'
-        print(Fore.RED + 'Failed to load "tweetUpdate", defaulted to "False"')
-
-    try:
-        tweetAes = data["tweetAes"]
-        if tweetAes == 'True' or tweetAes == 'False':
-            print(Fore.GREEN + 'Loaded "tweetAes" as "'+tweetAes+'"')
-        else:
-            tweetAes = 'False'
-            print(Fore.YELLOW + 'Incorrect value for tweetAes was given so I have loaded "tweetAes" as "False"')
-    except:
-        tweetAes = 'False'
-        print(Fore.RED + 'Failed to load "tweetAes", defaulted to "False"')
-
-    try:
-        BotDelay = data['BotDelay']
-        print(Fore.GREEN + f'Loaded "BotDelay" as {BotDelay} seconds.')
-    except:
-        BotDelay = 30
-        print(Fore.RED + 'Failed to load "BotDelay", defaulted to 30 seconds.')
-        
-    try:
-        twitsearch = data['TweetSearch']
-        if twitsearch == 'True' or twitsearch == 'False':
-            print(Fore.GREEN + f'Loaded "Tweet Search" as {twitsearch}.')
-        else:
-            twitsearch = 'True'
-            print(Fore.YELLOW + 'Incorrect value for "Twitter Search", defaulting to "True"...')
-    except:
-        twitsearch = 'False'
-        print(Fore.RED + 'Failed to load "Tweet Search", defaulting to "False"...')
-        
-    try:
-        MergeImagesAuto = data['MergeImages']
-        if MergeImagesAuto == 'True' or MergeImagesAuto == 'False':
-            print(Fore.GREEN + f'Loaded "MergeImages" as "{MergeImagesAuto}"')
-        else:
-            MergeImagesAuto = 'True'
-            print(Fore.YELLOW + f'Incorrect value for MergeImages was given so I have loaded "MergeImages" as "True"')
-    except:
-        print(Fore.YELLOW + 'Incorrect value for "MergeImages", defaulting to "True"...')
-        MergeImagesAuto = 'True'
-
-    try:
-        CreatorCode = data['CreatorCode']
-        if CreatorCode != '':
-            print(Fore.GREEN + f'Loaded "CreatorCode" as "{CreatorCode}')
-        else:
-            print(Fore.GREEN + 'Loaded Creator Code as none.')
-            CreatorCode = ''
-    except:
-        CreatorCode = ''
-        print(Fore.YELLOW + 'Incorrect value for "CreatorCode", defaulting to none.')
-        
-    try:
-        apikey = data['apikey']
-        if apikey != "":
-            print(Fore.GREEN + f'Loaded "API Key" as "{apikey}"')
-        else:
-            print(Fore.GREEN + 'Loaded API Key as none.')
-            CreatorCode = ''
-    except:
-        apikey = ''
-        print(Fore.YELLOW + 'Incorrect value for "apikey", defaulting to none.')   
-    
-    try:
-        global showitemsource
-        showitemsource = data['showitemsource']
-        showitemsource = showitemsource.title()
-        if showitemsource != "":
-            print(Fore.GREEN+f'Loaded "showitemsource" as "{showitemsource}"')
-        else:
-            print(Fore.GREEN+f'Loaded showitemsource as False.')
-    except:
-        print(Fore.YELLOW+'Incorrect value for "ShowItemSource", defaulting to True.')
-        showitemsource = 'True'
-        
-    try:
-        loc1 = ''
-        mergewatermark = data['MergeWatermarkUrl']
-        if 'image' in mergewatermark:
-            loc1 = mergewatermark.replace('image/', '')
-            print(Fore.GREEN+f'Detected "MergeWatermark" to be an image file. Image is located in assets/{loc1}')
-
-            def addwatermark():
-                img=Image.open(f'assets/{loc1}')
-                img=img.resize((512,512),PIL.Image.ANTIALIAS)
-                img.save(f'icons/zzz{loc1}')
-            addwatermark()
-        else:
-            if mergewatermark != "":
-                print(Fore.GREEN+f'Loaded "MergeWatermark" as "{mergewatermark}')
+        try:
+            global language
+            language = data["language"]
+            if language == 'ar' or language == 'de' or language == 'en' or language == 'es' or language == 'es-419' or language == 'fr' or language == 'it' or language == 'ja' or language == 'ko' or language == 'pl' or language == 'pt-BR' or language == 'de' or language == 'ru' or language == 'tr' or language == 'zh-CN' or language == 'zh-Hant':
+                print(Fore.GREEN + 'Loaded "language" as "'+language+'"')
             else:
-                print(Fore.GREEN+f'Loaded "MergeWatermark" as None.')
-                mergewatermark = ""
-    except:
-        print(Fore.YELLOW+'Incorrect value for "mergewatermark", defaulting to None.')
-        mergewatermark = ""
+                language = 'en'
+                print(Fore.YELLOW + 'Incorrect value for language was given so I have loaded "language" as "en"')
 
-    try:
-        automergetweet = data['AutoTweetMerged']
-        automergetweet = automergetweet.title()
-        if automergetweet == 'True' or 'False':
-            print(Fore.GREEN+f'Loaded "Auto Tweet Merged Images" as "{automergetweet}"')
-        else:
-            print(Fore.YELLOW+'Incorrect value for "Auto Tweet Merged Images", defaulting to False.')
-            automergetweet = 'False'
-    except:
-        print(Fore.YELLOW+'Incorrect value for "Auto Tweet Merged Images", defaulting to False.')
-        automergetweet = "False"
+        except:
+            language = 'en'
+            print(Fore.RED + 'Failed to load "language", defaulted to "en"')
 
-    try:
-        showDescription = data['ShowDescOnNPCs']
-        if showDescription == 'True' or 'False':
-            print(Fore.GREEN+f'Loaded "Show Description on NPCs" as "{showDescription}"')
-        else:
-            print(Fore.YELLOW+'Incorrect value for "Show Description on NPCs", defaulting to False.')
-            showDescription = 'False'
-    except:
-        print(Fore.YELLOW+'Incorrect value for "Show Description on NPCs", defaulting to False.')
-        showDescription = "False"
+        try:
+            imageFont = data["imageFont"]
+            print(Fore.GREEN + 'Loaded "imageFont" as "'+imageFont+'"')
+        except:
+            imageFont = 'BurbankBigCondensed-Black.otf'
+            print(Fore.RED + 'Failed to load "imageFont", defaulted to "BurbankBigCondensed-Black.otf"')
 
-    try:
-        sections_image = data['ShopSections_Image']
-        if sections_image == 'True' or 'False':
-            print(Fore.GREEN+f'Loaded "Shop Sections Image" as "{sections_image}"')
-        else:
-            print(Fore.YELLOW+f'Incorrect value for "Shop Sections Image", defaulting to True."')
-            sections_image = 'False'
-    except:
-        print(Fore.RED+f'Incorrect value for "Shop Sections Image", defaulting to True."')
-        sections_image = 'True'
+        try:
+            placeholderUrl = data["placeholderUrl"]
+            print(Fore.GREEN + 'Loaded "placeholderUrl" as "'+placeholderUrl+'"')
+        except:
+            placeholderUrl = 'https://i.imgur.com/W22Foja.png'
+            print(Fore.RED + 'Failed to load "placeholderUrl", set to default placeholder url.')
 
-    try:
-        BG_Color = data['ImageColor']
-        if BG_Color == "":
-            print(Fore.YELLOW+f'Incorrect value for "Background Color", defaulting to "Blue"')
-            BG_Color = '394ff7'
-        else:
-            print(Fore.GREEN+f'Loaded "Background Color" as "{BG_Color}"')
+        try:
+            watermark = data["watermark"]
+            print(Fore.GREEN + 'Loaded "watermark" as "'+watermark+'"')
+        except:
+            watermark = ''
+            print(Fore.RED + 'Failed to load "watermark", ignored, program will be ran without a watermark.')
+
+        try:
+            useFeaturedIfAvaliable = data["useFeaturedIfAvaliable"]
+            if useFeaturedIfAvaliable == 'True' or useFeaturedIfAvaliable == 'False':
+                print(Fore.GREEN + 'Loaded "useFeaturedIfAvaliable" as "'+useFeaturedIfAvaliable+'"')
+            else:
+                useFeaturedIfAvaliable = 'False'
+                print(Fore.YELLOW + 'Incorrect value for useFeaturedIfAvaliable was given so I have loaded "useFeaturedIfAvaliable" as "False"')
+        except:
+            useFeaturedIfAvaliable = 'False'
+            print(Fore.RED + 'Failed to load "useFeaturedIfAvaliable", defaulted to "False"')
+
+        try:
+            iconType = data["iconType"]
+            if iconType == 'standard' or iconType == 'clean' or iconType == 'new' or iconType == 'cataba' or iconType == 'large':
+                print(Fore.GREEN + 'Loaded "iconType" as "'+iconType+'"')
+            else:
+                iconType = 'cataba'
+                print(Fore.YELLOW + 'Incorrect value for iconType was given so I have loaded "iconType" as "cataba"')
+        except:
+            iconType = 'cataba'
+            print(Fore.RED + 'Failed to load "iconType", defaulted to "cataba"')
+
+        try:
+            benbot = data['BenBot']
+            if benbot == 'True':
+                print(Fore.GREEN + f'Loaded BenBot API.')
+            if benbot == 'False':
+                print(Fore.GREEN + 'Loaded Fortnite-API.')
+        except:
+            benbot = 'False'
+            print(Fore.RED + 'Failed to load "ApiType", defaulting to "Fortnite-API"...')
+
+        try:
+            twitAPIKey = data["twitAPIKey"]
+            if twitAPIKey == '':
+                twitAPIKey = 'XXX'
+            print(Fore.GREEN + 'Loaded "twitAPIKey" as "'+twitAPIKey+'"')
+        except:
+            twitAPIKey = 'XXX'
+            print(Fore.RED + 'Failed to load "twitAPIKey", defaulted to "XXX"')
+
+        try:
+            twitAPISecretKey = data["twitAPISecretKey"]
+            print(Fore.GREEN + 'Loaded "twitAPISecretKey" as "'+twitAPISecretKey+'"')
+        except:
+            twitAPISecretKey = 'XXX'
+            print(Fore.RED + 'Failed to load "twitAPISecretKey", defaulted to "XXX"')
+
+        try:
+            twitAccessToken = data["twitAccessToken"]
+            print(Fore.GREEN + 'Loaded "twitAccessToken" as "'+twitAccessToken+'"')
+        except:
+            twitAccessToken = 'XXX'
+            print(Fore.RED + 'Failed to load "twitAccessToken", defaulted to "XXX"')
+
+        try:
+            twitAccessTokenSecret = data["twitAccessTokenSecret"]
+            print(Fore.GREEN + 'Loaded "twitAccessTokenSecret" as "'+twitAccessTokenSecret+'"')
+        except:
+            twitAccessTokenSecret = 'XXX'
+            print(Fore.RED + 'Failed to load "twitAccessTokenSecret", defaulted to "XXX"')
+
+        try:
+            tweetUpdate = data["tweetUpdate"]
+            if tweetUpdate == 'True' or tweetUpdate == 'False':
+                print(Fore.GREEN + 'Loaded "tweetUpdate" as "'+tweetUpdate+'"')
+            else:
+                tweetUpdate = 'False'
+                print(Fore.YELLOW + 'Incorrect value for tweetUpdate was given so I have loaded "tweetUpdate" as "False"')
+        except:
+            tweetUpdate = 'False'
+            print(Fore.RED + 'Failed to load "tweetUpdate", defaulted to "False"')
+
+        try:
+            tweetAes = data["tweetAes"]
+            if tweetAes == 'True' or tweetAes == 'False':
+                print(Fore.GREEN + 'Loaded "tweetAes" as "'+tweetAes+'"')
+            else:
+                tweetAes = 'False'
+                print(Fore.YELLOW + 'Incorrect value for tweetAes was given so I have loaded "tweetAes" as "False"')
+        except:
+            tweetAes = 'False'
+            print(Fore.RED + 'Failed to load "tweetAes", defaulted to "False"')
+
+        try:
+            BotDelay = data['BotDelay']
+            print(Fore.GREEN + f'Loaded "BotDelay" as {BotDelay} seconds.')
+        except:
+            BotDelay = 30
+            print(Fore.RED + 'Failed to load "BotDelay", defaulted to 30 seconds.')
             
-    except:
-        print(Fore.RED+f'Incorrect value for "Background Color", defaulting to "Blue"')
-        BG_Color = '394ff7'
+        try:
+            twitsearch = data['TweetSearch']
+            if twitsearch == 'True' or twitsearch == 'False':
+                print(Fore.GREEN + f'Loaded "Tweet Search" as {twitsearch}.')
+            else:
+                twitsearch = 'True'
+                print(Fore.YELLOW + 'Incorrect value for "Twitter Search", defaulting to "True"...')
+        except:
+            twitsearch = 'False'
+            print(Fore.RED + 'Failed to load "Tweet Search", defaulting to "False"...')
+            
+        try:
+            MergeImagesAuto = data['MergeImages']
+            if MergeImagesAuto == 'True' or MergeImagesAuto == 'False':
+                print(Fore.GREEN + f'Loaded "MergeImages" as "{MergeImagesAuto}"')
+            else:
+                MergeImagesAuto = 'True'
+                print(Fore.YELLOW + f'Incorrect value for MergeImages was given so I have loaded "MergeImages" as "True"')
+        except:
+            print(Fore.YELLOW + 'Incorrect value for "MergeImages", defaulting to "True"...')
+            MergeImagesAuto = 'True'
 
-    try:
-        sideFont = data['sideFont']
-        if sideFont != '':
+        try:
+            CreatorCode = data['CreatorCode']
+            if CreatorCode != '':
+                print(Fore.GREEN + f'Loaded "CreatorCode" as "{CreatorCode}')
+            else:
+                print(Fore.GREEN + 'Loaded Creator Code as none.')
+                CreatorCode = ''
+        except:
+            CreatorCode = ''
+            print(Fore.YELLOW + 'Incorrect value for "CreatorCode", defaulting to none.')
+            
+        try:
+            apikey = data['apikey']
+            if apikey != "":
+                print(Fore.GREEN + f'Loaded "API Key" as "{apikey}"')
+            else:
+                print(Fore.GREEN + 'Loaded API Key as none.')
+                CreatorCode = ''
+        except:
+            apikey = ''
+            print(Fore.YELLOW + 'Incorrect value for "apikey", defaulting to none.')   
+        
+        try:
+            global showitemsource
+            showitemsource = data['showitemsource']
+            showitemsource = showitemsource.title()
+            if showitemsource != "":
+                print(Fore.GREEN+f'Loaded "showitemsource" as "{showitemsource}"')
+            else:
+                print(Fore.GREEN+f'Loaded showitemsource as False.')
+        except:
+            print(Fore.YELLOW+'Incorrect value for "ShowItemSource", defaulting to True.')
+            showitemsource = 'True'
+            
+        try:
+            loc1 = ''
+            mergewatermark = data['MergeWatermarkUrl']
+            if 'image' in mergewatermark:
+                loc1 = mergewatermark.replace('image/', '')
+                print(Fore.GREEN+f'Detected "MergeWatermark" to be an image file. Image is located in assets/{loc1}')
+
+                def addwatermark():
+                    img=Image.open(f'assets/{loc1}')
+                    img=img.resize((512,512),PIL.Image.ANTIALIAS)
+                    img.save(f'icons/zzz{loc1}')
+                #addwatermark()
+            else:
+                if mergewatermark != "":
+                    print(Fore.GREEN+f'Loaded "MergeWatermark" as "{mergewatermark}')
+                else:
+                    print(Fore.GREEN+f'Loaded "MergeWatermark" as None.')
+                    mergewatermark = ""
+        except:
+            print(Fore.YELLOW+'Incorrect value for "mergewatermark", defaulting to None.')
+            mergewatermark = ""
+
+        try:
+            automergetweet = data['AutoTweetMerged']
+            automergetweet = automergetweet.title()
+            if automergetweet == 'True' or 'False':
+                print(Fore.GREEN+f'Loaded "Auto Tweet Merged Images" as "{automergetweet}"')
+            else:
+                print(Fore.YELLOW+'Incorrect value for "Auto Tweet Merged Images", defaulting to False.')
+                automergetweet = 'False'
+        except:
+            print(Fore.YELLOW+'Incorrect value for "Auto Tweet Merged Images", defaulting to False.')
+            automergetweet = "False"
+
+        try:
+            showDescription = data['ShowDescOnNPCs']
+            if showDescription == 'True' or 'False':
+                print(Fore.GREEN+f'Loaded "Show Description on NPCs" as "{showDescription}"')
+            else:
+                print(Fore.YELLOW+'Incorrect value for "Show Description on NPCs", defaulting to False.')
+                showDescription = 'False'
+        except:
+            print(Fore.YELLOW+'Incorrect value for "Show Description on NPCs", defaulting to False.')
+            showDescription = "False"
+
+        try:
+            sections_image = data['ShopSections_Image']
+            if sections_image == 'True' or 'False':
+                print(Fore.GREEN+f'Loaded "Shop Sections Image" as "{sections_image}"')
+            else:
+                print(Fore.YELLOW+f'Incorrect value for "Shop Sections Image", defaulting to True."')
+                sections_image = 'False'
+        except:
+            print(Fore.RED+f'Incorrect value for "Shop Sections Image", defaulting to True."')
+            sections_image = 'True'
+
+        try:
+            BG_Color = data['ImageColor']
+            if BG_Color == "":
+                print(Fore.YELLOW+f'Incorrect value for "Background Color", defaulting to "Blue"')
+                BG_Color = '394ff7'
+            else:
+                print(Fore.GREEN+f'Loaded "Background Color" as "{BG_Color}"')
+                
+        except:
+            print(Fore.RED+f'Incorrect value for "Background Color", defaulting to "Blue"')
+            BG_Color = '394ff7'
+
+        try:
+            sideFont = data['sideFont']
+            if sideFont != '':
                 print(Fore.GREEN+f'Loaded "Side Font" as "{sideFont}"')
-        else:
+            else:
+                print(Fore.YELLOW+'Incorrect value for "Side Font", defaulting to OpenSans-Regular.ttf.')
+                sideFont = 'OpenSans-Regular.ttf'
+        except:
             print(Fore.YELLOW+'Incorrect value for "Side Font", defaulting to OpenSans-Regular.ttf.')
-            sideFont = 'OpenSans-Regular.ttf'
-    except:
-        print(Fore.YELLOW+'Incorrect value for "Side Font", defaulting to OpenSans-Regular.ttf.')
-        sideFont = "OpenSans-Regular.ttf"
+            sideFont = "OpenSans-Regular.ttf"
+
+    else:
+    
+        try:
+            name = data["name"]
+            namelol = data["name"]
+        except:
+            name = 'AutoLeak'
+            print(Fore.RED + 'Failed to load "name", defaulted to "AutoLeak"')
+
+        try:
+            footer = data["footer"]
+        except:
+            footer = '#Fortnite'
+            print(Fore.RED + 'Failed to load "footer", defaulted to "#Fortnite"')
+
+        try:
+            language = data["language"]
+            if language == 'ar' or language == 'de' or language == 'en' or language == 'es' or language == 'es-419' or language == 'fr' or language == 'it' or language == 'ja' or language == 'ko' or language == 'pl' or language == 'pt-BR' or language == 'de' or language == 'ru' or language == 'tr' or language == 'zh-CN' or language == 'zh-Hant':
+                pass
+            else:
+                language = 'en'
+                print(Fore.YELLOW + 'Incorrect value for language was given so I have loaded "language" as "en"')
+
+        except:
+            language = 'en'
+            print(Fore.RED + 'Failed to load "language", defaulted to "en"')
+
+        try:
+            imageFont = data["imageFont"]
+        except:
+            imageFont = 'BurbankBigCondensed-Black.otf'
+            print(Fore.RED + 'Failed to load "imageFont", defaulted to "BurbankBigCondensed-Black.otf"')
+
+        try:
+            placeholderUrl = data["placeholderUrl"]
+        except:
+            placeholderUrl = 'https://i.imgur.com/W22Foja.png'
+            print(Fore.RED + 'Failed to load "placeholderUrl", set to default placeholder url.')
+
+        try:
+            watermark = data["watermark"]
+        except:
+            watermark = ''
+            print(Fore.RED + 'Failed to load "watermark", ignored, program will be ran without a watermark.')
+
+        try:
+            useFeaturedIfAvaliable = data["useFeaturedIfAvaliable"]
+            if useFeaturedIfAvaliable == 'True' or useFeaturedIfAvaliable == 'False':
+                pass
+            else:
+                useFeaturedIfAvaliable = 'False'
+                print(Fore.YELLOW + 'Incorrect value for useFeaturedIfAvaliable was given so I have loaded "useFeaturedIfAvaliable" as "False"')
+        except:
+            useFeaturedIfAvaliable = 'False'
+            print(Fore.RED + 'Failed to load "useFeaturedIfAvaliable", defaulted to "False"')
+
+        try:
+            iconType = data["iconType"]
+            if iconType == 'standard' or iconType == 'clean' or iconType == 'new' or iconType == 'cataba' or iconType == 'large':
+                pass
+            else:
+                iconType = 'cataba'
+                print(Fore.YELLOW + 'Incorrect value for iconType was given so I have loaded "iconType" as "cataba"')
+        except:
+            iconType = 'cataba'
+            print(Fore.RED + 'Failed to load "iconType", defaulted to "cataba"')
+
+        try:
+            benbot = data['BenBot']
+        except:
+            benbot = 'False'
+            print(Fore.RED + 'Failed to load "ApiType", defaulting to "Fortnite-API"...')
+
+        try:
+            twitAPIKey = data["twitAPIKey"]
+            if twitAPIKey == '':
+                twitAPIKey = 'XXX'
+        
+        except:
+            twitAPIKey = 'XXX'
+            print(Fore.RED + 'Failed to load "twitAPIKey", defaulted to "XXX"')
+
+        try:
+            twitAPISecretKey = data["twitAPISecretKey"]
+           
+        except:
+            twitAPISecretKey = 'XXX'
+            print(Fore.RED + 'Failed to load "twitAPISecretKey", defaulted to "XXX"')
+
+        try:
+            twitAccessToken = data["twitAccessToken"]
+
+        except:
+            twitAccessToken = 'XXX'
+            print(Fore.RED + 'Failed to load "twitAccessToken", defaulted to "XXX"')
+
+        try:
+            twitAccessTokenSecret = data["twitAccessTokenSecret"]
+
+        except:
+            twitAccessTokenSecret = 'XXX'
+            print(Fore.RED + 'Failed to load "twitAccessTokenSecret", defaulted to "XXX"')
+
+        try:
+            tweetUpdate = data["tweetUpdate"]
+            if tweetUpdate == 'True' or tweetUpdate == 'False':
+                pass
+            else:
+                tweetUpdate = 'False'
+                print(Fore.YELLOW + 'Incorrect value for tweetUpdate was given so I have loaded "tweetUpdate" as "False"')
+        except:
+            tweetUpdate = 'False'
+            print(Fore.RED + 'Failed to load "tweetUpdate", defaulted to "False"')
+
+        try:
+            tweetAes = data["tweetAes"]
+            if tweetAes == 'True' or tweetAes == 'False':
+                pass
+            else:
+                tweetAes = 'False'
+                print(Fore.YELLOW + 'Incorrect value for tweetAes was given so I have loaded "tweetAes" as "False"')
+        except:
+            tweetAes = 'False'
+            print(Fore.RED + 'Failed to load "tweetAes", defaulted to "False"')
+
+        try:
+            BotDelay = data['BotDelay']
+            
+        except:
+            BotDelay = 30
+            print(Fore.RED + 'Failed to load "BotDelay", defaulted to 30 seconds.')
+            
+        try:
+            twitsearch = data['TweetSearch']
+            if twitsearch == 'True' or twitsearch == 'False':
+                pass
+            else:
+                twitsearch = 'True'
+                print(Fore.YELLOW + 'Incorrect value for "Twitter Search", defaulting to "True"...')
+        except:
+            twitsearch = 'False'
+            print(Fore.RED + 'Failed to load "Tweet Search", defaulting to "False"...')
+            
+        try:
+            MergeImagesAuto = data['MergeImages']
+            if MergeImagesAuto == 'True' or MergeImagesAuto == 'False':
+                pass
+            else:
+                MergeImagesAuto = 'True'
+        except:
+            print(Fore.YELLOW + 'Incorrect value for "MergeImages", defaulting to "True"...')
+            MergeImagesAuto = 'True'
+
+        try:
+            CreatorCode = data['CreatorCode']
+            if CreatorCode != '':
+                pass
+            else:
+                CreatorCode = ''
+        except:
+            CreatorCode = ''
+            print(Fore.YELLOW + 'Incorrect value for "CreatorCode", defaulting to none.')
+            
+        try:
+            apikey = data['apikey']
+            if apikey != "":
+                pass
+            else:
+                print(Fore.GREEN + 'Loaded API Key as none.')
+                CreatorCode = ''
+        except:
+            apikey = ''
+            print(Fore.YELLOW + 'Incorrect value for "apikey", defaulting to none.')   
+        
+        try:
+            showitemsource = data['showitemsource']
+            showitemsource = showitemsource.title()
+        except:
+            print(Fore.YELLOW+'Incorrect value for "ShowItemSource", defaulting to True.')
+            showitemsource = 'True'
+            
+        try:
+            loc1 = ''
+            mergewatermark = data['MergeWatermarkUrl']
+            if 'image' in mergewatermark:
+                loc1 = mergewatermark.replace('image/', '')
+
+                def addwatermark():
+                    img=Image.open(f'assets/{loc1}')
+                    img=img.resize((512,512),PIL.Image.ANTIALIAS)
+                    img.save(f'icons/zzz{loc1}')
+                #addwatermark()
+            else:
+                if mergewatermark != "":
+                    pass
+                else:
+                    #print(Fore.GREEN+f'Loaded "MergeWatermark" as None.')
+                    mergewatermark = ""
+        except:
+            print(Fore.YELLOW+'Incorrect value for "mergewatermark", defaulting to None.')
+            mergewatermark = ""
+
+        try:
+            automergetweet = data['AutoTweetMerged']
+            automergetweet = automergetweet.title()
+            if automergetweet == 'True' or 'False':
+                pass
+            else:
+                print(Fore.YELLOW+'Incorrect value for "Auto Tweet Merged Images", defaulting to False.')
+                automergetweet = 'False'
+        except:
+            print(Fore.YELLOW+'Incorrect value for "Auto Tweet Merged Images", defaulting to False.')
+            automergetweet = "False"
+
+        try:
+            showDescription = data['ShowDescOnNPCs']
+            if showDescription == 'True' or 'False':
+                pass
+            else:
+                print(Fore.YELLOW+'Incorrect value for "Show Description on NPCs", defaulting to False.')
+                showDescription = 'False'
+        except:
+            print(Fore.YELLOW+'Incorrect value for "Show Description on NPCs", defaulting to False.')
+            showDescription = "False"
+
+        try:
+            sections_image = data['ShopSections_Image']
+            if sections_image == 'True' or 'False':
+                pass
+            else:
+                print(Fore.YELLOW+f'Incorrect value for "Shop Sections Image", defaulting to True."')
+                sections_image = 'False'
+        except:
+            print(Fore.RED+f'Incorrect value for "Shop Sections Image", defaulting to True."')
+            sections_image = 'True'
+
+        try:
+            BG_Color = data['ImageColor']
+            if BG_Color == "":
+                BG_Color = '394ff7'
+            else:
+                print(Fore.GREEN+f'Loaded "Background Color" as "{BG_Color}"')
+                
+        except:
+            print(Fore.RED+f'Incorrect value for "Background Color", defaulting to "Blue"')
+            BG_Color = '394ff7'
+
+        try:
+            sideFont = data['sideFont']
+            if sideFont != '':
+                pass
+            else:
+                print(Fore.YELLOW+'Incorrect value for "Side Font", defaulting to OpenSans-Regular.ttf.')
+                sideFont = 'OpenSans-Regular.ttf'
+        except:
+            print(Fore.YELLOW+'Incorrect value for "Side Font", defaulting to OpenSans-Regular.ttf.')
+            sideFont = "OpenSans-Regular.ttf"
     
     sections_image = sections_image.title()
+
 
 # Sets up Twitter API keys        
 auth = tweepy.OAuthHandler(twitAPIKey, twitAPISecretKey)
@@ -420,9 +700,18 @@ headers = {'Authorization': apikey}
 
 # Defines update mode
 def update_mode():
+    print(Fore.CYAN)
+    if benbot == 'True':
+        apitype = 'BenBot'
+    else:
+        apitype = 'Fortnite-API'
+    print(f'\n-- Starting Update Mode --\n   IconType = {iconType}\n   Delay = {BotDelay} seconds\n   API = {apitype}\n'+Fore.GREEN)
     if benbot == 'False':
         response = requests.get('https://fortnite-api.com/v2/cosmetics/br/new')
-        oldhash = response.json()['data']['hash']
+        if response:
+            oldhash = response.json()['data']['hash']
+        else:
+            return update_mode()
 
         count = 1
 
@@ -432,7 +721,7 @@ def update_mode():
                 try:
                     newhash = response.json()['data']['hash'] 
                 except:
-                    catabaupdate()
+                    return update_mode()
                 print(f'Checking for a change in cosmetics... ({count})')
                 count = count + 1
                 if newhash != oldhash:
@@ -445,6 +734,9 @@ def update_mode():
                         return generate_cosmetics()
                     elif iconType == 'cataba':
                         catabaicons()
+                        
+                    elif iconType == 'large':
+                        largeicontype(useFeaturedIfAvaliable, language)
                     
                     if automergetweet == 'True':
                         try:
@@ -454,7 +746,7 @@ def update_mode():
                             api.update_with_media('merged/merge.jpg', 'A new update has been pushed out, heres all of the new cosmetics:')
                         print('Tweeted new cosmetics')
                     print('Done generating cosmetics.')
-                    exit()
+                    return update_mode()
             else:
                 print("FAILED TO GRAB NOTICES DATA: URL DOWN")
             time.sleep(BotDelay)
@@ -470,7 +762,7 @@ def update_mode():
                 try:
                     previousv = response.json()['previousVersion']
                 except:
-                    catabaupdate()
+                    return update_mode()
                 print(f'Checking for a change in cosmetics... ({count})')
                 count = count + 1
                 if previousv == currentv:
@@ -482,8 +774,9 @@ def update_mode():
                     elif iconType == 'clean':
                         return generate_cosmetics()
                     elif iconType == 'cataba':
-                        generate_variants()
                         catabaicons()
+                    elif iconType == 'large':
+                        largeicontype(useFeaturedIfAvaliable, language)
                     
                     if automergetweet == 'True':
                         try:
@@ -493,6 +786,7 @@ def update_mode():
                             api.update_with_media('merged/merge.jpg', 'A new update has been pushed out, heres all of the new cosmetics:')
                         print('Tweeted new cosmetics')
                     print('Done generating cosmetics.')
+                    return update_mode()
             else:
                 print("FAILED TO GRAB NOTICES DATA: URL DOWN")
             time.sleep(BotDelay)
@@ -506,6 +800,9 @@ def generate_cosmetics():
 
     if iconType == 'cataba':
         return catabaicons()
+    
+    if iconType == 'large':
+        return largeicontype(useFeaturedIfAvaliable, language)
 
     if benbot == 'False':
             print('Loading Fortnite-API...\n')
@@ -886,9 +1183,13 @@ def tweet_build():
 
 def search_cosmetic():
     if iconType == 'new':
-        newcbeta()
+        return newcbeta()
     elif iconType == 'cataba':
         return catabasearch()
+    elif iconType == 'large':
+        print('Loaded Large Icon Type')
+        print('API = Fortnite-API')
+        return largeicontype_search(useFeaturedIfAvaliable, language)
     else:
         pass
     fontSize = 40
@@ -1443,9 +1744,11 @@ def shopupdate():
 
 def dynamic_pak():
     if iconType == 'new':
-        dynpak2()
-    else:
-        pass
+        return dynpak2()
+    
+    if iconType == 'large':
+        return largeicontype_pak(useFeaturedIfAvaliable, language)
+
     print('\nWhat number pak do you want to grab?')
     ask = input('>> ')
 
@@ -1650,7 +1953,10 @@ def staging_servers():
     oldVersion = response.json()['version']
 
     while 1:
-        response = requests.get(apiurl)
+        try:
+            response = requests.get(apiurl)
+        except:
+            return staging_servers()
         if response:
             try:
                 newVersion = response.json()['version']
@@ -3547,11 +3853,13 @@ def catabaupdate():
 def catabaicons():
     delete_contents()
     print(Fore.YELLOW + 'THIS IS A WORK IN PROGRESS, NOT FULLY FINISHED YET.' + Fore.GREEN)
+    
     if benbot == 'False':
         response = requests.get('https://fortnite-api.com/v2/cosmetics/br/new')
         version = response.json()['data']['build']
         print('\nGenerating cosmetics for version',version)
         counter = 0
+        itemnum = 0
         for i in response.json()['data']['items']:
             name = i['name']
             id = i['id']
@@ -3602,6 +3910,11 @@ def catabaicons():
             except:
                 rarityoverlay = Image.open(f'rarities/cataba/placeholder_rarity.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
             img.paste(rarityoverlay, (0,0), rarityoverlay)
+
+            varaints_icon = Image.open('rarities/cataba/PlusSign.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+            if i['variants'] != None:
+                img.paste(varaints_icon, (0,0), varaints_icon)
+
             img.save(f'cache/{id}.png')
             loadFont = 'fonts/BurbankBigRegular-BlackItalic.otf'
             font=ImageFont.truetype(loadFont,31)
@@ -3628,11 +3941,13 @@ def catabaicons():
             percentage = counter/len(i)
             realpercentage = percentage * 100
             print(f"{counter}/{len(i)} - {round(realpercentage)}%")
+            itemnum = itemnum + 1
     if benbot == 'True':
         response = requests.get('https://benbot.app/api/v1/newCosmetics')
         version = response.json()['currentVersion']
         print('\nGenerating cosmetics for version',version)
         counter = 0
+        itemnum = len(response.json()['items'])
         for i in response.json()['items']:
             name = i['name']
             id = i['id']
@@ -3752,6 +4067,9 @@ def catabaicons():
         if 'image' in mergewatermark:
             addwatermark()
         merger(mergewatermark, loc1)
+        if automergetweet != 'False':
+            api.update_with_media(f'merged/merge.jpg', f'[{namelol}] Found {itemnum} Leaked cosmetics from Patch {version}.')
+            print('Tweeted')
 
 
 def catabasearch():
@@ -3798,8 +4116,15 @@ def catabasearch():
     rarity = i["rarity"]['value']
     rarity = rarity.lower()
 
-    raritybackground = Image.open(f'rarities/cataba/{rarity}.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-    background = Image.open(f'rarities/cataba/{rarity}_background.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+    try:
+        raritybackground = Image.open(f'rarities/cataba/{rarity}.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+    except:
+        raritybackground = Image.open(f'rarities/cataba/common.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+
+    try:
+        background = Image.open(f'rarities/cataba/{rarity}_background.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+    except:
+        background = Image.open(f'rarities/cataba/common_background.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
 
     img=Image.new("RGB",(512,512))
     img.paste(raritybackground)
@@ -3816,6 +4141,11 @@ def catabasearch():
     except:
         rarityoverlay = Image.open(f'rarities/cataba/placeholder_rarity.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
     img.paste(rarityoverlay, (0,0), rarityoverlay)
+
+    varaints_icon = Image.open('rarities/cataba/PlusSign.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+    if i['variants'] != None:
+        img.paste(varaints_icon, (0,0), varaints_icon)
+
     img.save(f'cache/{id}.png')
     loadFont = 'fonts/BurbankBigRegular-BlackItalic.otf'
     font=ImageFont.truetype(loadFont,31)
@@ -3965,73 +4295,93 @@ print(Fore.GREEN + "\n- - - - - MENU - - - - -")
 print("")
 
 notice = response.json()['notice']
-if notice == None or '':
+if notice == None or notice == '':
     pass
 else:
     print(Fore.RED+'!!NOTICE!! '+Fore.GREEN+f'{notice}\n')
 
+print(Fore.CYAN+'- MAIN COMMANDS -'+Fore.GREEN)
 print(Fore.YELLOW + "(1)" +Fore.GREEN + " - Start update mode")
-print(Fore.YELLOW + "(2)" +Fore.GREEN + " - Generate new cosmetics\n")
-print("(3) - Tweet current build")
-print("(4) - Tweet current AES key")
-print("(5) - Search for a cosmetic")
-print("(6) - Clear contents of the icon folder")
-print("(7) - Check for a change in News Feed")
-print("(8) - Merge images in icons folder")
-print("(9) - Check for a change in Shop Sections")
-print("(10) - Check for a change in Item Shop")
-print("(11) - Grab all cosmetics from a specific pak")
+print(Fore.YELLOW + "(2)" +Fore.GREEN + " - Generate new cosmetics")
+print(Fore.YELLOW + "(3)" +Fore.GREEN + " - Search for a cosmetic")
+print(Fore.YELLOW + "(4)" +Fore.GREEN + " - Grab all cosmetics from a specific pak")
+
+print('')
+print(Fore.CYAN+'- OTHER COMMANDS -'+Fore.GREEN)
+print("(5) - Tweet current build")
+print("(6) - Tweet current AES key")
+print("(7) - Clear contents of the icon folder")
+print("(8) - Check for a change in News Feed")
+print("(9) - Merge images in icons folder (512x512)")
+print("(10) - Check for a change in Shop Sections")
+print("(11) - Check for a change in Item Shop")
 print("(12) - Checks for a change in notices")
-print("(13) - Checks for a change in staging servers")
-print("(14) - Search for any weapon of choice.")
-print("(15) - "+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Generate current NPCs')
-print("(16) - "+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Search by set')
-print("(17) - "+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Generate new variants')
-#print("(17) - Cataba Icons Test")
-#print("(18) - Cataba Icons update mode")
+print("(13) - Checks for a change in staging servers") # staging_servers
+print("(14) - Search for any weapon of choice.") # weapons
+
+print('')
+print(Fore.CYAN+'- BETA COMMANDS -'+Fore.GREEN)
+print("(15) - "+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Generate current NPCs') # npcs
+print("(16) - "+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Search by set') # set_search
+print("(17) - "+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Generate new variants') # generate_variants
+
+###
 
 print("")
 option_choice = input(">> ")
+
+# MAIN COMMANDS
 if option_choice == "1":
     update_mode()
 elif option_choice == "2":
     generate_cosmetics()
 elif option_choice == "3":
-    tweet_build()
-elif option_choice == "4":
-    tweet_aes()
-elif option_choice == "5":
     search_cosmetic()
-elif option_choice == "6":
-    delete_contents()
-elif option_choice == "7":
-    news_feed()
-elif option_choice == "8":
-    merge_images()
-elif option_choice == "9":
-    shop_sections(sections_image, BotDelay, BG_Color, api, namelol, watermark, language)
-elif option_choice == "10":
-    shop()
-elif option_choice == "11":
+elif option_choice == "4":
     dynamic_pak()
+
+# OTHER COMMANDS
+elif option_choice == "5":
+    tweet_build()
+elif option_choice == "6":
+    tweet_aes()
+elif option_choice == "7":
+    delete_contents()
+elif option_choice == "8":
+    news_feed()
+elif option_choice == "9":
+    merge_images()
+elif option_choice == "10":
+    shop_sections(sections_image, BotDelay, BG_Color, api, namelol, watermark, language)
+elif option_choice == "11":
+    shop()
 elif option_choice == "12":
     notices()
 elif option_choice == "13":
     staging_servers()
 elif option_choice == "14":
     weapons()
+
+# BETA COMMANDS
 elif option_choice == "15":
     npcs()
 elif option_choice == '16':
     set_search()
 elif option_choice == '17':
     generate_variants()
+
+
 else:
-    print(Fore.RED+"\nPlease enter a number between 1 and 15")
+    print(Fore.RED+"\nPlease enter a number between 1 and 17")
     time.sleep(2)
     
 # Search for a cosmetic (NEW ICONS)") - newcbeta()
 # Generate new cosmetics (NEW ICONS)') - newcnew()
 # Grab all cosmetics from a specific pak (NEW ICONS)') - dynpak2()
+
+#print('(L1) - '+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Large Icon Type Gen (new cosmetics)')
+#print('(L2) - '+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Large Icon Type Gen (search cosmetic)')
+#print('(L3) - '+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Large Icon Type Gen (pak search)')
+#print('(LM) - '+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Large Icon Type Gen (Merge cosmetics)')
 
 # If you have any issues with the softwere, please message Fevers#3474 on discord. #
