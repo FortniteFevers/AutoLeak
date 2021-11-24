@@ -71,7 +71,7 @@ def large_merger( datas: Union[list, None] = None, save_as: str = 'merge.jpg'):
     return image
 
 def largeicontype(useFeaturedIfAvaliable, language):
-    response = requests.get('https://fortnite-api.com/v2/cosmetics/br/new')
+    response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/new?language={language}')
 
     count = 0
     items = len(response.json()['data']['items'])
