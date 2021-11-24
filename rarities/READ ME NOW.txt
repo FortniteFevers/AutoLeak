@@ -1,1 +1,0 @@
-clean template does not have "gaminglegends" rarity, it can still be used however any items will show up as common.
