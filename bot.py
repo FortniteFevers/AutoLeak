@@ -49,6 +49,11 @@ try:
     import platform
     import tkinter as tk
     import tkinter.messagebox
+    from pypresence import Presence
+    rpc = Presence("")
+    rpc.connect ()
+    rpc.update (state="Using Autoleak",details="BY:Fevers",large_image="icon")
+
     window = tk.Tk()
     window.wm_withdraw()
 except ModuleNotFoundError as e:
