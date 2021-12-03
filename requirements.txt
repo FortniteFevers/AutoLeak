@@ -5,3 +5,4 @@ colorama
 datetime
 pyfiglet
 googletrans
+pypresence
