@@ -51,6 +51,8 @@ try:
     import tkinter.messagebox
     window = tk.Tk()
     window.wm_withdraw()
+
+    from pypresence import Presence
 except ModuleNotFoundError as e:
     print(f"Error: {e}")
     error = tkinter.messagebox.showerror(title="ModuleNotFoundError",message=f"An error accured:\n{e}",parent=window)
@@ -62,6 +64,17 @@ except ModuleNotFoundError as e:
 translator = Translator()
 init()
 
+try:
+    rpc = Presence(
+        "916433412376625213"
+    )
+    rpc.connect()
+    rpc.update(details='The easiest way to datamine Fortnite', large_image='autoleak_v2_logo', buttons=[{"label": "Join our Discord!", "url": "https://dsc.gg/autoleak"}, {"label": "Download AutoLeak!", "url": "https://github.com/FortniteFevers/AutoLeak"}])
+except Exception as e:
+    print(Fore.RED + f'Discord Presense Error:',e)
+    print('Loading program anyways...')
+    time.sleep(1)
+
 now = datetime.now()
 current_time = now.strftime("%H:%M")
 
@@ -69,8 +82,8 @@ from ALmodules.shopsections import shop_sections
 from ALmodules.compressor import compressnewcosmetics_normal, compress_brnews, compress_normal, pak_compress, compressnewcosmetics_new
 from ALmodules.merger import merger
 from ALmodules.npcs import npcsdef
-from ALmodules.shop import genshopbenbot
 from ALmodules.largeIconType import largeicontype, largeicontype_search, large_merger, largeicontype_pak
+from ALmodules.shop import genshop, update
 
 loop = True
 count = 1
@@ -150,6 +163,7 @@ print("")
 
 with open("settings.json") as settings:
     data = json.load(settings)
+    TwitterSupport = data['TwitterSupport']
     if data['ShowValues_AtStart'] == True:
 
         try:
@@ -428,7 +442,7 @@ with open("settings.json") as settings:
             sideFont = "OpenSans-Regular.ttf"
 
     else:
-    
+        
         try:
             name = data["name"]
             namelol = data["name"]
@@ -1675,72 +1689,32 @@ def merge_images():
 
 def shop():
     delete_contents()
-    print('\nDo you want to generate the shop (1) or start Update Mode (2)')
-    ask = input('>> ')
-    if ask == '1':
-        d2 = now.strftime("%B %d, %Y")
-        genshopbenbot()
-        addwatermark()
-        merger(mergewatermark, loc1)
-        if twitAPIKey != 'XXX':
-            print('\n\nDo you want to tweet this?\n(1): Yes\n(2): No')
-            ask = input('>> ')
-            try:
-                if CreatorCode != '':
-                    api.update_with_media(f"merged/merge.jpg", f'#Fortnite Item Shop for {d2}.\n\nSupport-a-Creator Code: {CreatorCode}')
-                else:
-                    api.update_with_media(f"merged/merge.jpg", f'#Fortnite Item Shop for {d2}.')
-            except:
-                compressnewcosmetics_normal()
-                if CreatorCode != '':
-                    api.update_with_media(f"merged/merge.jpg", f'#Fortnite Item Shop for {d2}.\n\nSupport-a-Creator Code: {CreatorCode}')
-                else:
-                    api.update_with_media(f"merged/merge.jpg", f'#Fortnite Item Shop for {d2}.')
-    else:
-        return shopupdate()
+    if TwitterSupport != False:
+        print('\nDo you want to generate a shop image or use the Shop Update mode for twitter?\n(1) Generate shop\n(2) Update mode')
+        ask = input('>> ')
+        if ask == '1':
+            genshop()
 
-def shopupdate():
-    count = 1
-    apiurl = 'https://fortnite-api.com/v2/shop/br'
+            print('\nMerging images...')
+            merger(mergewatermark, loc1)
 
-    jsondata = requests.get(apiurl)
-    data = jsondata.json
-
-    response = requests.get(apiurl)
-    shopData = response.json()['data']['hash']
-
-    while 1:
-        response = requests.get(apiurl)
-        if response:
-            shopDataLoop = response.json()['data']['hash']
-            print("Checking for change in Item Shop... ("+str(count)+")")
-            count = count + 1
-            response = requests.get(apiurl)
-
-            if shopData != shopDataLoop:
-                delete_contents()
-                print(f"Shop have changed at {current_time}...")
-                genshopbenbot()
-                merger(mergewatermark, loc1)
-                d2 = now.strftime("%B %d, %Y")
-                try:
-                    if CreatorCode != '':
-                        api.update_with_media(f"merged/merge.jpg", f'#Fortnite Item Shop for {d2}.\n\nSupport-a-Creator Code: {CreatorCode}')
-                    else:
-                        api.update_with_media(f"merged/merge.jpg", f'#Fortnite Item Shop for {d2}.')
-                except:
-                    compressnewcosmetics_normal()
-                    if CreatorCode != '':
-                        api.update_with_media(f"merged/merge.jpg", f'#Fortnite Item Shop for {d2}.\n\nSupport-a-Creator Code: {CreatorCode}')
-                    else:
-                        api.update_with_media(f"merged/merge.jpg", f'#Fortnite Item Shop for {d2}.')
-                print('done')
-                shopupdate()
-
+            img=Image.open(f'merge.jpg')
+            img.show()
+            print('Done! The image is now saved in merged/merge.jpg')
+            time.sleep(10)
         else:
-            print("FAILED TO GRAB SHOP DATA: URL DOWN")
+            update(api)
+    else:
+        print('\nGenerating shop image...')
+        genshop()
 
-        time.sleep(BotDelay)
+        print('\nMerging images...')
+        merger(mergewatermark, loc1)
+
+        img=Image.open(f'merge.jpg')
+        img.show()
+        print('Done! The image is now saved in merged/merge.jpg')
+        time.sleep(10)
 
 def dynamic_pak():
     if iconType == 'new':
@@ -1748,6 +1722,8 @@ def dynamic_pak():
     
     if iconType == 'large':
         return largeicontype_pak(useFeaturedIfAvaliable, language)
+
+    
 
     print('\nWhat number pak do you want to grab?')
     ask = input('>> ')
@@ -4290,6 +4266,111 @@ def generate_variants():
         api.update_with_media('merged/merge.jpg', f'All new variants added in v{currentversion}')
         print('Tweeted image.')
 
+def cataba_pak():
+    print(Fore.GREEN+'\nWhat pak do you wanna grab')
+    pak = input('>> ')
+    response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/search/all?dynamicPakId={pak}')
+    if response.json()['status'] == 404:
+        print('ERROR: 404')
+        cataba_pak()
+    data = response.json()['data']
+    start = time.time()
+    for i in data:
+        name = i['name']
+        id = i['id']
+        description = i['description']
+        backendtype = i['type']['value']
+        backendtype = backendtype.upper()
+
+        if useFeaturedIfAvaliable == 'True':
+            if i["images"]["featured"] != None:
+                url = i["images"]["featured"]
+            else:
+                if i['images']['icon'] != None:
+                    url = i['images']['icon']
+                else:
+                    url = 'https://i.ibb.co/KyvMydQ/do-Not-Delete.png'
+        else:
+            if i['images']['icon'] != None:
+                    url = i['images']['icon']
+            else:
+                url = 'https://i.ibb.co/KyvMydQ/do-Not-Delete.png'
+        try:
+            r = requests.get(url)
+        except:
+            print('a')
+        open(f'cache/{id}temp.png', 'wb').write(r.content)
+        iconImg = Image.open(f'cache/{id}temp.png')
+        iconImg.resize((512,512),PIL.Image.ANTIALIAS)
+
+
+        rarity = i["rarity"]['value']
+        rarity = rarity.lower()
+
+        try:
+            raritybackground = Image.open(f'rarities/cataba/{rarity}.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+        except:
+            raritybackground = Image.open(f'rarities/cataba/common.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+
+        try:
+            background = Image.open(f'rarities/cataba/{rarity}_background.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+        except:
+            background = Image.open(f'rarities/cataba/common_background.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+
+        img=Image.new("RGB",(512,512))
+        img.paste(raritybackground)
+        try:
+            overlay = Image.open(f'rarities/cataba/{rarity}_overlay.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+        except:
+            overlay = Image.open(f'rarities/cataba/common_overlay.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+        img.paste(overlay, (0,0), overlay)
+        iconImg= Image.open(f'cache/{id}temp.png').resize((512, 512), Image.ANTIALIAS).convert('RGBA')
+        img.paste(iconImg, (0,0), iconImg)
+        img.paste(background, (0,0), background)
+        try:
+            rarityoverlay = Image.open(f'rarities/cataba/{rarity}_rarity.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+        except:
+            rarityoverlay = Image.open(f'rarities/cataba/placeholder_rarity.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+        img.paste(rarityoverlay, (0,0), rarityoverlay)
+
+        varaints_icon = Image.open('rarities/cataba/PlusSign.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
+        if i['variants'] != None:
+            img.paste(varaints_icon, (0,0), varaints_icon)
+
+        img.save(f'cache/{id}.png')
+        loadFont = 'fonts/BurbankBigRegular-BlackItalic.otf'
+        font=ImageFont.truetype(loadFont,31)
+
+        background = Image.open(f'cache/{id}.png')
+        name=name.upper()
+        draw=ImageDraw.Draw(background)
+        draw.text((256,472),name,font=font,fill='white', anchor='ms') # Writes name
+
+        description=description.upper()
+        font=ImageFont.truetype(loadFont,10)
+        draw=ImageDraw.Draw(background)
+        draw.text((256,501),description,font=font,fill='white', anchor='ms') # Writes description
+
+        font=ImageFont.truetype(loadFont,14)
+        draw=ImageDraw.Draw(background)
+        draw.text((6,495),backendtype,font=font,fill='white') # Writes backend type        
+
+        background.save(f'icons/{id}.png')
+        os.remove(f'cache/{id}temp.png')
+        os.remove(f'cache/{id}.png')
+        end = time.time()
+        print(Fore.CYAN+"")
+        print("!  !  !  !  !  !  !")
+        print(f"IMAGE GENERATING COMPLETE - Generated image in {round(end - start, 2)} seconds!")
+        print("!  !  !  !  !  !  !")
+    #time.sleep(2)
+    #img = Image.open(f'icons/{id}.png')
+    #img.show()
+    print('done')
+    if twitsearch == 'True':
+        api.update_with_media(f'icons/{id}.png', f'{name} - {backendtype}')
+    cataba_pak()
+
 ##############################################
 print(Fore.GREEN + "\n- - - - - MENU - - - - -")
 print("")
@@ -4305,25 +4386,25 @@ print(Fore.YELLOW + "(1)" +Fore.GREEN + " - Start update mode")
 print(Fore.YELLOW + "(2)" +Fore.GREEN + " - Generate new cosmetics")
 print(Fore.YELLOW + "(3)" +Fore.GREEN + " - Search for a cosmetic")
 print(Fore.YELLOW + "(4)" +Fore.GREEN + " - Grab all cosmetics from a specific pak")
+print(Fore.YELLOW + "(5)" +Fore.GREEN + " - Generate a custom Fortnite Item Shop image")
 
 print('')
 print(Fore.CYAN+'- OTHER COMMANDS -'+Fore.GREEN)
-print("(5) - Tweet current build")
-print("(6) - Tweet current AES key")
-print("(7) - Clear contents of the icon folder")
-print("(8) - Check for a change in News Feed")
-print("(9) - Merge images in icons folder (512x512)")
-print("(10) - Check for a change in Shop Sections")
-print("(11) - Check for a change in Item Shop")
+print("(6) - Tweet current build")
+print("(7) - Tweet current AES key")
+print("(8) - Clear contents of the icon folder")
+print("(9) - Check for a change in News Feed")
+print("(10) - Merge images in icons folder (512x512)")
+print("(11) - Check for a change in Shop Sections")
 print("(12) - Checks for a change in notices")
 print("(13) - Checks for a change in staging servers") # staging_servers
 print("(14) - Search for any weapon of choice.") # weapons
 
 print('')
 print(Fore.CYAN+'- BETA COMMANDS -'+Fore.GREEN)
-print("(15) - "+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Generate current NPCs') # npcs
-print("(16) - "+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Search by set') # set_search
-print("(17) - "+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Generate new variants') # generate_variants
+print("(15) - Generate current NPCs") # npcs
+print("(16) - Search by set") # set_search
+print("(17) - Generate new variants") # generate_variants
 
 ###
 
@@ -4339,22 +4420,22 @@ elif option_choice == "3":
     search_cosmetic()
 elif option_choice == "4":
     dynamic_pak()
+elif option_choice == "5":
+    shop()
 
 # OTHER COMMANDS
-elif option_choice == "5":
-    tweet_build()
 elif option_choice == "6":
-    tweet_aes()
+    tweet_build()
 elif option_choice == "7":
-    delete_contents()
+    tweet_aes()
 elif option_choice == "8":
-    news_feed()
+    delete_contents()
 elif option_choice == "9":
-    merge_images()
+    news_feed()
 elif option_choice == "10":
-    shop_sections(sections_image, BotDelay, BG_Color, api, namelol, watermark, language)
+    merge_images()
 elif option_choice == "11":
-    shop()
+    shop_sections(sections_image, BotDelay, BG_Color, api, namelol, watermark, language)
 elif option_choice == "12":
     notices()
 elif option_choice == "13":
@@ -4369,6 +4450,11 @@ elif option_choice == '16':
     set_search()
 elif option_choice == '17':
     generate_variants()
+elif option_choice == '18':
+    large_merger()
+
+elif option_choice == '69':
+    cataba_pak()
 
 
 else:
