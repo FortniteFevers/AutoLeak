@@ -1,427 +1,354 @@
 import requests
 from PIL import Image, ImageFont, ImageDraw
+from datetime import date
+from datetime import datetime
 import os
-import PIL
-from math import ceil
+import time
+import tweepy
+from colorama import *
+import shutil
 
-def genshopbenbot():
-    response = requests.get('https://benbot.app/api/v1/shop/br')
-    version = response.json()
-    print('\nGenerating shop for',version['date'])
-    counter = 0
+#===============#
+loadFont = 'fonts/BurbankBigRegular-BlackItalic.otf'
+showItems = False
+botDelay = 5
 
-    print('Generating featured...')
-    for i in version['featured']:
-        
-        for i in i['entries']:
-            price = str(i['finalPrice'])
-            for i in i['items']:
-                name = i['name']
-                rarity = i['rarity']
-                backendtype = i['shortDescription']
-                if backendtype == None:
-                    backendtype = i['backendType']
-                id = i['id']
-                url = f'https://fortnite-api.com/images/cosmetics/br/{id}/icon.png'
-                description = i['description']
-                
+#===============#
 
-                r = requests.get(url)
-                open(f'cache/{id}temp.png', 'wb').write(r.content)
-                iconImg = Image.open(f'cache/{id}temp.png')
-                iconImg.resize((512,512),PIL.Image.ANTIALIAS)
+def genshop():
 
+    start = time.time()
 
-                raritybackground = Image.open(f'rarities/cataba/{rarity}.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-                background = Image.open(f'rarities/cataba/{rarity}_background.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-
-                img=Image.new("RGB",(512,512))
-                img.paste(raritybackground)
-                try:
-                    overlay = Image.open(f'rarities/cataba/{rarity}_overlay.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-                except:
-                    overlay = Image.open(f'rarities/cataba/common_overlay.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-                img.paste(overlay, (0,0), overlay)
-                iconImg= Image.open(f'cache/{id}temp.png').resize((512, 512), Image.ANTIALIAS).convert('RGBA')
-                img.paste(iconImg, (0,0), iconImg)
-                img.paste(background, (0,0), background)
-                try:
-                    rarityoverlay = Image.open(f'rarities/cataba/{rarity}_rarity.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-                except:
-                    rarityoverlay = Image.open(f'rarities/cataba/placeholder_rarity.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-                img.paste(rarityoverlay, (0,0), rarityoverlay)
-
-                vbucksoverlay = Image.open(f'rarities/cataba/vbuck.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-                img.paste(vbucksoverlay, (0,0), vbucksoverlay)
-                img.save(f'cache/{id}.png')
-
-                loadFont = 'fonts/BurbankBigRegular-BlackItalic.otf'
-                font=ImageFont.truetype(loadFont,31)
-
-
-                background = Image.open(f'cache/{id}.png')
-                name=name.upper()
-                draw=ImageDraw.Draw(background)
-                draw.text((256,472),name,font=font,fill='white', anchor='ms') # Writes name
-
-                description=description.upper()
-                font=ImageFont.truetype(loadFont,10)
-                draw=ImageDraw.Draw(background)
-                draw.text((256,501),description,font=font,fill='white', anchor='ms') # Writes description
-            
-                font=ImageFont.truetype(loadFont,15)
-                draw=ImageDraw.Draw(background)
-                draw.text((445,500),price,font=font,fill='white', anchor='ms') # Writes description
-
-                backendtype = backendtype.upper()
-                font=ImageFont.truetype(loadFont,14)
-                draw=ImageDraw.Draw(background)
-                draw.text((6,495),backendtype,font=font,fill='white') # Writes backend type        
-
-                background.save(f'icons/{id}.png')
-                os.remove(f'cache/{id}temp.png')
-                os.remove(f'cache/{id}.png')
-
-    print('Generated featured')
-
-
-    print('\nGenerating daily...')
-    for i in version['daily']:
-        
-        for i in i['entries']:
-            price = str(i['finalPrice'])
-            for i in i['items']:
-                name = i['name']
-                rarity = i['rarity']
-                backendtype = i['shortDescription']
-                if backendtype == None:
-                    backendtype = i['backendType']
-                id = i['id']
-                url = f'https://fortnite-api.com/images/cosmetics/br/{id}/icon.png'
-                description = i['description']
-                
-
-                r = requests.get(url)
-                open(f'cache/{id}temp.png', 'wb').write(r.content)
-                iconImg = Image.open(f'cache/{id}temp.png')
-                iconImg.resize((512,512),PIL.Image.ANTIALIAS)
-
-
-                raritybackground = Image.open(f'rarities/cataba/{rarity}.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-                background = Image.open(f'rarities/cataba/{rarity}_background.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-
-                img=Image.new("RGB",(512,512))
-                img.paste(raritybackground)
-                try:
-                    overlay = Image.open(f'rarities/cataba/{rarity}_overlay.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-                except:
-                    overlay = Image.open(f'rarities/cataba/common_overlay.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-                img.paste(overlay, (0,0), overlay)
-                iconImg= Image.open(f'cache/{id}temp.png').resize((512, 512), Image.ANTIALIAS).convert('RGBA')
-                img.paste(iconImg, (0,0), iconImg)
-                img.paste(background, (0,0), background)
-                try:
-                    rarityoverlay = Image.open(f'rarities/cataba/{rarity}_rarity.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-                except:
-                    rarityoverlay = Image.open(f'rarities/cataba/placeholder_rarity.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-                img.paste(rarityoverlay, (0,0), rarityoverlay)
-
-                vbucksoverlay = Image.open(f'rarities/cataba/vbuck.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-                img.paste(vbucksoverlay, (0,0), vbucksoverlay)
-                img.save(f'cache/{id}.png')
-
-                loadFont = 'fonts/BurbankBigRegular-BlackItalic.otf'
-                font=ImageFont.truetype(loadFont,31)
-
-
-                background = Image.open(f'cache/{id}.png')
-                name=name.upper()
-                draw=ImageDraw.Draw(background)
-                draw.text((256,472),name,font=font,fill='white', anchor='ms') # Writes name
-
-                description=description.upper()
-                font=ImageFont.truetype(loadFont,10)
-                draw=ImageDraw.Draw(background)
-                draw.text((256,501),description,font=font,fill='white', anchor='ms') # Writes description
-            
-                font=ImageFont.truetype(loadFont,15)
-                draw=ImageDraw.Draw(background)
-                draw.text((445,500),price,font=font,fill='white', anchor='ms') # Writes description
-
-                backendtype = backendtype.upper()
-                font=ImageFont.truetype(loadFont,14)
-                draw=ImageDraw.Draw(background)
-                draw.text((6,495),backendtype,font=font,fill='white') # Writes backend type        
-
-                background.save(f'icons/{id}.png')
-                os.remove(f'cache/{id}temp.png')
-                os.remove(f'cache/{id}.png')
-
-    print('Generated daily.')
-
-    if version['specialFeatured'] == None:
-        pass
-    else:
-        print('\nGenerating special featured...')
-        for i in version['specialFeatured']:
-            for i in i['entries']:
-                price = str(i['finalPrice'])
-                for i in i['items']:
-                    name = i['name']
-                    rarity = i['rarity']
-                    backendtype = i['shortDescription']
-                    if backendtype == None:
-                        backendtype = i['backendType']
-                    id = i['id']
-                    url = f'https://fortnite-api.com/images/cosmetics/br/{id}/icon.png'
-                    description = i['description']
-                    
-
-                    r = requests.get(url)
-                    open(f'cache/{id}temp.png', 'wb').write(r.content)
-                    iconImg = Image.open(f'cache/{id}temp.png')
-                    iconImg.resize((512,512),PIL.Image.ANTIALIAS)
-
-
-                    raritybackground = Image.open(f'rarities/cataba/{rarity}.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-                    background = Image.open(f'rarities/cataba/{rarity}_background.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-
-                    img=Image.new("RGB",(512,512))
-                    img.paste(raritybackground)
-                    try:
-                        overlay = Image.open(f'rarities/cataba/{rarity}_overlay.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-                    except:
-                        overlay = Image.open(f'rarities/cataba/common_overlay.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-                    img.paste(overlay, (0,0), overlay)
-                    iconImg= Image.open(f'cache/{id}temp.png').resize((512, 512), Image.ANTIALIAS).convert('RGBA')
-                    img.paste(iconImg, (0,0), iconImg)
-                    img.paste(background, (0,0), background)
-                    try:
-                        rarityoverlay = Image.open(f'rarities/cataba/{rarity}_rarity.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-                    except:
-                        rarityoverlay = Image.open(f'rarities/cataba/placeholder_rarity.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-                    img.paste(rarityoverlay, (0,0), rarityoverlay)
-
-                    vbucksoverlay = Image.open(f'rarities/cataba/vbuck.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-                    img.paste(vbucksoverlay, (0,0), vbucksoverlay)
-                    img.save(f'cache/{id}.png')
-
-                    loadFont = 'fonts/BurbankBigRegular-BlackItalic.otf'
-                    font=ImageFont.truetype(loadFont,31)
-
-
-                    background = Image.open(f'cache/{id}.png')
-                    name=name.upper()
-                    draw=ImageDraw.Draw(background)
-                    draw.text((256,472),name,font=font,fill='white', anchor='ms') # Writes name
-
-                    description=description.upper()
-                    font=ImageFont.truetype(loadFont,10)
-                    draw=ImageDraw.Draw(background)
-                    draw.text((256,501),description,font=font,fill='white', anchor='ms') # Writes description
-                
-                    font=ImageFont.truetype(loadFont,15)
-                    draw=ImageDraw.Draw(background)
-                    draw.text((445,500),price,font=font,fill='white', anchor='ms') # Writes description
-
-                    backendtype = backendtype.upper()
-                    font=ImageFont.truetype(loadFont,14)
-                    draw=ImageDraw.Draw(background)
-                    draw.text((6,495),backendtype,font=font,fill='white') # Writes backend type        
-
-                    background.save(f'icons/{id}.png')
-                    os.remove(f'cache/{id}temp.png')
-                    os.remove(f'cache/{id}.png')
-
-    print('Generated special featured.')
-
-    print('\nLoading bundles and other things...')
     response = requests.get('https://fortnite-api.com/v2/shop/br/combined')
-    version = response.json()['data']
-    counter = 0
-    for i in version['featured']['entries']:
+
+    data = response.json()['data']
+
+    currentdate = response.json()['data']['date']
+    currentdate = currentdate[:10]
+
+    # --- FEATURED GEN --- #
+    print('Generating Featured Section...')
+    featured = data['featured']
+    count = 0
+    for i in featured['entries']:
+
+        try:
+            url = i['newDisplayAsset']['materialInstances'][0]['images']['Background']
+        except:
+            url = i['items'][0]['images']['icon']
+        name = i['items'][0]['id']
+        last_seen = i['items'][0]['shopHistory']
+        try:
+            last_seen = last_seen[-2][:10]
+        except:
+            last_seen = 'NEW!'
+        price = i['finalPrice']
 
         if i['bundle'] != None:
-            name = i['bundle']['name']
-            if 'BUNDLE' not in name:
-                name = name + ' BUNDLE'
             url = i['bundle']['image']
-            id = i['bundle']['name']
-            price = str(i['finalPrice'])
-            rarity = 'bundle'
-            backendtype = 'BUNDLE'
-            try:
-                description = i['banner']['value']
-            except:
-                description = 'N/A'
-            if description == None:
-                description = 'N/A'
-            r = requests.get(url)
-            open(f'cache/{id}temp.png', 'wb').write(r.content)
-            iconImg = Image.open(f'cache/{id}temp.png')
-            iconImg.resize((512,512),PIL.Image.ANTIALIAS)
-
-            rarity = 'common'
-            try:
-                raritybackground = Image.open(f'rarities/cataba/{rarity}.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-            except:
-                raritybackground = Image.open(f'rarities/cataba/common.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-
-            try:  
-                background = Image.open(f'rarities/cataba/{rarity}_background.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-            except:
-                background = Image.open(f'rarities/cataba/{rarity}_background.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-
-            img=Image.new("RGB",(512,512))
-            img.paste(raritybackground)
-            try:
-                overlay = Image.open(f'rarities/cataba/{rarity}_overlay.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-            except:
-                overlay = Image.open(f'rarities/cataba/common_overlay.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-            img.paste(overlay, (0,0), overlay)
-            iconImg= Image.open(f'cache/{id}temp.png').resize((512, 512), Image.ANTIALIAS).convert('RGBA')
-            img.paste(iconImg, (0,0), iconImg)
-            img.paste(background, (0,0), background)
-
-            rarity = 'bundle'
-            try:
-                rarityoverlay = Image.open(f'rarities/cataba/{rarity}_rarity.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-            except:
-                rarityoverlay = Image.open(f'rarities/cataba/placeholder_rarity.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-            img.paste(rarityoverlay, (0,0), rarityoverlay)
-
-            vbucksoverlay = Image.open(f'rarities/cataba/vbuck.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-            img.paste(vbucksoverlay, (0,0), vbucksoverlay)
-            img.save(f'cache/{id}.png')
-
-            loadFont = 'fonts/BurbankBigRegular-BlackItalic.otf'
-            font=ImageFont.truetype(loadFont,31)
-
-
-            background = Image.open(f'cache/{id}.png')
-            name=name.upper()
-            draw=ImageDraw.Draw(background)
-            draw.text((256,472),name,font=font,fill='white', anchor='ms') # Writes name
-
-            description=description.upper()
-            font=ImageFont.truetype(loadFont,10)
-            draw=ImageDraw.Draw(background)
-            draw.text((256,501),description,font=font,fill='white', anchor='ms') # Writes description
+            name = f"zzz{i['bundle']['name']}"
         
-            font=ImageFont.truetype(loadFont,15)
-            draw=ImageDraw.Draw(background)
-            draw.text((445,500),price,font=font,fill='white', anchor='ms') # Writes description
-
-            font=ImageFont.truetype(loadFont,14)
-            draw=ImageDraw.Draw(background)
-            draw.text((6,495),backendtype,font=font,fill='white') # Writes backend type        
-
-            background.save(f'icons/{id}.png')
-            os.remove(f'cache/{id}temp.png')
-            os.remove(f'cache/{id}.png')
-            counter = counter + 1
+        if last_seen != 'NEW!':
+            dateloop = datetime.strptime(last_seen, "%Y-%m-%d")
+            current = datetime.strptime(currentdate, "%Y-%m-%d")
+            diff = str(current.date() - dateloop.date())
+            diff = diff.replace('days, 0:00:00', '')
+            if diff == '0:00:00':
+                diff = '1'
         else:
-            price = str(i['finalPrice'])
-            for i in i['items']:
-                backendtype = i['type']['value'].upper()
-                rarity = i['rarity']['value']
-                name = i['name']
-                description = i['description']
-                if i["images"]["featured"] != None:
-                    url = i["images"]["featured"]
-                else:
-                    if i['images']['icon'] != None:
-                        url = i['images']['icon']
-                    else:
-                        url = 'https://i.ibb.co/KyvMydQ/do-Not-Delete.png'
-                id = i['id']
-                r = requests.get(url)
-                open(f'cache/{id}temp.png', 'wb').write(r.content)
-                iconImg = Image.open(f'cache/{id}temp.png')
-                iconImg.resize((512,512),PIL.Image.ANTIALIAS)
-
-                rarity = rarity.lower()
-                try:
-                    raritybackground = Image.open(f'rarities/cataba/{rarity}.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-                except:
-                    raritybackground = Image.open(f'rarities/cataba/common.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-
-                try:  
-                    background = Image.open(f'rarities/cataba/{rarity}_background.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-                except:
-                    background = Image.open(f'rarities/cataba/{rarity}_background.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-
-                img=Image.new("RGB",(512,512))
-                img.paste(raritybackground)
-                try:
-                    overlay = Image.open(f'rarities/cataba/{rarity}_overlay.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-                except:
-                    overlay = Image.open(f'rarities/cataba/common_overlay.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-                img.paste(overlay, (0,0), overlay)
-                iconImg= Image.open(f'cache/{id}temp.png').resize((512, 512), Image.ANTIALIAS).convert('RGBA')
-                img.paste(iconImg, (0,0), iconImg)
-                img.paste(background, (0,0), background)
-
-                try:
-                    rarityoverlay = Image.open(f'rarities/cataba/{rarity}_rarity.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-                except:
-                    rarityoverlay = Image.open(f'rarities/cataba/placeholder_rarity.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-                img.paste(rarityoverlay, (0,0), rarityoverlay)
-
-                vbucksoverlay = Image.open(f'rarities/cataba/vbuck.png').resize((512, 512), Image.ANTIALIAS).convert("RGBA")
-                img.paste(vbucksoverlay, (0,0), vbucksoverlay)
-                img.save(f'cache/{id}.png')
-
-                loadFont = 'fonts/BurbankBigRegular-BlackItalic.otf'
-                font=ImageFont.truetype(loadFont,31)
+            diff = 'NEW!'
 
 
-                background = Image.open(f'cache/{id}.png')
-                name=name.upper()
-                draw=ImageDraw.Draw(background)
-                draw.text((256,472),name,font=font,fill='white', anchor='ms') # Writes name
+        open(f'icons/{name}.png', 'wb').write(requests.get(url).content)
+        background = Image.open(f'icons/{name}.png').resize((512, 512), Image.ANTIALIAS)
+        background.save(f'icons/{name}.png')
 
-                description=description.upper()
-                font=ImageFont.truetype(loadFont,10)
-                draw=ImageDraw.Draw(background)
-                draw.text((256,501),description,font=font,fill='white', anchor='ms') # Writes description
+        img=Image.new("RGB",(512,512))
+        img.paste(background)
 
-                font=ImageFont.truetype(loadFont,15)
-                draw=ImageDraw.Draw(background)
-                draw.text((445,500),price,font=font,fill='white', anchor='ms') # Writes description
+        # OTHER ITEMS GEN
+        try:
+            if i['items'][1]:
+                url = i['items'][1]['images']['icon']
+                open(f'icons/temp{name}.png', 'wb').write(requests.get(url).content)
+                background = Image.open(f'icons/temp{name}.png').resize((80, 80), Image.ANTIALIAS)
+                background.save(f'icons/temp{name}.png')
+            
+                background = Image.open(f'icons/temp{name}.png')
+                img.paste(background, (0, 0), background)
 
-                font=ImageFont.truetype(loadFont,14)
-                draw=ImageDraw.Draw(background)
-                draw.text((6,495),backendtype,font=font,fill='white') # Writes backend type        
+                os.remove(f'icons/temp{name}.png')
+            if i['items'][2]:
+                url = i['items'][2]['images']['icon']
+                open(f'icons/temp{name}.png', 'wb').write(requests.get(url).content)
+                background = Image.open(f'icons/temp{name}.png').resize((80, 80), Image.ANTIALIAS)
+                background.save(f'icons/temp{name}.png')
+            
+                background = Image.open(f'icons/temp{name}.png')
+                img.paste(background, (0, 100), background)
 
-                background.save(f'icons/{id}.png')
-                os.remove(f'cache/{id}temp.png')
-                os.remove(f'cache/{id}.png')
+                os.remove(f'icons/temp{name}.png')
 
+            if i['items'][3]:
+                url = i['items'][3]['images']['icon']
+                open(f'icons/temp{name}.png', 'wb').write(requests.get(url).content)
+                background = Image.open(f'icons/temp{name}.png').resize((80, 80), Image.ANTIALIAS)
+                background.save(f'icons/temp{name}.png')
+            
+                background = Image.open(f'icons/temp{name}.png')
+                img.paste(background, (0, 200), background)
+
+                os.remove(f'icons/temp{name}.png')
+        except:
+            pass
+
+
+
+        overlay = Image.open('assets/overlay.png').convert('RGBA')
+        img.paste(overlay, (0,0), overlay)
+
+        img.save(f'icons/{name}.png')
+
+        background = Image.open(f'icons/{name}.png')
+
+        itemname = i['items'][0]['name']
+        if i['bundle'] != None:
+            itemname = f"{i['bundle']['name']}"
+        
+        font=ImageFont.truetype(loadFont,35)
+        draw=ImageDraw.Draw(background)
+        draw.text((256,420),itemname,font=font,fill='white', anchor='ms') # Writes name
+
+        if 'NEW!' in diff:
+            diff_text = 'NEW!'
+        else:
+            diff = diff.replace(' ', '')
+            diff_text = f'LAST SEEN: {diff} days ago'
+
+        if '0:00' in diff_text:
+            diff_text = 'LAST SEEN: 1 day ago'
+
+        font=ImageFont.truetype(loadFont,15)
+        draw=ImageDraw.Draw(background)
+        draw.text((256,450),diff_text,font=font,fill='white', anchor='ms') # Writes date last seen
+
+        font=ImageFont.truetype(loadFont,40)
+        draw=ImageDraw.Draw(background)
+        draw.text((256,505),f'{price}',font=font,fill='white', anchor='ms') # Writes price
+
+        background.save(f'icons/{name}.png')
+
+        if showItems != False:
+            print(f'Last Seen: {diff} days ago\n{name} - {price}\n')
+
+        count += 1
+
+    print(f'Done generating "{count}" items in the Featured section.')
+    featrued_num = count
+    print('')
+
+    # --- DAILY GEN --- #
+    print('Generating Daily Section...')
+    daily = data['daily']
+    count = 0
+    for i in daily['entries']:
+
+        url = i['newDisplayAsset']['materialInstances'][0]['images']['Background']
+        name = i['items'][0]['id']
+        last_seen = i['items'][0]['shopHistory']
+        try:
+            last_seen = last_seen[-2][:10]
+        except:
+            last_seen = 'NEW!'
+        price = i['finalPrice']
+
+        if i['bundle'] != None:
+            url = i['bundle']['image']
+            name = f"zzz{i['bundle']['name']}"
+        
+        if last_seen != 'NEW!':
+            dateloop = datetime.strptime(last_seen, "%Y-%m-%d")
+            current = datetime.strptime(currentdate, "%Y-%m-%d")
+            diff = str(current.date() - dateloop.date())
+            diff = diff.replace('days, 0:00:00', '')
+            if diff == '0:00:00':
+                diff = '1'
+        else:
+            diff = 'NEW!'
+
+
+        open(f'icons/{name}.png', 'wb').write(requests.get(url).content)
+        background = Image.open(f'icons/{name}.png').resize((512, 512), Image.ANTIALIAS)
+        background.save(f'icons/{name}.png')
+
+        img=Image.new("RGB",(512,512))
+        img.paste(background)
+
+        # OTHER ITEMS GEN
+        try:
+            if i['items'][1]:
+                url = i['items'][1]['images']['icon']
+                open(f'icons/temp{name}.png', 'wb').write(requests.get(url).content)
+                background = Image.open(f'icons/temp{name}.png').resize((80, 80), Image.ANTIALIAS)
+                background.save(f'icons/temp{name}.png')
+            
+                background = Image.open(f'icons/temp{name}.png')
+                img.paste(background, (0, 0), background)
+
+                os.remove(f'icons/temp{name}.png')
+            if i['items'][2]:
+                url = i['items'][2]['images']['icon']
+                open(f'icons/temp{name}.png', 'wb').write(requests.get(url).content)
+                background = Image.open(f'icons/temp{name}.png').resize((80, 80), Image.ANTIALIAS)
+                background.save(f'icons/temp{name}.png')
+            
+                background = Image.open(f'icons/temp{name}.png')
+                img.paste(background, (0, 100), background)
+
+                os.remove(f'icons/temp{name}.png')
+
+            if i['items'][3]:
+                url = i['items'][3]['images']['icon']
+                open(f'icons/temp{name}.png', 'wb').write(requests.get(url).content)
+                background = Image.open(f'icons/temp{name}.png').resize((80, 80), Image.ANTIALIAS)
+                background.save(f'icons/temp{name}.png')
+            
+                background = Image.open(f'icons/temp{name}.png')
+                img.paste(background, (0, 200), background)
+
+                os.remove(f'icons/temp{name}.png')
+        except:
+            pass
+
+        overlay = Image.open('assets/overlay.png').convert('RGBA')
+        img.paste(overlay, (0,0), overlay)
+
+        img.save(f'icons/{name}.png')
+
+        background = Image.open(f'icons/{name}.png')
+
+
+        itemname = i['items'][0]['name']
+        if i['bundle'] != None:
+            itemname = f"{i['bundle']['name']}"
+        font=ImageFont.truetype(loadFont,35)
+        draw=ImageDraw.Draw(background)
+        draw.text((256,420),itemname,font=font,fill='white', anchor='ms') # Writes name
+
+        if 'NEW!' in diff:
+            diff_text = 'NEW!'
+        else:
+            diff = diff.replace(' ', '')
+            diff_text = f'LAST SEEN: {diff} days ago'
+
+        if '0:00' in diff_text:
+            diff_text = 'LAST SEEN: 1 day ago'
+
+        font=ImageFont.truetype(loadFont,15)
+        draw=ImageDraw.Draw(background)
+        draw.text((256,450),diff_text,font=font,fill='white', anchor='ms') # Writes date last seen
+
+        font=ImageFont.truetype(loadFont,40)
+        draw=ImageDraw.Draw(background)
+        draw.text((256,505),f'{price}',font=font,fill='white', anchor='ms') # Writes price
+
+        background.save(f'icons/{name}.png')
+
+        if showItems != False:
+            print(f'Last Seen: {diff} days ago\n{name} - {price}\n')
+
+        count += 1
+
+    print(f'Done generating "{count}" items in the Daily section.')
+    daily_num = count
     
-        #i = response.json()['data']['items']
-        #percentage = counter/len(i)
-        #realpercentage = percentage * 100
-        #print(f"{counter}/{len(i)} - {round(realpercentage)}%")
-    print('\nLoaded bundles and other things.')
+    #########################
 
-def newgenshop():
-    print('Generating')
-    response = requests.get('https://fortnite-api.com/v2/shop/br/combined')
+    totalnum = daily_num + featrued_num
+    print(f'\nGenerated {totalnum} items from the {currentdate} Item Shop.')
 
-    if response.json()['data']['featured']:
-        featured = response.json()['data']['featured']
-    else:
-        featured = []
 
-    if response.json()['data']['daily']:
-        daily = response.json()['data']['daily']
-    else:
-        daily = []
+    end = time.time()
+
+    print(f"IMAGE GENERATING COMPLETE - Generated image in {round(end - start, 2)} seconds!")
     
-    rows = max(ceil(len(featured) / 5), ceil(len(daily) / 3))
-    height = 302 + (300 * rows)
-    shop_image = Image.new("RGB", (2544, height))
-    background = Image.open(f"CreatorCollabSeries.png").resize((shop_image.width, shop_image.height),PIL.Image.ANTIALIAS)
 
-    shop_image.paste(background, )
+response = requests.get('https://fortnite-api.com/v2/shop/br/combined')
+currentdate = response.json()['data']['date']
+currentdate = currentdate[:10]
+# Credits to https://github.com/MyNameIsDark01 for the original Merger code.
+# This merger is under rights, you may not take this code and use it in your own project without proper credits to Fevers and Dark.
+from math import ceil, sqrt
+from typing import Union
+import glob
+def shopmerge(datas: Union[list, None] = None, save_as: str = f'merged/shop {currentdate}.jpg'):
+    if not datas:
+        datas = [Image.open(i) for i in glob.glob('icons/*.png')]
+
+    row_n = len(datas)
+        
+    rowslen = ceil(sqrt(row_n))
+    columnslen = round(sqrt(row_n))
+
+    mode = "RGB"
+    px = 512
+
+    rows = rowslen * px
+    columns = columnslen * px
+    image = Image.new(mode, (rows, columns))
+
+    i = 0
+
+    for card in datas:
+        image.paste(
+            card,
+            ((0 + ((i % rowslen) * card.width)),
+                (0 + ((i // rowslen) * card.height)))
+        )
+
+        i += 1
+
+    image.save(f"{save_as}")
+
+    return image
+
+
+def update(api):
+    apiurl = f'https://pastebin.com/raw/0n76WS04'
+
+    response = requests.get(apiurl)
+    shopData = response.json()['data']['hash']
+    currentdate = response.json()['data']['date']
+    currentdate = currentdate[:10]
+
+    count = 1
+
+    while 1:
+        
+        response = requests.get(apiurl)
+        if response:
+            try:
+                shopDataLoop = response.json()['data']['hash']
+            except:
+                return update()
+            print("Checking for change in the Shop... ("+str(count)+")")
+            count = count + 1
+            
+            if shopData != shopDataLoop: # Now run program as normal. Shop has changed.
+                print('\nTHE SHOP HAS UPDATED!')
+                try:
+                    shutil.rmtree('cache')
+                    os.makedirs('cache')
+                except:
+                    os.makedirs('cache')
+                genshop()
+                from ALmodules.merger import merger
+                shopmerge()
+                api.update_with_media(f'merged/shop {currentdate}.jpg', f'#Fortnite Item Shop update for {currentdate}!\n\nConsider using code "Fevers" to support me! #EpicPartner')
+                print('')
+                update(api)
+        
+        else:
+            print("FAILED TO GRAB SHOP DATA: URL DOWN")
+
+        time.sleep(botDelay)
