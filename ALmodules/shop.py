@@ -314,7 +314,7 @@ def shopmerge(datas: Union[list, None] = None, save_as: str = f'merged/shop {cur
 
 
 def update(api):
-    apiurl = f'https://pastebin.com/raw/0n76WS04'
+    apiurl = f'https://fortnite-api.com/v2/shop/br/combined'
 
     response = requests.get(apiurl)
     shopData = response.json()['data']['hash']
