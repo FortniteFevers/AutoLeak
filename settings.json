@@ -15,15 +15,15 @@
   "iconType": "large",
   "showitemsource": "True",
 
-  "TwitterSupport": true,
-  "twitAPIKey": "RFduiS9r5nTHcurVeoN2UOrPC",
-  "twitAPISecretKey": "HRv6WIgwKAxIm7GTEjWammp9wt5slzevQ32rgukUjKCS6Z6LpN",
-  "twitAccessToken": "1057364060390543361-JsyHdLqWwgG6P5NZmkyI8SiSEE5LGn",
-  "twitAccessTokenSecret": "j9FPvbbQpLnKcJorJyjyQPrISdbY1HEOsasNZVoLDDgsm",
+  "TwitterSupport": false,
+  "twitAPIKey": "",
+  "twitAPISecretKey": "",
+  "twitAccessToken": "",
+  "twitAccessTokenSecret": "",
 
   "BenBot": "False",
   "BotDelay": 10,
-  "apikey": "b8f04d76-413b547e-15425588-1dd11d0274",
+  "apikey": "",
 
   "CreatorCode": "",
 
