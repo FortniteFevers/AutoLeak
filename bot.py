@@ -52,7 +52,6 @@ try:
     window = tk.Tk()
     window.wm_withdraw()
 
-    from pypresence import Presence
 except ModuleNotFoundError as e:
     print(f"Error: {e}")
     error = tkinter.messagebox.showerror(title="ModuleNotFoundError",message=f"An error accured:\n{e}",parent=window)
@@ -65,6 +64,7 @@ translator = Translator()
 init()
 
 try:
+    from pypresence import Presence
     rpc = Presence(
         "916433412376625213"
     )
