@@ -52,6 +52,7 @@ try:
     window = tk.Tk()
     window.wm_withdraw()
 
+    from pypresence import Presence
 except ModuleNotFoundError as e:
     print(f"Error: {e}")
     error = tkinter.messagebox.showerror(title="ModuleNotFoundError",message=f"An error accured:\n{e}",parent=window)
@@ -64,7 +65,6 @@ translator = Translator()
 init()
 
 try:
-    from pypresence import Presence
     rpc = Presence(
         "916433412376625213"
     )
@@ -1698,7 +1698,7 @@ def shop():
             print('\nMerging images...')
             merger(mergewatermark, loc1)
 
-            img=Image.open(f'merge.jpg')
+            img=Image.open(f'merged/merge.jpg')
             img.show()
             print('Done! The image is now saved in merged/merge.jpg')
             time.sleep(10)
@@ -4371,6 +4371,25 @@ def cataba_pak():
         api.update_with_media(f'icons/{id}.png', f'{name} - {backendtype}')
     cataba_pak()
 
+def reset_settings():
+    print('')
+    print('Are you sure you want to reset settings.json?\n(y) Yes\n(n) No')
+    ask = input('>> ')
+    ask = ask.lower()
+    if ask == 'y':
+        print('\nClearing settings.json...')
+        response = requests.get('https://raw.githubusercontent.com/FortniteFevers/AutoLeak/beta/settings.json')
+
+        with open(f'test.json', 'w') as x:
+            json.dump(response.json(), x, indent = 2)
+        
+        print('Dumped json to file')
+
+    else:
+        print('\nNot clearing settings.json.')
+
+    exit()
+
 ##############################################
 print(Fore.GREEN + "\n- - - - - MENU - - - - -")
 print("")
@@ -4381,6 +4400,10 @@ if notice == None or notice == '':
 else:
     print(Fore.RED+'!!NOTICE!! '+Fore.GREEN+f'{notice}\n')
 
+print(Fore.RED+'- IMPORTANT COMMANDS -'+Fore.GREEN)
+print(Fore.YELLOW + "(reset)" +Fore.GREEN + " - Reset settings.json")
+
+print('')
 print(Fore.CYAN+'- MAIN COMMANDS -'+Fore.GREEN)
 print(Fore.YELLOW + "(1)" +Fore.GREEN + " - Start update mode")
 print(Fore.YELLOW + "(2)" +Fore.GREEN + " - Generate new cosmetics")
@@ -4410,6 +4433,12 @@ print("(17) - Generate new variants") # generate_variants
 
 print("")
 option_choice = input(">> ")
+option_choice = option_choice.lower()
+
+# IMPORTANT COMMANDS
+if option_choice == 'reset':
+    reset_settings()
+
 
 # MAIN COMMANDS
 if option_choice == "1":
