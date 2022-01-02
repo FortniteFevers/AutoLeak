@@ -16,7 +16,7 @@ botDelay = 5
 #===============#
 
 def genshop():
-
+    print('Starting the generation process.')
     start = time.time()
 
     response = requests.get('https://fortnite-api.com/v2/shop/br/combined')
@@ -27,7 +27,7 @@ def genshop():
     currentdate = currentdate[:10]
 
     # --- FEATURED GEN --- #
-    print('Generating Featured Section...')
+    print('\nGenerating Featured Section...')
     featured = data['featured']
     count = 0
     for i in featured['entries']:
@@ -35,7 +35,7 @@ def genshop():
         try:
             url = i['newDisplayAsset']['materialInstances'][0]['images']['Background']
         except:
-            url = i['items'][0]['images']['icon']
+            url = i['newDisplayAsset']['materialInstances'][0]['images']['OfferImage']
         name = i['items'][0]['id']
         last_seen = i['items'][0]['shopHistory']
         try:
@@ -153,7 +153,10 @@ def genshop():
     count = 0
     for i in daily['entries']:
 
-        url = i['newDisplayAsset']['materialInstances'][0]['images']['Background']
+        try:
+            url = i['newDisplayAsset']['materialInstances'][0]['images']['Background']
+        except:
+            url = i['newDisplayAsset']['materialInstances'][0]['images']['OfferImage']
         name = i['items'][0]['id']
         last_seen = i['items'][0]['shopHistory']
         try:
@@ -299,7 +302,7 @@ def shopmerge(datas: Union[list, None] = None, save_as: str = f'merged/shop {cur
 
     i = 0
 
-    for card in datas:
+    for card in sorted(datas):
         image.paste(
             card,
             ((0 + ((i % rowslen) * card.width)),
@@ -314,7 +317,7 @@ def shopmerge(datas: Union[list, None] = None, save_as: str = f'merged/shop {cur
 
 
 def update(api):
-    apiurl = f'https://fortnite-api.com/v2/shop/br/combined'
+    apiurl = f'https://pastebin.com/raw/0n76WS04'
 
     response = requests.get(apiurl)
     shopData = response.json()['data']['hash']
