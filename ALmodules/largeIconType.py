@@ -29,6 +29,8 @@ import requests
 from PIL import Image, ImageFont, ImageDraw
 import PIL
 import os
+import arabic_reshaper
+from bidi.algorithm import get_display
 
 import glob
 from math import ceil, sqrt
@@ -103,6 +105,8 @@ def largeicontype(useFeaturedIfAvaliable, language):
         iconImg.resize((1083,1083),PIL.Image.ANTIALIAS)
 
         rarity = i["rarity"]['value']
+        rarity2 = arabic_reshaper.reshape(rarity)
+        rarity = get_display(rarity2)
         rarity = rarity.lower()
         #rarity = 'common'
 
@@ -144,26 +148,32 @@ def largeicontype(useFeaturedIfAvaliable, language):
         background.paste(watermark, (0, 0), watermark)
         #
 
-        loadFont = 'fonts/BurbankBigRegular-Black.ttf'
+        loadFont = 'fonts/JannaLTBold.ttf'
         font=ImageFont.truetype(loadFont,60)
 
         name = i['name']
+        name2 = arabic_reshaper.reshape(name)
+        name = get_display(name2)
         name=name.upper()
         draw=ImageDraw.Draw(background)
-        draw.text((30,55),name,font=font,fill='white')
+        draw.text((30,55),name,font=font,fill="#FFFFFF")
 
 
-        loadFont = 'fonts/BurbankBigRegular-BlackItalic.otf'
+        loadFont = 'fonts/JannaLTBold.ttf'
         font=ImageFont.truetype(loadFont,39)
         desc = i['description']
+        desc2 = arabic_reshaper.reshape(desc)
+        desc = get_display(desc2)
         desc=desc.upper()
         import textwrap
         newdesc = textwrap.fill(desc, 30)
 
         draw=ImageDraw.Draw(background)
-        draw.text((34,210),newdesc,font=font,fill='white')
+        draw.text((34,210),newdesc,font=font)
 
         # Button
+        loadFont = 'fonts/Cairo-Black.ttf'
+        font=ImageFont.truetype(loadFont,39)
         rarity = i['rarity']['value']
         raritylen = len(rarity)
         raritywidth = font.getsize(rarity)[0]
@@ -172,9 +182,10 @@ def largeicontype(useFeaturedIfAvaliable, language):
 
         raritytag=Image.new("RGB",(raritytag_w,48), color = 0xfffafa).convert('RGBA') # Draws Rarity Button Tag
 
-        background.paste(raritytag, (28, 124), raritytag)
+        background.paste(raritytag, (26, 155), raritytag)
 
         # RARITY BUTTON TEXT
+
         rarity=rarity.upper()
         draw=ImageDraw.Draw(background)
         draw.text((32,131),rarity,font=font,fill='black') # Draws Rarity Button Text
@@ -186,12 +197,14 @@ def largeicontype(useFeaturedIfAvaliable, language):
         backend = i['type']['value']
         backend=backend.upper()
         draw=ImageDraw.Draw(background)
-        draw.text((backend_x,133),backend,font=font,fill='white')
+        draw.text((backend_x,150),backend,font=font,fill='white')
 
-
+        loadFont = 'fonts/JannaLTBold.ttf'
         font=ImageFont.truetype(loadFont,35)
         try:
             set = i['set']['value']
+            set2 = arabic_reshaper.reshape(set)
+            set = get_display(set2)
         except:
             set = 'N/A'
         draw.text((20,935),f'Set: {set}',font=font,fill=0xc8c5c4)
@@ -225,7 +238,7 @@ def largeicontype(useFeaturedIfAvaliable, language):
             background.paste(plus_sign, (0,0), plus_sign)
 
             variants_text = Image.open(f'rarities/large/VariantsText.png').convert("RGBA")
-            background.paste(variants_text, (0,0), variants_text)
+            background.paste(variants_text, (0,5), variants_text)
 
             for x in i['variants'][0]['options']:
                 if x['name'] != 'DEFAULT':
@@ -364,26 +377,32 @@ def largeicontype_search(useFeaturedIfAvaliable, language):
     background.paste(watermark, (0, 0), watermark)
     #
 
-    loadFont = 'fonts/BurbankBigRegular-Black.ttf'
+    loadFont = 'fonts/JannaLTBold.ttf'
     font=ImageFont.truetype(loadFont,60)
 
     name = i['name']
+    name2 = arabic_reshaper.reshape(name)
+    name = get_display(name2)
     name=name.upper()
     draw=ImageDraw.Draw(background)
-    draw.text((30,55),name,font=font,fill='white')
+    draw.text((30,55),name,font=font,fill="#FFFFFF")
 
 
-    loadFont = 'fonts/BurbankBigRegular-BlackItalic.otf'
+    loadFont = 'fonts/JannaLTBold.ttf'
     font=ImageFont.truetype(loadFont,39)
     desc = i['description']
+    desc2 = arabic_reshaper.reshape(desc)
+    desc = get_display(desc2)
     desc=desc.upper()
     import textwrap
     newdesc = textwrap.fill(desc, 30)
 
     draw=ImageDraw.Draw(background)
-    draw.text((34,210),newdesc,font=font,fill='white')
+    draw.text((34,210),newdesc,font=font)
 
-    # Button
+        # Button
+    loadFont = 'fonts/Cairo-Black.ttf'
+    font=ImageFont.truetype(loadFont,39)
     rarity = i['rarity']['value']
     raritylen = len(rarity)
     raritywidth = font.getsize(rarity)[0]
@@ -392,8 +411,7 @@ def largeicontype_search(useFeaturedIfAvaliable, language):
 
     raritytag=Image.new("RGB",(raritytag_w,48), color = 0xfffafa).convert('RGBA') # Draws Rarity Button Tag
 
-    background.paste(raritytag, (28, 124), raritytag)
-
+    background.paste(raritytag, (26, 155), raritytag)
     # RARITY BUTTON TEXT
     rarity=rarity.upper()
     draw=ImageDraw.Draw(background)
@@ -581,26 +599,32 @@ def largeicontype_pak(useFeaturedIfAvaliable, language):
         background.paste(watermark, (0, 0), watermark)
         #
 
-        loadFont = 'fonts/BurbankBigRegular-Black.ttf'
+        loadFont = 'fonts/JannaLTBold.ttf'
         font=ImageFont.truetype(loadFont,60)
 
         name = i['name']
+        name2 = arabic_reshaper.reshape(name)
+        name = get_display(name2)
         name=name.upper()
         draw=ImageDraw.Draw(background)
-        draw.text((30,55),name,font=font,fill='white')
+        draw.text((30,55),name,font=font,fill="#FFFFFF")
 
 
-        loadFont = 'fonts/BurbankBigRegular-BlackItalic.otf'
+        loadFont = 'fonts/JannaLTBold.ttf'
         font=ImageFont.truetype(loadFont,39)
         desc = i['description']
+        desc2 = arabic_reshaper.reshape(desc)
+        desc = get_display(desc2)
         desc=desc.upper()
         import textwrap
         newdesc = textwrap.fill(desc, 30)
 
         draw=ImageDraw.Draw(background)
-        draw.text((34,210),newdesc,font=font,fill='white')
+        draw.text((34,210),newdesc,font=font)
 
         # Button
+        loadFont = 'fonts/Cairo-Black.ttf'
+        font=ImageFont.truetype(loadFont,39)
         rarity = i['rarity']['value']
         raritylen = len(rarity)
         raritywidth = font.getsize(rarity)[0]
@@ -609,7 +633,7 @@ def largeicontype_pak(useFeaturedIfAvaliable, language):
 
         raritytag=Image.new("RGB",(raritytag_w,48), color = 0xfffafa).convert('RGBA') # Draws Rarity Button Tag
 
-        background.paste(raritytag, (28, 124), raritytag)
+        background.paste(raritytag, (26, 155), raritytag)
 
         # RARITY BUTTON TEXT
         rarity=rarity.upper()
