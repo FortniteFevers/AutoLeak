@@ -11,9 +11,7 @@ Make sure to check out our Wiki, with info on how to utilitize [**settings.json*
 - [Click me for a list of 1.4 changes and fixes.](https://github.com/FortniteFevers/AutoLeak/wiki/1.4-Changes)
 
 # Are you having issues with modules not being installed?
-- [Click me for a tutorial on how to fix this!]()
-
-   ^ I'll add a link to this once I publish the tutorial
+- [Click me for a tutorial on how to fix this!](https://discord.com/channels/810722059302731819/810723457049690153/921507748678606868)
 
 
 # Features
