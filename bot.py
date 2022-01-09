@@ -1,30 +1,4 @@
-# If you have any issues with the softwere, please message Fevers#3474 on discord. #
-
-"""
-Commons Clause - License Condition v1.0
-Copyright Fevers 2021
-The Software is provided to you by the Licensor under the
-License, as defined below, subject to the following condition.
-Without limiting other conditions in the License, the grant
-of rights under the License will not include, and the License
-does not grant to you, the right to Sell the Software.
-For purposes of the foregoing, “Sell” means practicing any or
-all of the rights granted to you under the License to provide
-to third parties, for a fee or other consideration (including
-without limitation fees for hosting or consulting/ support
-services related to the Software), a product or service whose
-value derives, entirely or substantially, from the functionality
-of the Software. Any license notice or attribution required by
-the License must also include this Commons Clause License
-Condition notice.
-
-Please note: You also do not have the right to edit this program
-and distribute it to others. You are allowed to edit the program
-for personal use, but if you do edit it, you are not allowed
-to distribute to others.
-
-Software: AUTOLEAK
-"""
+# If you have any issues with the softwere, please join our discord server at https://dsc.gg/AutoLeak #
 
 import requests
 import tweepy
@@ -3014,9 +2988,5 @@ elif option_choice == "14":
 else:
     print(Fore.RED+"\nPlease enter a number between 1 and 14")
     time.sleep(2)
-    
-# Search for a cosmetic (NEW ICONS)") - newcbeta()
-# Generate new cosmetics (NEW ICONS)') - newcnew()
-# Grab all cosmetics from a specific pak (NEW ICONS)') - dynpak2()
 
-# If you have any issues with the softwere, please message Fevers#3474 on discord. #
+# If you have any issues with the softwere, please join our discord server at https://dsc.gg/AutoLeak #
