@@ -118,20 +118,28 @@ data = requests.get('https://benbot.app/api/v1/status')
 seasonnum = data.json()['currentFortniteVersionNumber']
 
 # Used to communicate with updates
-response = requests.get('https://pastebin.com/raw/zku0yz9q')
 try:
+    response = requests.get('https://aaapastebin.com/raw/zku0yz9q')
     ln1 = response.json()["1"]
+    ln2 = response.json()["2"]
+    ln3 = response.json()["3"]
+    ln4 = response.json()["4"]
+    ln5 = response.json()["5"]
+    ln6 = response.json()["6"]
+    ln7 = response.json()["7"]
+    latestVersion = response.json()["latestVersion"]
+    betaText = response.json()['betatext']
 except:
-    response = requests.get('https://gist.githubusercontent.com/FortniteFevers/3415159ceebc4af1cf9d198f042473e7/raw/7a8b4ec685c10bfedd4aafc1b0f86f349d4cb7b4/AutoLeak%2520Code')
-ln1 = response.json()["1"]
-ln2 = response.json()["2"]
-ln3 = response.json()["3"]
-ln4 = response.json()["4"]
-ln5 = response.json()["5"]
-ln6 = response.json()["6"]
-ln7 = response.json()["7"]
-latestVersion = response.json()["latestVersion"]
-betaText = response.json()['betatext']
+    response = None
+    ln1 = 'Thank you for using AutoLeak - Created by Fevers.'
+    ln2 = ''
+    ln3 = 'Want to create rarity backgrounds? Feel free to send us any via discord to maybe be featured in AutoLeak!'
+    ln4 = '(Please keep it in the same format!) My discord @: @Fevers#3474'
+    ln5 = 'AutoLeak beta is now public! Check it out on my GitHub under the beta branch!'
+    ln6 = ''
+    ln7 = 'Make sure you join our discord server!  -  https://dsc.gg/AutoLeak'
+    latestVersion = '1.3.8'
+    betaText = 'Welcome to AutoLeak Beta! Thanks for signing up and helping us with developing this program!\nIf there are any errors, make sure to tell us in our Discord server.'
 print("")
 print("------------------------------------------------------------------------------------------------")
 print("")
@@ -4394,11 +4402,14 @@ def reset_settings():
 print(Fore.GREEN + "\n- - - - - MENU - - - - -")
 print("")
 
-notice = response.json()['notice']
-if notice == None or notice == '':
-    pass
+if response != None:
+    notice = response.json()['notice']
+    if notice == None or notice == '':
+        pass
+    else:
+        print(Fore.RED+'!!NOTICE!! '+Fore.GREEN+f'{notice}\n')
 else:
-    print(Fore.RED+'!!NOTICE!! '+Fore.GREEN+f'{notice}\n')
+    print(Fore.RED+'!!NOTICE!! '+Fore.GREEN+f'For some reason, Pastebin did not work. Try to relaunch AutoLeak!\n')
 
 print(Fore.RED+'- IMPORTANT COMMANDS -'+Fore.GREEN)
 print(Fore.YELLOW + "(reset)" +Fore.GREEN + " - Reset settings.json")
