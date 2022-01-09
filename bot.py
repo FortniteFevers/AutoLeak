@@ -119,7 +119,7 @@ seasonnum = data.json()['currentFortniteVersionNumber']
 
 # Used to communicate with updates
 try:
-    response = requests.get('https://aaapastebin.com/raw/zku0yz9q')
+    response = requests.get('https://pastebin.com/raw/zku0yz9q')
     ln1 = response.json()["1"]
     ln2 = response.json()["2"]
     ln3 = response.json()["3"]
