@@ -287,11 +287,31 @@ currentdate = currentdate[:10]
 from math import ceil, sqrt
 from typing import Union
 import glob
+from PIL import Image, ImageFont, ImageDraw
+import PIL
+import requests
+import glob
+from math import ceil, sqrt
+from typing import Union
+import os
+
+# Credits to https://github.com/MyNameIsDark01 for the original Merger code.
+# This merger is under rights, you may not take this code and use it in your own project without proper credits to Fevers and Dark.
+
 def shopmerge(datas: Union[list, None] = None, save_as: str = f'merged/shop {currentdate}.jpg'):
+    response = requests.get('https://fortnite-api.com/v2/shop/br/combined')
+    currentdate = response.json()['data']['date']
+    currentdate = currentdate[:10]
     if not datas:
         datas = [Image.open(i) for i in glob.glob('icons/*.png')]
 
-    row_n = len(datas)
+    list_ = []
+    num = 0
+    for file in os.listdir('icons'):
+        num += 1
+        list_.append(f'icons/{file}')
+
+    row_n = num
         
     rowslen = ceil(sqrt(row_n))
     columnslen = round(sqrt(row_n))
@@ -305,7 +325,9 @@ def shopmerge(datas: Union[list, None] = None, save_as: str = f'merged/shop {cur
 
     i = 0
 
-    for card in sorted(datas):
+    datas = [Image.open(i) for i in sorted(list_)]
+
+    for card in datas:
         image.paste(
             card,
             ((0 + ((i % rowslen) * card.width)),
@@ -316,11 +338,27 @@ def shopmerge(datas: Union[list, None] = None, save_as: str = f'merged/shop {cur
 
     image.save(f"{save_as}")
 
+    img = PIL.Image.open(f"{save_as}")
+    width, height = img.size
+
+    img=Image.new("RGB",(width,height+322))
+
+    shopimage = Image.open(f"{save_as}")
+    img.paste(shopimage, (0, 322))
+    
+    font=ImageFont.truetype('fonts/BurbankBigRegular-BlackItalic.otf',150)
+    draw=ImageDraw.Draw(img)
+    draw.text((width/2,150),'FORTNITE ITEM SHOP',font=font,fill='white', anchor='ms') # Writes name
+
+    font=ImageFont.truetype('fonts/BurbankBigRegular-BlackItalic.otf',50)
+    draw.text((width/2,200),currentdate,font=font,fill='white', anchor='ms') # Writes name
+
+    img.save(f'{save_as}')
+
     return image
 
-
 def update(api):
-    apiurl = f'https://pastebin.com/raw/0n76WS04'
+    apiurl = f'https://fortnite-api.com/v2/shop/br/combined'
 
     response = requests.get(apiurl)
     shopData = response.json()['data']['hash']
@@ -348,7 +386,6 @@ def update(api):
                 except:
                     os.makedirs('cache')
                 genshop()
-                from ALmodules.merger import merger
                 shopmerge()
                 api.update_with_media(f'merged/shop {currentdate}.jpg', f'#Fortnite Item Shop update for {currentdate}!\n\nConsider using code "Fevers" to support me! #EpicPartner')
                 print('')
