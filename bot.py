@@ -83,7 +83,7 @@ from ALmodules.compressor import compressnewcosmetics_normal, compress_brnews, c
 from ALmodules.merger import merger
 from ALmodules.npcs import npcsdef
 from ALmodules.largeIconType import largeicontype, largeicontype_search, large_merger, largeicontype_pak
-from ALmodules.shop import genshop, update
+from ALmodules.shop import genshop, update, shopmerge
 
 loop = True
 count = 1
@@ -1704,24 +1704,17 @@ def shop():
             genshop()
 
             print('\nMerging images...')
-            merger(mergewatermark, loc1)
-
-            img=Image.open(f'merged/merge.jpg')
-            img.show()
-            print('Done! The image is now saved in merged/merge.jpg')
+            shopmerge()
+            print('Done! The image is now saved in the "merged" folder.')
             time.sleep(10)
         else:
             update(api)
     else:
-        print('\nGenerating shop image...')
         genshop()
 
         print('\nMerging images...')
-        merger(mergewatermark, loc1)
-
-        img=Image.open(f'merge.jpg')
-        img.show()
-        print('Done! The image is now saved in merged/merge.jpg')
+        shopmerge()
+        print('Done! The image is now saved in the "merged" folder.')
         time.sleep(10)
 
 def dynamic_pak():
