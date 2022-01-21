@@ -309,7 +309,11 @@ def shopmerge(datas: Union[list, None] = None, save_as: str = f'merged/shop {cur
     num = 0
     for file in os.listdir('icons'):
         num += 1
-        list_.append(f'icons/{file}')
+        
+        if file.startswith('tempzzz'):
+            pass
+        else:
+            list_.append(f'icons/{file}')
 
     row_n = num
         
