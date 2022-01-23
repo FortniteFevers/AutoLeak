@@ -13,10 +13,11 @@ loadFont = 'fonts/BurbankBigRegular-BlackItalic.otf'
 showItems = False
 botDelay = 5
 
+backgroundColor = 0x000000
 #===============#
 
 def genshop():
-    print('Starting the generation process.')
+    print('Starting the generation process.'+Fore.CYAN)
     start = time.time()
 
     response = requests.get('https://fortnite-api.com/v2/shop/br/combined')
@@ -345,7 +346,7 @@ def shopmerge(datas: Union[list, None] = None, save_as: str = f'merged/shop {cur
     img = PIL.Image.open(f"{save_as}")
     width, height = img.size
 
-    img=Image.new("RGB",(width,height+322))
+    img=Image.new("RGB",(width,height+322), backgroundColor)
 
     shopimage = Image.open(f"{save_as}")
     img.paste(shopimage, (0, 322))
