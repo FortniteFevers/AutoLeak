@@ -46,3 +46,6 @@ The following languages are supported: ar / de / en / es / es-419 / fr / it / ja
 - Change these within your settings.json file!
 
 <em>AutoLeak wouldn't be what it is by these incredible APIs. [Fortnite-API](https://fortnite-api.com/), [BenBot](https://benbot.stoplight.io/docs/benbot-docs), and [Fortniteapi.io](https://fortniteapi.io/).</em>
+
+# Credits
+- Credits to [Dark](https://github.com/MyNameIsDark01) for the image merger code. This merger is under rights, you may not take this code and use it in your own project without proper credits to myself and Dark.
