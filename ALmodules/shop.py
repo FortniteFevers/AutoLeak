@@ -34,7 +34,10 @@ def genshop():
     for i in featured['entries']:
 
         if i['newDisplayAssetPath'] != None:
-            url = i['newDisplayAsset']['materialInstances'][0]['images']['Background']
+            try:
+                url = i['newDisplayAsset']['materialInstances'][0]['images']['Background']
+            except:
+                url = i['newDisplayAsset']['materialInstances'][0]['images']['OfferImage']
         else:
             url = i['items'][0]['images']['icon']
 
@@ -156,7 +159,10 @@ def genshop():
     for i in daily['entries']:
 
         if i['newDisplayAssetPath'] != None:
-            url = i['newDisplayAsset']['materialInstances'][0]['images']['Background']
+            try:
+                url = i['newDisplayAsset']['materialInstances'][0]['images']['Background']
+            except:
+                url = i['newDisplayAsset']['materialInstances'][0]['images']['OfferImage']
         else:
             url = i['items'][0]['images']['icon']
 
