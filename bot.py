@@ -729,7 +729,7 @@ def update_mode():
         apitype = 'Fortnite-API'
     print(f'\n-- Starting Update Mode --\n   IconType = {iconType}\n   Delay = {BotDelay} seconds\n   API = {apitype}\n'+Fore.GREEN)
     if benbot == 'False':
-        response = requests.get('https://fortnite-api.com/v2/cosmetics/br/new')
+        response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/new?lange={language}')
         if response:
             oldhash = response.json()['data']['hash']
         else:
@@ -738,7 +738,7 @@ def update_mode():
         count = 1
 
         while 1:
-            response = requests.get('https://fortnite-api.com/v2/cosmetics/br/new')
+            response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/new?lange={language}')
             if response:
                 try:
                     newhash = response.json()['data']['hash'] 
@@ -1218,7 +1218,7 @@ def search_cosmetic():
     print(Fore.GREEN +'\nWhat cosmetic do you want to grab?')
     ask = input()
     if benbot == 'False':
-        response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/search?name={ask}')
+        response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/search?name={ask}&language={language}')
 
         print(f'\nGenerating {ask}...')
         print('')
@@ -1618,7 +1618,7 @@ def delete_contents():
                      
 def news_feed():
     count = 1
-    apiurl = 'https://fortnite-api.com/v2/news/br'
+    apiurl = 'https://fortnite-api.com/v2/news/br?language={language}'
 
     jsondata = requests.get(apiurl)
     data = jsondata.json()
@@ -2324,7 +2324,7 @@ def newcbeta():
                     if result != -1:
                         print('Found a battle pass tag.')
                         shop = '2'
-                        resp1 = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/search?name={ask}')
+                        resp1 = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/search?name={ask}&language={language}')
                         seasonnum = resp1.json()['data']['introduction']['backendValue']
                         break
                 if shop != '2':
@@ -2942,12 +2942,12 @@ def newiconsfnapi():
     print(Fore.YELLOW+'Type the name of the cosmetic you want to grab below:\n')
     ask = input(Fore.GREEN + '>> ')
 
-    response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/search?name={ask}&lang={language}')
+    response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/search?name={ask}&language={language}')
 
     idsearch = ask.find('Athena_Commando')
     if idsearch != -1:
         # Detected an ID
-        response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/search?id={ask}&lang={language}')
+        response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/search?id={ask}&language={language}')
 
     fontSize = 40
     # Making icon type new to get the new icons lol #
@@ -3417,7 +3417,7 @@ def set_search():
     print(Fore.GREEN + '\nCleared Content\nWhat set do you want to grab?' + Fore.CYAN)
     ask = input('>> ')
     fontSize = 40
-    response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/search/all?set={ask}&lang={language}')
+    response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/search/all?set={ask}&language={language}')
     if response.json()['status'] == 404:
         print(Fore.RED + 'Item Set does not exist.')
         set_search()
@@ -3799,13 +3799,13 @@ def set_search():
     set_search()
 
 def catabaupdate():
-    response = requests.get('https://fortnite-api.com/v2/cosmetics/br/new')
+    response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/new?language={language}')
     oldhash = response.json()['data']['hash']
 
     count = 1
 
     while 1:
-        response = requests.get('https://fortnite-api.com/v2/cosmetics/br/new')
+        response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/new?language={language}')
         if response:
             try:
                 newhash = response.json()['data']['hash'] 
@@ -3832,7 +3832,7 @@ def catabaicons():
     print(Fore.YELLOW + 'THIS IS A WORK IN PROGRESS, NOT FULLY FINISHED YET.' + Fore.GREEN)
     
     if benbot == 'False':
-        response = requests.get('https://fortnite-api.com/v2/cosmetics/br/new')
+        response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/new?language={language}')
         version = response.json()['data']['build']
         print('\nGenerating cosmetics for version',version)
         counter = 0
@@ -4017,11 +4017,19 @@ def catabaicons():
             font=ImageFont.truetype(loadFont,31)
 
             background = Image.open(f'cache/{id}.png')
-            name=name.upper()
+            if name != None:
+
+                name=name.upper()
+            else:
+                name='NONE'
             draw=ImageDraw.Draw(background)
             draw.text((256,472),name,font=font,fill='white', anchor='ms') # Writes name
 
-            description=description.upper()
+
+            if description != None:
+                description=description.upper()
+            else:
+                description = 'NONE'
             font=ImageFont.truetype(loadFont,10)
             draw=ImageDraw.Draw(background)
             draw.text((256,501),description,font=font,fill='white', anchor='ms') # Writes description
@@ -4270,7 +4278,7 @@ def generate_variants():
 def cataba_pak():
     print(Fore.GREEN+'\nWhat pak do you wanna grab')
     pak = input('>> ')
-    response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/search/all?dynamicPakId={pak}')
+    response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/search/all?dynamicPakId={pak}&language={language}')
     if response.json()['status'] == 404:
         print('ERROR: 404')
         cataba_pak()
