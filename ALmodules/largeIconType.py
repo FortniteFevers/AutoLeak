@@ -38,6 +38,12 @@ init()
 
 
 def large_merger( datas: Union[list, None] = None, save_as: str = 'merge.jpg'):
+    try:
+        shutil.rmtree('icons')
+        os.makedirs('icons')
+    except:
+        os.makedirs('icons')
+
     if not datas:
         datas = [Image.open(i) for i in glob.glob('icons/*.png')]
 
@@ -47,10 +53,9 @@ def large_merger( datas: Union[list, None] = None, save_as: str = 'merge.jpg'):
     columnslen = round(sqrt(row_n))
 
     mode = "RGB"
-    px = 512
 
-    rows = rowslen * 1793
-    columns = columnslen * 1080
+    rows = rowslen * 1793 # X VALUE
+    columns = columnslen * 1080 # Y VALUE
     image = Image.new(mode, (rows, columns))
 
     i = 0
@@ -63,6 +68,8 @@ def large_merger( datas: Union[list, None] = None, save_as: str = 'merge.jpg'):
         )
 
         i += 1
+
+    datas.append(Image.open('assets/watermarklol.png'))
 
     if save_as and len(save_as) > 4:
         image.save(f"merged/{save_as}")
@@ -77,6 +84,7 @@ def largeicontype(useFeaturedIfAvaliable, language):
     items = len(response.json()['data']['items'])
 
     version = response.json()['data']['build']
+    print('Loaded Large icon type')
     print(f'Loaded build {version}')
     print(f'Generating {items} items...\n')
     for i in response.json()['data']['items']:
@@ -165,19 +173,41 @@ def largeicontype(useFeaturedIfAvaliable, language):
 
         # Button
         rarity = i['rarity']['value']
+        button_color = (255, 255, 255) # Default
+        text_color = 0, 0, 0
+
+        if rarity == 'gaminglegends':
+            button_color = (128, 120, 255)
+            text_color = (40, 8, 95)
+        elif rarity == 'uncommon':
+            button_color = (101, 197, 0)
+            text_color = (2, 80, 2)
+        elif rarity == 'rare':
+            button_color = (0, 180, 255)
+            text_color = (0, 69, 138)
+        elif rarity == 'epic':
+            button_color = (209, 90, 255)
+            text_color = (76, 25, 123)
+        elif rarity == 'legendary':
+            button_color = (255, 139, 25)
+            text_color = (138, 60, 30)
+        elif rarity == 'icon':
+            button_color = (92, 242, 243)
+            text_color = (0, 73, 74)
+
         raritylen = len(rarity)
         raritywidth = font.getsize(rarity)[0]
 
         raritytag_w = raritywidth + 40
 
-        raritytag=Image.new("RGB",(raritytag_w,48), color = 0xfffafa).convert('RGBA') # Draws Rarity Button Tag
+        raritytag=Image.new("RGB",(raritytag_w,48), color = button_color).convert('RGBA') # Draws Rarity Button Tag
 
         background.paste(raritytag, (28, 124), raritytag)
 
         # RARITY BUTTON TEXT
         rarity=rarity.upper()
         draw=ImageDraw.Draw(background)
-        draw.text((32,131),rarity,font=font,fill='black') # Draws Rarity Button Text
+        draw.text((32,131),rarity,font=font,fill=text_color) # Draws Rarity Button Text
 
         # Backend Value Text
 
@@ -197,6 +227,9 @@ def largeicontype(useFeaturedIfAvaliable, language):
         draw.text((20,935),f'Set: {set}',font=font,fill=0xc8c5c4)
 
         id = i['id']
+        idlen = len(id)
+        import math
+
         font=ImageFont.truetype(loadFont,25)
         draw.text((20,995),f'ID:  {id}',font=font,fill=0xc8c5c4)
 
@@ -228,7 +261,7 @@ def largeicontype(useFeaturedIfAvaliable, language):
             background.paste(variants_text, (0,0), variants_text)
 
             for x in i['variants'][0]['options']:
-                if x['name'] != 'DEFAULT':
+                if x['name'] is not 'DEFAULT' or x['name'] is not 'Stage1':
                     variantbox=Image.new("RGB",(157,157), color = 0x211f20).convert('RGBA')
 
                     name = x['name']
@@ -385,19 +418,41 @@ def largeicontype_search(useFeaturedIfAvaliable, language):
 
     # Button
     rarity = i['rarity']['value']
+    button_color = (255, 255, 255) # Default
+    text_color = 0, 0, 0
+
+    if rarity == 'gaminglegends':
+        button_color = (128, 120, 255)
+        text_color = (40, 8, 95)
+    elif rarity == 'uncommon':
+        button_color = (101, 197, 0)
+        text_color = (2, 80, 2)
+    elif rarity == 'rare':
+        button_color = (0, 180, 255)
+        text_color = (0, 69, 138)
+    elif rarity == 'epic':
+        button_color = (209, 90, 255)
+        text_color = (76, 25, 123)
+    elif rarity == 'legendary':
+        button_color = (255, 139, 25)
+        text_color = (138, 60, 30)
+    elif rarity == 'icon':
+        button_color = (92, 242, 243)
+        text_color = (0, 73, 74)
+
     raritylen = len(rarity)
     raritywidth = font.getsize(rarity)[0]
 
     raritytag_w = raritywidth + 40
 
-    raritytag=Image.new("RGB",(raritytag_w,48), color = 0xfffafa).convert('RGBA') # Draws Rarity Button Tag
+    raritytag=Image.new("RGB",(raritytag_w,48), color = button_color).convert('RGBA') # Draws Rarity Button Tag
 
     background.paste(raritytag, (28, 124), raritytag)
 
     # RARITY BUTTON TEXT
     rarity=rarity.upper()
     draw=ImageDraw.Draw(background)
-    draw.text((32,131),rarity,font=font,fill='black') # Draws Rarity Button Text
+    draw.text((32,131),rarity,font=font,fill=text_color) # Draws Rarity Button Text
 
     # Backend Value Text
 
@@ -417,6 +472,9 @@ def largeicontype_search(useFeaturedIfAvaliable, language):
     draw.text((20,935),f'Set: {set}',font=font,fill=0xc8c5c4)
 
     id = i['id']
+    idlen = len(id)
+    import math
+
     font=ImageFont.truetype(loadFont,25)
     draw.text((20,995),f'ID:  {id}',font=font,fill=0xc8c5c4)
 
@@ -511,7 +569,7 @@ def largeicontype_pak(useFeaturedIfAvaliable, language):
     response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/search/all?dynamicPakId={pak}&language={language}')
     if response.json()['status'] != 200:
         print(f"ERROR: {response.json()['error']}")
-        largeicontype(useFeaturedIfAvaliable, language)
+        largeicontype_pak(useFeaturedIfAvaliable, language)
         
 
     count = 0
