@@ -1,5 +1,11 @@
 # AutoLeak
 
+------------
+
+:x: **This branch is not stable. Please use the [beta](https://github.com/FortniteFevers/AutoLeak/tree/beta) branch instead.**
+
+------------
+
 AutoLeak is a terminal-based utility to generate all of the latest leaks in Fortnite, with some bonus features as well.
 
 Make sure to check out our Wiki, with info on how to utilitize [**settings.json**](https://github.com/FortniteFevers/AutoLeak/wiki/Settings.json-Info)
