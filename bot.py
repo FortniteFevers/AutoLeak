@@ -48,14 +48,14 @@ try:
     from googletrans import Translator
     import platform
     import tkinter as tk
-    import tkinter.messagebox
+    from tkinter import messagebox
     window = tk.Tk()
     window.wm_withdraw()
 
     from pypresence import Presence
 except ModuleNotFoundError as e:
     print(f"Error: {e}")
-    error = tkinter.messagebox.showerror(title="ModuleNotFoundError",message=f"An error accured:\n{e}",parent=window)
+    error = messagebox.showerror(title="ModuleNotFoundError",message=f"An error accured:\n{e}",parent=window)
     if error == True:
         exit()
     else:
