@@ -48,18 +48,13 @@ try:
     from googletrans import Translator
     import platform
     import tkinter as tk
-    from tkinter import messagebox
     window = tk.Tk()
     window.wm_withdraw()
 
     from pypresence import Presence
 except ModuleNotFoundError as e:
     print(f"Error: {e}")
-    error = messagebox.showerror(title="ModuleNotFoundError",message=f"An error accured:\n{e}",parent=window)
-    if error == True:
-        exit()
-    else:
-        exit()
+    print('Please install this module to run the program.')
 
 translator = Translator()
 init()
@@ -1723,6 +1718,9 @@ def dynamic_pak():
     
     if iconType == 'large':
         return largeicontype_pak(useFeaturedIfAvaliable, language)
+
+    if iconType == 'cataba':
+        return cataba_pak()
 
     
 
@@ -4284,6 +4282,7 @@ def cataba_pak():
         cataba_pak()
     data = response.json()['data']
     start = time.time()
+    counter = 0
     for i in data:
         name = i['name']
         id = i['id']
@@ -4368,14 +4367,16 @@ def cataba_pak():
         os.remove(f'cache/{id}temp.png')
         os.remove(f'cache/{id}.png')
         end = time.time()
-        print(Fore.CYAN+"")
-        print("!  !  !  !  !  !  !")
-        print(f"IMAGE GENERATING COMPLETE - Generated image in {round(end - start, 2)} seconds!")
-        print("!  !  !  !  !  !  !")
+        counter = counter + 1
+        i = response.json()['data']
+        percentage = counter/len(i)
+        realpercentage = percentage * 100
+        print(f"{counter}/{len(i)} - {round(realpercentage)}%")
     #time.sleep(2)
     #img = Image.open(f'icons/{id}.png')
     #img.show()
     print('done')
+    merger(mergewatermark, loc1)
     if twitsearch == 'True':
         api.update_with_media(f'icons/{id}.png', f'{name} - {backendtype}')
     cataba_pak()
@@ -4494,21 +4495,8 @@ elif option_choice == '17':
 elif option_choice == '18':
     large_merger()
 
-elif option_choice == '69':
-    cataba_pak()
-
-
 else:
     print(Fore.RED+"\nPlease enter a number between 1 and 17")
     time.sleep(2)
-    
-# Search for a cosmetic (NEW ICONS)") - newcbeta()
-# Generate new cosmetics (NEW ICONS)') - newcnew()
-# Grab all cosmetics from a specific pak (NEW ICONS)') - dynpak2()
-
-#print('(L1) - '+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Large Icon Type Gen (new cosmetics)')
-#print('(L2) - '+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Large Icon Type Gen (search cosmetic)')
-#print('(L3) - '+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Large Icon Type Gen (pak search)')
-#print('(LM) - '+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Large Icon Type Gen (Merge cosmetics)')
 
 # If you have any issues with the softwere, please message Fevers#3474 on discord. #
