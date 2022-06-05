@@ -109,9 +109,6 @@ if x == 'Windows':
     "TITLE AutoLeak / Created by Fevers.")
     os.system('cls' if os.name=='nt' else 'clear')
 
-data = requests.get('https://benbot.app/api/v1/status')
-seasonnum = data.json()['currentFortniteVersionNumber']
-
 # Used to communicate with updates
 try:
     response = requests.get('https://pastebin.com/raw/zku0yz9q')
@@ -124,6 +121,7 @@ try:
     ln7 = response.json()["7"]
     latestVersion = response.json()["latestVersion"]
     betaText = response.json()['betatext']
+    seasonnum = response.json()['currentFortniteVersionNumber']
 except:
     response = None
     ln1 = 'Thank you for using AutoLeak - Created by Fevers.'
@@ -135,6 +133,7 @@ except:
     ln7 = 'Make sure you join our discord server!  -  https://dsc.gg/AutoLeak'
     latestVersion = '1.3.8'
     betaText = 'Welcome to AutoLeak Beta! Thanks for signing up and helping us with developing this program!\nIf there are any errors, make sure to tell us in our Discord server.'
+    seasonnum = '0000'
 print("")
 print("------------------------------------------------------------------------------------------------")
 print("")
@@ -4498,5 +4497,14 @@ elif option_choice == '18':
 else:
     print(Fore.RED+"\nPlease enter a number between 1 and 17")
     time.sleep(2)
+    
+# Search for a cosmetic (NEW ICONS)") - newcbeta()
+# Generate new cosmetics (NEW ICONS)') - newcnew()
+# Grab all cosmetics from a specific pak (NEW ICONS)') - dynpak2()
+
+#print('(L1) - '+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Large Icon Type Gen (new cosmetics)')
+#print('(L2) - '+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Large Icon Type Gen (search cosmetic)')
+#print('(L3) - '+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Large Icon Type Gen (pak search)')
+#print('(LM) - '+Fore.YELLOW+'**IN BETA** '+Fore.GREEN+'Large Icon Type Gen (Merge cosmetics)')
 
 # If you have any issues with the softwere, please message Fevers#3474 on discord. #
