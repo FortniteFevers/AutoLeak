@@ -21,7 +21,6 @@
   "twitAccessToken": "",
   "twitAccessTokenSecret": "",
 
-  "BenBot": "False",
   "BotDelay": 10,
   "apikey": "",
 
