@@ -19,7 +19,6 @@ AutoLeak is a program with many features.
 Currently, the program features these options:
 
 - Custom icon generation
-- Grab cosmetic data from either [BenBot](https://benbot.stoplight.io/docs/benbot-docs) or [Fortnite-API](https://fortnite-api.com/)
 - Full Twitter support! Tweet out new cosmetics or any cosmetic you want using [Twitter API keys](https://developer.twitter.com/)
 - Grab new cosmetics when there's a new update pushed out
 - **CUSTOMIZATION!** Customize AutoLeak however you want! Either it's by using a different language, putting a watermark on an image, or changing the icon type your using! It's all up to YOU on how you want AutoLeak to look like! (You can customize AutoLeak in the settings.json file, read [here](https://github.com/FortniteFevers/AutoLeak/wiki/Settings.json-With-Comments) on how to use it)
@@ -45,7 +44,7 @@ After this, run 'startprogram.bat' and enter in a number (Each number correlates
 The following languages are supported: ar / de / en / es / es-419 / fr / it / ja / ko / pl / pt-BR / ru / tr / zh-CN / zh-Hant
 - Change these within your settings.json file!
 
-<em>AutoLeak wouldn't be what it is by these incredible APIs. [Fortnite-API](https://fortnite-api.com/), [BenBot](https://benbot.stoplight.io/docs/benbot-docs), and [Fortniteapi.io](https://fortniteapi.io/).</em>
+<em>AutoLeak wouldn't be what it is by these incredible APIs. [Fortnite-API](https://fortnite-api.com/), and [Fortniteapi.io](https://fortniteapi.io/).</em>
 
 # Credits
 - Credits to [Dark](https://github.com/MyNameIsDark01) for the image merger code. This merger is under rights, you may not take this code and use it in your own project without proper credits to myself and Dark.
