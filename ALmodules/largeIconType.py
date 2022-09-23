@@ -714,6 +714,7 @@ def largeicontype_pak(useFeaturedIfAvaliable, language):
 
         #Variant Gen
         variants = i['variants']
+        json_output = []
         variantnum = 0
         if i['variants'] != None:
             plus_sign = Image.open(f'rarities/large/PlusSign.png').convert("RGBA")
@@ -722,12 +723,29 @@ def largeicontype_pak(useFeaturedIfAvaliable, language):
             variants_text = Image.open(f'rarities/large/VariantsText.png').convert("RGBA")
             background.paste(variants_text, (0,0), variants_text)
 
-            for x in i['variants'][0]['options']:
-                if x['name'] != 'DEFAULT':
+            amount = len(i['variants'])
+            for x in range(amount):
+                variantnum = x-1
+                data_ = i['variants'][variantnum]['options']
+                id_ = i['id']
+                for y in data_:
+                    image = y["image"]
+                    name = y["name"]
+                    #print(image) Used for debugging
+                    json_output.append(
+                        {
+                            "id": id_,
+                            "name": name,
+                            "image": image
+                        }
+                    )
+
+            for i in json_output:
+                if i['id'] == id:
                     variantbox=Image.new("RGB",(157,157), color = 0x211f20).convert('RGBA')
 
-                    name = x['name']
-                    url = x['image']
+                    name = i['name']
+                    url = i['image']
                     r = requests.get(url)
                     open(f'cache/variant_{name}.png', 'wb').write(r.content)
                     varianticon = Image.open(f'cache/variant_{name}.png').resize((157, 157), Image.ANTIALIAS).convert("RGBA")
@@ -758,6 +776,8 @@ def largeicontype_pak(useFeaturedIfAvaliable, language):
                     elif variantnum == 6:
                         xnum = 384
                         ynum = 570
+                    elif variantnum > 6:
+                        pass
                         
                     background.paste(varianticon, (xnum, ynum), varianticon)
                     os.remove(f'cache/V_{name}.png')
