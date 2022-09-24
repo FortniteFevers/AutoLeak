@@ -252,6 +252,7 @@ def largeicontype(useFeaturedIfAvaliable, language):
 
         #Variant Gen
         variants = i['variants']
+        json_output = []
         variantnum = 0
         if i['variants'] != None:
             plus_sign = Image.open(f'rarities/large/PlusSign.png').convert("RGBA")
@@ -260,12 +261,29 @@ def largeicontype(useFeaturedIfAvaliable, language):
             variants_text = Image.open(f'rarities/large/VariantsText.png').convert("RGBA")
             background.paste(variants_text, (0,0), variants_text)
 
-            for x in i['variants'][0]['options']:
-                if x['name'] is not 'DEFAULT' or x['name'] is not 'Stage1':
+            amount = len(i['variants'])
+            for x in range(amount):
+                variantnum = x-1
+                data_ = i['variants'][variantnum]['options']
+                id_ = i['id']
+                for y in data_:
+                    image = y["image"]
+                    name = y["name"]
+                    #print(image) Used for debugging
+                    json_output.append(
+                        {
+                            "id": id_,
+                            "name": name,
+                            "image": image
+                        }
+                    )
+
+            for i in json_output:
+                if i['id'] == id:
                     variantbox=Image.new("RGB",(157,157), color = 0x211f20).convert('RGBA')
 
-                    name = x['name']
-                    url = x['image']
+                    name = i['name']
+                    url = i['image']
                     r = requests.get(url)
                     open(f'cache/variant_{name}.png', 'wb').write(r.content)
                     varianticon = Image.open(f'cache/variant_{name}.png').resize((157, 157), Image.ANTIALIAS).convert("RGBA")
@@ -278,15 +296,23 @@ def largeicontype(useFeaturedIfAvaliable, language):
                     
                     variantnum = variantnum + 1
                     
+                    # X - Interval by 180
+                    # Y - Interval by 180
+
+                    # Layer 1
                     xnum = 24
                     if variantnum == 1:
                         xnum = 24
+                        #ynum = 390
                     elif variantnum == 2:
                         xnum = 204 # 180
+                        #ynum = 390
                     elif variantnum == 3:
                         xnum = 384 # 180
-
+                        #ynum = 390
                     ynum = 390
+
+                    # Layer 2
                     if variantnum == 4:
                         xnum = 24
                         ynum = 570
@@ -296,9 +322,20 @@ def largeicontype(useFeaturedIfAvaliable, language):
                     elif variantnum == 6:
                         xnum = 384
                         ynum = 570
+
+                    # Layer 3
+                    elif variantnum == 7:
+                        xnum = 24
+                        ynum = 750
+                    elif variantnum == 8:
+                        xnum = 204
+                        ynum = 750
+                    elif variantnum == 9:
+                        xnum = 384
+                        ynum = 750
                         
                     background.paste(varianticon, (xnum, ynum), varianticon)
-                    os.remove(f'cache/V_{name}.png')
+                    #os.remove(f'cache/V_{name}.png')
 
 
             font=ImageFont.truetype(loadFont,35)
@@ -497,6 +534,7 @@ def largeicontype_search(useFeaturedIfAvaliable, language):
 
     #Variant Gen
     variants = i['variants']
+    json_output = []
     variantnum = 0
     if i['variants'] != None:
         plus_sign = Image.open(f'rarities/large/PlusSign.png').convert("RGBA")
@@ -505,12 +543,29 @@ def largeicontype_search(useFeaturedIfAvaliable, language):
         variants_text = Image.open(f'rarities/large/VariantsText.png').convert("RGBA")
         background.paste(variants_text, (0,0), variants_text)
 
-        for x in i['variants'][0]['options']:
-            if x['name'] != 'DEFAULT':
+        amount = len(i['variants'])
+        for x in range(amount):
+            variantnum = x-1
+            data_ = i['variants'][variantnum]['options']
+            id_ = i['id']
+            for y in data_:
+                image = y["image"]
+                name = y["name"]
+                #print(image) Used for debugging
+                json_output.append(
+                    {
+                        "id": id_,
+                        "name": name,
+                        "image": image
+                    }
+                )
+
+        for i in json_output:
+            if i['id'] == id:
                 variantbox=Image.new("RGB",(157,157), color = 0x211f20).convert('RGBA')
 
-                name = x['name']
-                url = x['image']
+                name = i['name']
+                url = i['image']
                 r = requests.get(url)
                 open(f'cache/variant_{name}.png', 'wb').write(r.content)
                 varianticon = Image.open(f'cache/variant_{name}.png').resize((157, 157), Image.ANTIALIAS).convert("RGBA")
@@ -523,15 +578,23 @@ def largeicontype_search(useFeaturedIfAvaliable, language):
                 
                 variantnum = variantnum + 1
                 
+                # X - Interval by 180
+                # Y - Interval by 180
+
+                # Layer 1
                 xnum = 24
                 if variantnum == 1:
                     xnum = 24
+                    #ynum = 390
                 elif variantnum == 2:
                     xnum = 204 # 180
+                    #ynum = 390
                 elif variantnum == 3:
                     xnum = 384 # 180
-
+                    #ynum = 390
                 ynum = 390
+
+                # Layer 2
                 if variantnum == 4:
                     xnum = 24
                     ynum = 570
@@ -541,9 +604,20 @@ def largeicontype_search(useFeaturedIfAvaliable, language):
                 elif variantnum == 6:
                     xnum = 384
                     ynum = 570
+
+                # Layer 3
+                elif variantnum == 7:
+                    xnum = 24
+                    ynum = 750
+                elif variantnum == 8:
+                    xnum = 204
+                    ynum = 750
+                elif variantnum == 9:
+                    xnum = 384
+                    ynum = 750
                     
                 background.paste(varianticon, (xnum, ynum), varianticon)
-                os.remove(f'cache/V_{name}.png')
+                #os.remove(f'cache/V_{name}.png')
 
 
         font=ImageFont.truetype(loadFont,35)
@@ -758,15 +832,23 @@ def largeicontype_pak(useFeaturedIfAvaliable, language):
                     
                     variantnum = variantnum + 1
                     
+                    # X - Interval by 180
+                    # Y - Interval by 180
+
+                    # Layer 1
                     xnum = 24
                     if variantnum == 1:
                         xnum = 24
+                        #ynum = 390
                     elif variantnum == 2:
                         xnum = 204 # 180
+                        #ynum = 390
                     elif variantnum == 3:
                         xnum = 384 # 180
-
+                        #ynum = 390
                     ynum = 390
+
+                    # Layer 2
                     if variantnum == 4:
                         xnum = 24
                         ynum = 570
@@ -776,11 +858,20 @@ def largeicontype_pak(useFeaturedIfAvaliable, language):
                     elif variantnum == 6:
                         xnum = 384
                         ynum = 570
-                    elif variantnum > 6:
-                        pass
+
+                    # Layer 3
+                    elif variantnum == 7:
+                        xnum = 24
+                        ynum = 750
+                    elif variantnum == 8:
+                        xnum = 204
+                        ynum = 750
+                    elif variantnum == 9:
+                        xnum = 384
+                        ynum = 750
                         
                     background.paste(varianticon, (xnum, ynum), varianticon)
-                    os.remove(f'cache/V_{name}.png')
+                    #os.remove(f'cache/V_{name}.png')
 
 
             font=ImageFont.truetype(loadFont,35)
