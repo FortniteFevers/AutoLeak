@@ -270,13 +270,16 @@ def largeicontype(useFeaturedIfAvaliable, language):
                     image = y["image"]
                     name = y["name"]
                     #print(image) Used for debugging
-                    json_output.append(
-                        {
-                            "id": id_,
-                            "name": name,
-                            "image": image
-                        }
-                    )
+                    if len(json_output) > 8:
+                        break
+                    else:
+                        json_output.append(
+                            {
+                                "id": id_,
+                                "name": name,
+                                "image": image
+                            }
+                        )
 
             for i in json_output:
                 if i['id'] == id:
@@ -335,7 +338,7 @@ def largeicontype(useFeaturedIfAvaliable, language):
                         ynum = 750
                         
                     background.paste(varianticon, (xnum, ynum), varianticon)
-                    #os.remove(f'cache/V_{name}.png')
+                    os.remove(f'cache/V_{name}.png')
 
 
             font=ImageFont.truetype(loadFont,35)
@@ -552,13 +555,16 @@ def largeicontype_search(useFeaturedIfAvaliable, language):
                 image = y["image"]
                 name = y["name"]
                 #print(image) Used for debugging
-                json_output.append(
-                    {
-                        "id": id_,
-                        "name": name,
-                        "image": image
-                    }
-                )
+                if len(json_output) > 8:
+                    break
+                else:
+                    json_output.append(
+                        {
+                            "id": id_,
+                            "name": name,
+                            "image": image
+                        }
+                    )
 
         for i in json_output:
             if i['id'] == id:
@@ -617,7 +623,7 @@ def largeicontype_search(useFeaturedIfAvaliable, language):
                     ynum = 750
                     
                 background.paste(varianticon, (xnum, ynum), varianticon)
-                #os.remove(f'cache/V_{name}.png')
+                os.remove(f'cache/V_{name}.png')
 
 
         font=ImageFont.truetype(loadFont,35)
@@ -806,13 +812,17 @@ def largeicontype_pak(useFeaturedIfAvaliable, language):
                     image = y["image"]
                     name = y["name"]
                     #print(image) Used for debugging
-                    json_output.append(
-                        {
-                            "id": id_,
-                            "name": name,
-                            "image": image
-                        }
-                    )
+                    
+                    if len(json_output) > 8:
+                        break
+                    else:
+                        json_output.append(
+                            {
+                                "id": id_,
+                                "name": name,
+                                "image": image
+                            }
+                        )
 
             for i in json_output:
                 if i['id'] == id:
@@ -871,7 +881,7 @@ def largeicontype_pak(useFeaturedIfAvaliable, language):
                         ynum = 750
                         
                     background.paste(varianticon, (xnum, ynum), varianticon)
-                    #os.remove(f'cache/V_{name}.png')
+                    os.remove(f'cache/V_{name}.png')
 
 
             font=ImageFont.truetype(loadFont,35)
