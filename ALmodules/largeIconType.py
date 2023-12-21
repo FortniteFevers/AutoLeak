@@ -31,6 +31,7 @@ import PIL
 import os
 
 import glob
+import shutil
 from math import ceil, sqrt
 from typing import Union
 from colorama import *
@@ -38,11 +39,6 @@ init()
 
 
 def large_merger( datas: Union[list, None] = None, save_as: str = 'merge.jpg'):
-    try:
-        shutil.rmtree('icons')
-        os.makedirs('icons')
-    except:
-        os.makedirs('icons')
 
     if not datas:
         datas = [Image.open(i) for i in glob.glob('icons/*.png')]
@@ -69,13 +65,39 @@ def large_merger( datas: Union[list, None] = None, save_as: str = 'merge.jpg'):
 
         i += 1
 
-    datas.append(Image.open('assets/watermarklol.png'))
+    #datas.append(Image.open('assets/watermarklol.png'))
 
     if save_as and len(save_as) > 4:
         image.save(f"merged/{save_as}")
         #image.show()
 
     return image
+
+def raritycolor(rarity):
+    if rarity == 'gaminglegends':
+        button_color = (128, 120, 255)
+        text_color = (40, 8, 95)
+    elif rarity == 'uncommon':
+        button_color = (101, 197, 0)
+        text_color = (2, 80, 2)
+    elif rarity == 'rare':
+        button_color = (0, 180, 255)
+        text_color = (0, 69, 138)
+    elif rarity == 'epic':
+        button_color = (209, 90, 255)
+        text_color = (76, 25, 123)
+    elif rarity == 'legendary':
+        button_color = (255, 139, 25)
+        text_color = (138, 60, 30)
+    elif rarity == 'icon':
+        button_color = (92, 242, 243)
+        text_color = (0, 73, 74)
+    elif rarity == 'common':
+        button_color = (184, 184, 184)
+        text_color =  (92, 92, 92)
+    
+    return button_color, text_color
+
 
 def largeicontype(useFeaturedIfAvaliable, language):
     response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/new?language={language}')
@@ -148,8 +170,8 @@ def largeicontype(useFeaturedIfAvaliable, language):
         background = Image.open(f'cache/LargeTemp-{id}.png')
 
         #Watermark
-        watermark = Image.open(f'rarities/large/watermark.png').convert("RGBA")
-        background.paste(watermark, (0, 0), watermark)
+        #watermark = Image.open(f'rarities/large/watermark.png').convert("RGBA")
+        #background.paste(watermark, (0, 0), watermark)
         #
 
         loadFont = 'fonts/BurbankBigRegular-Black.ttf'
@@ -173,27 +195,8 @@ def largeicontype(useFeaturedIfAvaliable, language):
 
         # Button
         rarity = i['rarity']['value']
-        button_color = (255, 255, 255) # Default
-        text_color = 0, 0, 0
 
-        if rarity == 'gaminglegends':
-            button_color = (128, 120, 255)
-            text_color = (40, 8, 95)
-        elif rarity == 'uncommon':
-            button_color = (101, 197, 0)
-            text_color = (2, 80, 2)
-        elif rarity == 'rare':
-            button_color = (0, 180, 255)
-            text_color = (0, 69, 138)
-        elif rarity == 'epic':
-            button_color = (209, 90, 255)
-            text_color = (76, 25, 123)
-        elif rarity == 'legendary':
-            button_color = (255, 139, 25)
-            text_color = (138, 60, 30)
-        elif rarity == 'icon':
-            button_color = (92, 242, 243)
-            text_color = (0, 73, 74)
+        button_color, text_color = raritycolor(rarity)
 
         raritylen = len(rarity)
         raritywidth = font.getsize(rarity)[0]
@@ -252,7 +255,6 @@ def largeicontype(useFeaturedIfAvaliable, language):
 
         #Variant Gen
         variants = i['variants']
-        json_output = []
         variantnum = 0
         if i['variants'] != None:
             plus_sign = Image.open(f'rarities/large/PlusSign.png').convert("RGBA")
@@ -261,32 +263,12 @@ def largeicontype(useFeaturedIfAvaliable, language):
             variants_text = Image.open(f'rarities/large/VariantsText.png').convert("RGBA")
             background.paste(variants_text, (0,0), variants_text)
 
-            amount = len(i['variants'])
-            for x in range(amount):
-                variantnum = x-1
-                data_ = i['variants'][variantnum]['options']
-                id_ = i['id']
-                for y in data_:
-                    image = y["image"]
-                    name = y["name"]
-                    #print(image) Used for debugging
-                    if len(json_output) > 8:
-                        break
-                    else:
-                        json_output.append(
-                            {
-                                "id": id_,
-                                "name": name,
-                                "image": image
-                            }
-                        )
-
-            for i in json_output:
-                if i['id'] == id:
+            for x in i['variants'][0]['options']:
+                if x['name'] is not 'DEFAULT' or x['name'] is not 'Stage1':
                     variantbox=Image.new("RGB",(157,157), color = 0x211f20).convert('RGBA')
 
-                    name = i['name']
-                    url = i['image']
+                    name = x['name']
+                    url = x['image']
                     r = requests.get(url)
                     open(f'cache/variant_{name}.png', 'wb').write(r.content)
                     varianticon = Image.open(f'cache/variant_{name}.png').resize((157, 157), Image.ANTIALIAS).convert("RGBA")
@@ -299,23 +281,15 @@ def largeicontype(useFeaturedIfAvaliable, language):
                     
                     variantnum = variantnum + 1
                     
-                    # X - Interval by 180
-                    # Y - Interval by 180
-
-                    # Layer 1
                     xnum = 24
                     if variantnum == 1:
                         xnum = 24
-                        #ynum = 390
                     elif variantnum == 2:
                         xnum = 204 # 180
-                        #ynum = 390
                     elif variantnum == 3:
                         xnum = 384 # 180
-                        #ynum = 390
-                    ynum = 390
 
-                    # Layer 2
+                    ynum = 390
                     if variantnum == 4:
                         xnum = 24
                         ynum = 570
@@ -325,17 +299,6 @@ def largeicontype(useFeaturedIfAvaliable, language):
                     elif variantnum == 6:
                         xnum = 384
                         ynum = 570
-
-                    # Layer 3
-                    elif variantnum == 7:
-                        xnum = 24
-                        ynum = 750
-                    elif variantnum == 8:
-                        xnum = 204
-                        ynum = 750
-                    elif variantnum == 9:
-                        xnum = 384
-                        ynum = 750
                         
                     background.paste(varianticon, (xnum, ynum), varianticon)
                     os.remove(f'cache/V_{name}.png')
@@ -358,9 +321,10 @@ def largeicontype(useFeaturedIfAvaliable, language):
         print(f'{count}/{items}')
     print('\nDone generating items! Merging images...')
     large_merger()
+    print('\nMerged images!')
 
 def largeicontype_search(useFeaturedIfAvaliable, language):
-    print('\nWhat cosmetic do you want to lookup? (Enter name or enter an ID by doing ID:CID_Example_ID)')
+    print('\nWhat cosmetic do you want to lookup? (Enter name or enter an ID by doing ID:CID_Example_ID or enter a banner by doing Banner:Example_ID)')
     name = input('>> ')
     response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/search?name={name}&language={language}')
 
@@ -433,8 +397,8 @@ def largeicontype_search(useFeaturedIfAvaliable, language):
     background = Image.open(f'cache/LargeTemp-{id}.png')
 
     #Watermark
-    watermark = Image.open(f'rarities/large/watermark.png').convert("RGBA")
-    background.paste(watermark, (0, 0), watermark)
+    #watermark = Image.open(f'rarities/large/watermark.png').convert("RGBA")
+    #background.paste(watermark, (0, 0), watermark)
     #
 
     loadFont = 'fonts/BurbankBigRegular-Black.ttf'
@@ -458,27 +422,8 @@ def largeicontype_search(useFeaturedIfAvaliable, language):
 
     # Button
     rarity = i['rarity']['value']
-    button_color = (255, 255, 255) # Default
-    text_color = 0, 0, 0
 
-    if rarity == 'gaminglegends':
-        button_color = (128, 120, 255)
-        text_color = (40, 8, 95)
-    elif rarity == 'uncommon':
-        button_color = (101, 197, 0)
-        text_color = (2, 80, 2)
-    elif rarity == 'rare':
-        button_color = (0, 180, 255)
-        text_color = (0, 69, 138)
-    elif rarity == 'epic':
-        button_color = (209, 90, 255)
-        text_color = (76, 25, 123)
-    elif rarity == 'legendary':
-        button_color = (255, 139, 25)
-        text_color = (138, 60, 30)
-    elif rarity == 'icon':
-        button_color = (92, 242, 243)
-        text_color = (0, 73, 74)
+    button_color, text_color = raritycolor(rarity)
 
     raritylen = len(rarity)
     raritywidth = font.getsize(rarity)[0]
@@ -534,107 +479,147 @@ def largeicontype_search(useFeaturedIfAvaliable, language):
 
     font=ImageFont.truetype(loadFont,35)
     draw.text((20,1035),otherdesc,font=font,fill=0xc8c5c4)
-
-    #Variant Gen
-    variants = i['variants']
-    json_output = []
-    variantnum = 0
-    if i['variants'] != None:
-        plus_sign = Image.open(f'rarities/large/PlusSign.png').convert("RGBA")
-        background.paste(plus_sign, (0,0), plus_sign)
-
-        variants_text = Image.open(f'rarities/large/VariantsText.png').convert("RGBA")
-        background.paste(variants_text, (0,0), variants_text)
-
-        amount = len(i['variants'])
-        for x in range(amount):
-            variantnum = x-1
-            data_ = i['variants'][variantnum]['options']
-            id_ = i['id']
-            for y in data_:
-                image = y["image"]
-                name = y["name"]
-                #print(image) Used for debugging
-                if len(json_output) > 8:
-                    break
-                else:
-                    json_output.append(
-                        {
-                            "id": id_,
-                            "name": name,
-                            "image": image
-                        }
-                    )
-
-        for i in json_output:
-            if i['id'] == id:
-                variantbox=Image.new("RGB",(157,157), color = 0x211f20).convert('RGBA')
-
-                name = i['name']
-                url = i['image']
-                r = requests.get(url)
-                open(f'cache/variant_{name}.png', 'wb').write(r.content)
-                varianticon = Image.open(f'cache/variant_{name}.png').resize((157, 157), Image.ANTIALIAS).convert("RGBA")
-                variantbox.paste(varianticon, (0,0), varianticon)
-                
-                variantbox.save(f'cache/V_{name}.png')
-                os.remove(f'cache/variant_{name}.png')
-
-                varianticon = Image.open(f'cache/V_{name}.png').convert("RGBA")
-                
-                variantnum = variantnum + 1
-                
-                # X - Interval by 180
-                # Y - Interval by 180
-
-                # Layer 1
-                xnum = 24
-                if variantnum == 1:
-                    xnum = 24
-                    #ynum = 390
-                elif variantnum == 2:
-                    xnum = 204 # 180
-                    #ynum = 390
-                elif variantnum == 3:
-                    xnum = 384 # 180
-                    #ynum = 390
-                ynum = 390
-
-                # Layer 2
-                if variantnum == 4:
-                    xnum = 24
-                    ynum = 570
-                elif variantnum == 5:
-                    xnum = 204
-                    ynum = 570
-                elif variantnum == 6:
-                    xnum = 384
-                    ynum = 570
-
-                # Layer 3
-                elif variantnum == 7:
-                    xnum = 24
-                    ynum = 750
-                elif variantnum == 8:
-                    xnum = 204
-                    ynum = 750
-                elif variantnum == 9:
-                    xnum = 384
-                    ynum = 750
-                    
-                background.paste(varianticon, (xnum, ynum), varianticon)
-                os.remove(f'cache/V_{name}.png')
-
-
-        font=ImageFont.truetype(loadFont,35)
-        draw.text((230,340),f'{variantnum}',font=font,fill=0x999999)
-        #print(f'Variants: {variantnum}')
     
 
 
     # CARD GEN #
 
 
+
+    background.save(f'icons/{id}.png')
+    os.remove(f'cache/LargeTemp-{id}.png')
+    print(Fore.CYAN+'--Saved image to Icons folder!--'+Fore.GREEN)
+    largeicontype_search(useFeaturedIfAvaliable, language)
+
+def largeicontype_search_banner(useFeaturedIfAvaliable, language):
+    print('\nWhat banner do you want to lookup? (Enter ID)')
+    name = input('>> ')
+    response = requests.get(f'https://fortnite-api.com/v1/banners')
+
+    if 'ID:' in name:
+        id = name.replace('ID:', '')
+
+    status = response.json()['status']
+    if status != 200:
+        print(f"Error: Status {response.json()['status']}")
+        largeicontype_search_banner(useFeaturedIfAvaliable, language)
+    i = response.json()['data']
+
+    for banners in i:
+        if banners['id'] == name or banners['devName'] == name:
+            id = banners['id']
+
+            if banners["images"]["icon"] != None:
+                url = banners["images"]["icon"]
+            else:
+                if banners['images']['smallIcon'] != None:
+                    url = banners['images']['smallIcon']
+                else:
+                    url = 'https://cdn.discordapp.com/attachments/1038528439419940905/1187164103597367337/AutoLeakplaceholder.png'
+
+        
+            r = requests.get(url)
+            open(f'cache/{id}temp.png', 'wb').write(r.content)
+
+            # RARITY GEN #
+            iconImg = Image.open(f'cache/{id}temp.png')
+            iconImg.resize((1083,1083),PIL.Image.ANTIALIAS)
+
+            rarity = "common"
+            rarity = rarity.lower()
+            #rarity = 'common'
+
+            try:
+                raritybackground = Image.open(f'rarities/cataba/{rarity}.png').resize((1083, 1083), Image.ANTIALIAS).convert("RGBA")
+            except:
+                raritybackground = Image.open(f'rarities/cataba/common.png').resize((1083, 1083), Image.ANTIALIAS).convert("RGBA")
+
+            img=Image.new("RGB",(1083,1083))
+            img.paste(raritybackground)
+
+            iconimg = Image.open(f'cache/{id}temp.png').resize((1083, 1083), Image.ANTIALIAS).convert("RGBA")
+            img.paste(iconimg, (0,0), iconimg)
+            img.save(f'cache/{id}.png')
+            try:
+                os.remove(f'cache/{id}temp.png')
+            except Exception as e:
+                print(e)
+                pass
+            # RARITY GEN #
+
+            # CARD GEN #
+            img=Image.new("RGB",(1793,1080))
+
+            finishedIcon = Image.open(f'cache/{id}.png').resize((1083, 1083), Image.ANTIALIAS).convert("RGBA")
+            img.paste(finishedIcon, (710, 0), finishedIcon)
+
+            os.remove(f'cache/{id}.png')
+
+            card = Image.open(f'rarities/large/card.png').convert("RGBA")
+            img.paste(card, (0,0), card)
+
+            img.save(f'cache/LargeTemp-{id}.png')
+
+            background = Image.open(f'cache/LargeTemp-{id}.png')
+
+            #Watermark
+            #watermark = Image.open(f'rarities/large/watermark.png').convert("RGBA")
+            #background.paste(watermark, (0, 0), watermark)
+            #
+
+            loadFont = 'fonts/BurbankBigRegular-Black.ttf'
+            font=ImageFont.truetype(loadFont,60)
+
+            name = banners['name']
+            name=name.upper()
+            draw=ImageDraw.Draw(background)
+            draw.text((30,55),name,font=font,fill='white')
+
+
+            loadFont = 'fonts/BurbankBigRegular-BlackItalic.otf'
+            font=ImageFont.truetype(loadFont,39)
+            desc = banners['description']
+            desc=desc.upper()
+            import textwrap
+            newdesc = textwrap.fill(desc, 30)
+
+            draw=ImageDraw.Draw(background)
+            draw.text((34,210),newdesc,font=font,fill='white')
+
+            # Button
+            rarity = 'common'
+            button_color = (255, 255, 255) # Default
+            text_color = 0, 0, 0
+
+            raritylen = len(rarity)
+            raritywidth = font.getsize(rarity)[0]
+
+            raritytag_w = raritywidth + 40
+
+            raritytag=Image.new("RGB",(raritytag_w,48), color = button_color).convert('RGBA') # Draws Rarity Button Tag
+
+            background.paste(raritytag, (28, 124), raritytag)
+
+            # RARITY BUTTON TEXT
+            rarity=rarity.upper()
+            draw=ImageDraw.Draw(background)
+            draw.text((32,131),rarity,font=font,fill=text_color) # Draws Rarity Button Text
+
+            # Backend Value Text
+
+            backend_x = raritytag_w + 28 + 20
+
+            backend = banners['category']
+            backend=backend.upper()
+            draw=ImageDraw.Draw(background)
+            draw.text((backend_x,133),backend,font=font,fill='white')
+
+            id = banners['id']
+            idlen = len(id)
+            import math
+
+            font=ImageFont.truetype(loadFont,25)
+            draw.text((20,995),f'ID:  {id}',font=font,fill=0xc8c5c4)
 
     background.save(f'icons/{id}.png')
     os.remove(f'cache/LargeTemp-{id}.png')
@@ -715,8 +700,8 @@ def largeicontype_pak(useFeaturedIfAvaliable, language):
         background = Image.open(f'cache/LargeTemp-{id}.png')
 
         #Watermark
-        watermark = Image.open(f'rarities/large/watermark.png').convert("RGBA")
-        background.paste(watermark, (0, 0), watermark)
+        #watermark = Image.open(f'rarities/large/watermark.png').convert("RGBA")
+        #background.paste(watermark, (0, 0), watermark)
         #
 
         loadFont = 'fonts/BurbankBigRegular-Black.ttf'
@@ -794,7 +779,6 @@ def largeicontype_pak(useFeaturedIfAvaliable, language):
 
         #Variant Gen
         variants = i['variants']
-        json_output = []
         variantnum = 0
         if i['variants'] != None:
             plus_sign = Image.open(f'rarities/large/PlusSign.png').convert("RGBA")
@@ -803,33 +787,12 @@ def largeicontype_pak(useFeaturedIfAvaliable, language):
             variants_text = Image.open(f'rarities/large/VariantsText.png').convert("RGBA")
             background.paste(variants_text, (0,0), variants_text)
 
-            amount = len(i['variants'])
-            for x in range(amount):
-                variantnum = x-1
-                data_ = i['variants'][variantnum]['options']
-                id_ = i['id']
-                for y in data_:
-                    image = y["image"]
-                    name = y["name"]
-                    #print(image) Used for debugging
-                    
-                    if len(json_output) > 8:
-                        break
-                    else:
-                        json_output.append(
-                            {
-                                "id": id_,
-                                "name": name,
-                                "image": image
-                            }
-                        )
-
-            for i in json_output:
-                if i['id'] == id:
+            for x in i['variants'][0]['options']:
+                if x['name'] != 'DEFAULT':
                     variantbox=Image.new("RGB",(157,157), color = 0x211f20).convert('RGBA')
 
-                    name = i['name']
-                    url = i['image']
+                    name = x['name']
+                    url = x['image']
                     r = requests.get(url)
                     open(f'cache/variant_{name}.png', 'wb').write(r.content)
                     varianticon = Image.open(f'cache/variant_{name}.png').resize((157, 157), Image.ANTIALIAS).convert("RGBA")
@@ -842,23 +805,15 @@ def largeicontype_pak(useFeaturedIfAvaliable, language):
                     
                     variantnum = variantnum + 1
                     
-                    # X - Interval by 180
-                    # Y - Interval by 180
-
-                    # Layer 1
                     xnum = 24
                     if variantnum == 1:
                         xnum = 24
-                        #ynum = 390
                     elif variantnum == 2:
                         xnum = 204 # 180
-                        #ynum = 390
                     elif variantnum == 3:
                         xnum = 384 # 180
-                        #ynum = 390
-                    ynum = 390
 
-                    # Layer 2
+                    ynum = 390
                     if variantnum == 4:
                         xnum = 24
                         ynum = 570
@@ -868,17 +823,6 @@ def largeicontype_pak(useFeaturedIfAvaliable, language):
                     elif variantnum == 6:
                         xnum = 384
                         ynum = 570
-
-                    # Layer 3
-                    elif variantnum == 7:
-                        xnum = 24
-                        ynum = 750
-                    elif variantnum == 8:
-                        xnum = 204
-                        ynum = 750
-                    elif variantnum == 9:
-                        xnum = 384
-                        ynum = 750
                         
                     background.paste(varianticon, (xnum, ynum), varianticon)
                     os.remove(f'cache/V_{name}.png')
