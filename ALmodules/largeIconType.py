@@ -95,6 +95,9 @@ def raritycolor(rarity):
     elif rarity == 'common':
         button_color = (184, 184, 184)
         text_color =  (92, 92, 92)
+    else:
+        button_color = (184, 184, 184)
+        text_color =  (92, 92, 92)
     
     return button_color, text_color
 
