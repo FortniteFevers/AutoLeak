@@ -45,7 +45,7 @@ try:
     import random
     from os import listdir
     from colorama import *
-    from googletrans import Translator
+    #from googletrans import Translator
     import platform
     import tkinter as tk
     window = tk.Tk()
@@ -56,8 +56,8 @@ except ModuleNotFoundError as e:
     print(f"Error: {e}")
     print('Please install this module to run the program.')
 
-translator = Translator()
-init()
+#translator = Translator()
+#init()
 
 try:
     rpc = Presence(
@@ -76,7 +76,7 @@ current_time = now.strftime("%H:%M")
 from ALmodules.shopsections import shop_sections
 from ALmodules.compressor import compressnewcosmetics_normal, compress_brnews, compress_normal, pak_compress, compressnewcosmetics_new
 from ALmodules.merger import merger
-from ALmodules.largeIconType import largeicontype, largeicontype_search, large_merger, largeicontype_pak
+from ALmodules.largeIconType import largeicontype, largeicontype_search, large_merger, largeicontype_pak, largeicontype_search_banner
 from ALmodules.shop import genshop, update, shopmerge
 
 loop = True
@@ -1640,7 +1640,7 @@ def staging_servers():
 
 def weapons():
     #print('\nWhat weapon do you want to grab?')
-    response = requests.get('https://fortniteapi.io/v1/loot/list?lang={language}', headers=headers)
+    response = requests.get(f'https://fortniteapi.io/v1/loot/list?lang={language}', headers=headers)
 
     if apikey == "":
         print(Fore.RED+'\nNo API Key is defined. Please add a Fortniteapi.io API key in settings.json.')
@@ -1658,10 +1658,10 @@ def weapons():
         print(Fore.GREEN + '\nWhat weapon ID do you want to grab?')
 
     arg = input('>> ')
-    arg = arg.title()
+    #arg = arg.title()
     if ask1 == '2':
         for i in weapons:
-            if i['name'] == arg:
+            if i['name'].lower() == arg.lower():
                 print(Fore.BLUE + f'\nFound the {i["name"]} weapon.')
                 print(f'\nID: {i["id"]}')
                 print(f'\nDescription: {i["description"]}')
@@ -3070,6 +3070,8 @@ elif option_choice == "13":
     staging_servers()
 elif option_choice == "14":
     weapons()
+elif option_choice == "69":
+    largeicontype_search_banner(useFeaturedIfAvaliable, language)
 
 # BETA COMMANDS
 elif option_choice == '15':
