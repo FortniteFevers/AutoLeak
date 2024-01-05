@@ -1,12 +1,15 @@
 import requests
 from PIL import Image, ImageFont, ImageDraw
-from datetime import date
+import PIL
 from datetime import datetime
 import os
 import time
 import tweepy
 from colorama import *
 import shutil
+from math import ceil, sqrt
+from typing import Union
+import glob
 
 #===============#
 loadFont = 'fonts/BurbankBigRegular-BlackItalic.otf'
@@ -289,27 +292,55 @@ def genshop():
     end = time.time()
 
     print(f"IMAGE GENERATING COMPLETE - Generated image in {round(end - start, 2)} seconds!")
-    
 
+    s = response.json()['data']
+
+    list = []
+
+    for i in s['featured']['entries']:
+        for i in i['items']:
+            shophistory = i['shopHistory']
+            try:
+                lastseen = shophistory[-2]
+            except:
+                lastseen = currentdate
+            lastseen = lastseen[:10]
+            dateloop = datetime.strptime(lastseen, "%Y-%m-%d")
+            current = datetime.strptime(currentdate, "%Y-%m-%d")
+            diff = current.date() - dateloop.date()
+            daysd=int(diff.days)
+            list.append(daysd)
+    
+    if s['daily'] != None:
+        for i in s['daily']['entries']:
+            for i in i['items']:
+                shophistory = i['shopHistory']
+                try:
+                    lastseen = shophistory[-2]
+                except:
+                    lastseen = currentdate
+                lastseen = lastseen[:10]
+                dateloop = datetime.strptime(lastseen, "%Y-%m-%d")
+                current = datetime.strptime(currentdate, "%Y-%m-%d")
+                diff = current.date() - dateloop.date()
+                daysd=int(diff.days)
+                list.append(daysd)
+
+    list.sort(reverse = True)
+    maxitem = list[0]
+
+    list.sort()
+    minitem = list[0]
+
+    average = sum(list) / len(list)
+    average = round(average, 0)
+    print(Fore.YELLOW + f"\nTotal Items: {totalnum}\nMax Last Seen: {maxitem} days\nMin Last Seen: {minitem} days\nAverage of Last Seen items: {average} days" + Fore.CYAN)
+
+# Credits to https://github.com/MyNameIsDark01 for the original Merger code.
+# This merger is under rights, you may not take this code and use it in your own project without proper credits to Fevers and Dark.
 response = requests.get('https://fortnite-api.com/v2/shop/br/combined')
 currentdate = response.json()['data']['date']
 currentdate = currentdate[:10]
-# Credits to https://github.com/MyNameIsDark01 for the original Merger code.
-# This merger is under rights, you may not take this code and use it in your own project without proper credits to Fevers and Dark.
-from math import ceil, sqrt
-from typing import Union
-import glob
-from PIL import Image, ImageFont, ImageDraw
-import PIL
-import requests
-import glob
-from math import ceil, sqrt
-from typing import Union
-import os
-
-# Credits to https://github.com/MyNameIsDark01 for the original Merger code.
-# This merger is under rights, you may not take this code and use it in your own project without proper credits to Fevers and Dark.
-
 def shopmerge(datas: Union[list, None] = None, save_as: str = f'merged/shop {currentdate}.jpg'):
     response = requests.get('https://fortnite-api.com/v2/shop/br/combined')
     currentdate = response.json()['data']['date']
