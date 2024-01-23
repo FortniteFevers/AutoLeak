@@ -34,123 +34,124 @@ def genshop():
     print('\nGenerating Featured Section...')
     featured = data['featured']
     count = 0
-    for i in featured['entries']:
+    if featured != None:
+        for i in featured['entries']:
 
-        if i['newDisplayAssetPath'] != None:
+            if i['newDisplayAssetPath'] != None:
+                try:
+                    url = i['newDisplayAsset']['materialInstances'][0]['images']['Background']
+                except:
+                    url = i['newDisplayAsset']['materialInstances'][0]['images']['OfferImage']
+            else:
+                url = i['items'][0]['images']['icon']
+
+            name = i['items'][0]['id']
+            last_seen = i['items'][0]['shopHistory']
             try:
-                url = i['newDisplayAsset']['materialInstances'][0]['images']['Background']
+                last_seen = last_seen[-2][:10]
             except:
-                url = i['newDisplayAsset']['materialInstances'][0]['images']['OfferImage']
-        else:
-            url = i['items'][0]['images']['icon']
+                last_seen = 'NEW!'
+            price = i['finalPrice']
 
-        name = i['items'][0]['id']
-        last_seen = i['items'][0]['shopHistory']
-        try:
-            last_seen = last_seen[-2][:10]
-        except:
-            last_seen = 'NEW!'
-        price = i['finalPrice']
-
-        if i['bundle'] != None:
-            url = i['bundle']['image']
-            name = f"zzz{i['bundle']['name']}"
-        
-        if last_seen != 'NEW!':
-            dateloop = datetime.strptime(last_seen, "%Y-%m-%d")
-            current = datetime.strptime(currentdate, "%Y-%m-%d")
-            diff = str(current.date() - dateloop.date())
-            diff = diff.replace('days, 0:00:00', '')
-            if diff == '0:00:00':
-                diff = '1'
-        else:
-            diff = 'NEW!'
+            if i['bundle'] != None:
+                url = i['bundle']['image']
+                name = f"zzz{i['bundle']['name']}"
+            
+            if last_seen != 'NEW!':
+                dateloop = datetime.strptime(last_seen, "%Y-%m-%d")
+                current = datetime.strptime(currentdate, "%Y-%m-%d")
+                diff = str(current.date() - dateloop.date())
+                diff = diff.replace('days, 0:00:00', '')
+                if diff == '0:00:00':
+                    diff = '1'
+            else:
+                diff = 'NEW!'
 
 
-        open(f'icons/{name}.png', 'wb').write(requests.get(url).content)
-        background = Image.open(f'icons/{name}.png').resize((512, 512))
-        background.save(f'icons/{name}.png')
+            open(f'icons/{name}.png', 'wb').write(requests.get(url).content)
+            background = Image.open(f'icons/{name}.png').resize((512, 512))
+            background.save(f'icons/{name}.png')
 
-        img=Image.new("RGB",(512,512))
-        img.paste(background)
+            img=Image.new("RGB",(512,512))
+            img.paste(background)
 
-        # OTHER ITEMS GEN
-        try:
-            if i['bundle'] == None:
-                if i['items'][1]:
-                    url = i['items'][1]['images']['icon']
-                    open(f'icons/temp{name}.png', 'wb').write(requests.get(url).content)
-                    background = Image.open(f'icons/temp{name}.png').resize((80, 80))
-                    background.save(f'icons/temp{name}.png')
-                
-                    background = Image.open(f'icons/temp{name}.png')
-                    img.paste(background, (0, 0), background)
+            # OTHER ITEMS GEN
+            try:
+                if i['bundle'] == None:
+                    if i['items'][1]:
+                        url = i['items'][1]['images']['icon']
+                        open(f'icons/temp{name}.png', 'wb').write(requests.get(url).content)
+                        background = Image.open(f'icons/temp{name}.png').resize((80, 80))
+                        background.save(f'icons/temp{name}.png')
+                    
+                        background = Image.open(f'icons/temp{name}.png')
+                        img.paste(background, (0, 0), background)
 
-                    os.remove(f'icons/temp{name}.png')
-                if i['items'][2]:
-                    url = i['items'][2]['images']['icon']
-                    open(f'icons/temp{name}.png', 'wb').write(requests.get(url).content)
-                    background = Image.open(f'icons/temp{name}.png').resize((80, 80))
-                    background.save(f'icons/temp{name}.png')
-                
-                    background = Image.open(f'icons/temp{name}.png')
-                    img.paste(background, (0, 100), background)
+                        os.remove(f'icons/temp{name}.png')
+                    if i['items'][2]:
+                        url = i['items'][2]['images']['icon']
+                        open(f'icons/temp{name}.png', 'wb').write(requests.get(url).content)
+                        background = Image.open(f'icons/temp{name}.png').resize((80, 80))
+                        background.save(f'icons/temp{name}.png')
+                    
+                        background = Image.open(f'icons/temp{name}.png')
+                        img.paste(background, (0, 100), background)
 
-                    os.remove(f'icons/temp{name}.png')
+                        os.remove(f'icons/temp{name}.png')
 
-                if i['items'][3]:
-                    url = i['items'][3]['images']['icon']
-                    open(f'icons/temp{name}.png', 'wb').write(requests.get(url).content)
-                    background = Image.open(f'icons/temp{name}.png').resize((80, 80))
-                    background.save(f'icons/temp{name}.png')
-                
-                    background = Image.open(f'icons/temp{name}.png')
-                    img.paste(background, (0, 200), background)
+                    if i['items'][3]:
+                        url = i['items'][3]['images']['icon']
+                        open(f'icons/temp{name}.png', 'wb').write(requests.get(url).content)
+                        background = Image.open(f'icons/temp{name}.png').resize((80, 80))
+                        background.save(f'icons/temp{name}.png')
+                    
+                        background = Image.open(f'icons/temp{name}.png')
+                        img.paste(background, (0, 200), background)
 
-                    os.remove(f'icons/temp{name}.png')
-        except:
-            pass
+                        os.remove(f'icons/temp{name}.png')
+            except:
+                pass
 
 
 
-        overlay = Image.open('assets/overlay.png').convert('RGBA')
-        img.paste(overlay, (0,0), overlay)
+            overlay = Image.open('assets/overlay.png').convert('RGBA')
+            img.paste(overlay, (0,0), overlay)
 
-        img.save(f'icons/{name}.png')
+            img.save(f'icons/{name}.png')
 
-        background = Image.open(f'icons/{name}.png')
+            background = Image.open(f'icons/{name}.png')
 
-        itemname = i['items'][0]['name']
-        if i['bundle'] != None:
-            itemname = f"{i['bundle']['name']}"
-        
-        font=ImageFont.truetype(loadFont,35)
-        draw=ImageDraw.Draw(background)
-        draw.text((256,420),itemname,font=font,fill='white', anchor='ms') # Writes name
+            itemname = i['items'][0]['name']
+            if i['bundle'] != None:
+                itemname = f"{i['bundle']['name']}"
+            
+            font=ImageFont.truetype(loadFont,35)
+            draw=ImageDraw.Draw(background)
+            draw.text((256,420),itemname,font=font,fill='white', anchor='ms') # Writes name
 
-        if 'NEW!' in diff:
-            diff_text = 'NEW!'
-        else:
-            diff = diff.replace(' ', '')
-            diff_text = f'LAST SEEN: {diff} days ago'
+            if 'NEW!' in diff:
+                diff_text = 'NEW!'
+            else:
+                diff = diff.replace(' ', '')
+                diff_text = f'LAST SEEN: {diff} days ago'
 
-        if '0:00' in diff_text:
-            diff_text = 'LAST SEEN: 1 day ago'
+            if '0:00' in diff_text:
+                diff_text = 'LAST SEEN: 1 day ago'
 
-        font=ImageFont.truetype(loadFont,15)
-        draw=ImageDraw.Draw(background)
-        draw.text((256,450),diff_text,font=font,fill='white', anchor='ms') # Writes date last seen
+            font=ImageFont.truetype(loadFont,15)
+            draw=ImageDraw.Draw(background)
+            draw.text((256,450),diff_text,font=font,fill='white', anchor='ms') # Writes date last seen
 
-        font=ImageFont.truetype(loadFont,40)
-        draw=ImageDraw.Draw(background)
-        draw.text((256,505),f'{price}',font=font,fill='white', anchor='ms') # Writes price
+            font=ImageFont.truetype(loadFont,40)
+            draw=ImageDraw.Draw(background)
+            draw.text((256,505),f'{price}',font=font,fill='white', anchor='ms') # Writes price
 
-        background.save(f'icons/{name}.png')
+            background.save(f'icons/{name}.png')
 
-        if showItems != False:
-            print(f'Last Seen: {diff} days ago\n{name} - {price}\n')
+            if showItems != False:
+                print(f'Last Seen: {diff} days ago\n{name} - {price}\n')
 
-        count += 1
+            count += 1
 
     print(f'Done generating "{count}" items in the Featured section.')
     featrued_num = count
@@ -297,19 +298,20 @@ def genshop():
 
     list = []
 
-    for i in s['featured']['entries']:
-        for i in i['items']:
-            shophistory = i['shopHistory']
-            try:
-                lastseen = shophistory[-2]
-            except:
-                lastseen = currentdate
-            lastseen = lastseen[:10]
-            dateloop = datetime.strptime(lastseen, "%Y-%m-%d")
-            current = datetime.strptime(currentdate, "%Y-%m-%d")
-            diff = current.date() - dateloop.date()
-            daysd=int(diff.days)
-            list.append(daysd)
+    if s['featured'] != None:
+        for i in s['featured']['entries']:
+            for i in i['items']:
+                shophistory = i['shopHistory']
+                try:
+                    lastseen = shophistory[-2]
+                except:
+                    lastseen = currentdate
+                lastseen = lastseen[:10]
+                dateloop = datetime.strptime(lastseen, "%Y-%m-%d")
+                current = datetime.strptime(currentdate, "%Y-%m-%d")
+                diff = current.date() - dateloop.date()
+                daysd=int(diff.days)
+                list.append(daysd)
     
     if s['daily'] != None:
         for i in s['daily']['entries']:
@@ -325,15 +327,22 @@ def genshop():
                 diff = current.date() - dateloop.date()
                 daysd=int(diff.days)
                 list.append(daysd)
+    if list != []:
+        list.sort(reverse = True)
+        maxitem = list[0]
 
-    list.sort(reverse = True)
-    maxitem = list[0]
+        list.sort()
+        minitem = list[0]
 
-    list.sort()
-    minitem = list[0]
-
-    average = sum(list) / len(list)
-    average = round(average, 0)
+        average = sum(list) / len(list)
+        average = round(average, 0)
+    else:
+        watermark = Image.open('assets/watermarklol.png').convert('RGBA')
+        img.save(f'icons/watermark.png')
+        totalnum = "N/A"
+        maxitem = "N/A"
+        minitem = "N/A"
+        average = "N/A"
     print(Fore.YELLOW + f"\nTotal Items: {totalnum}\nMax Last Seen: {maxitem} days\nMin Last Seen: {minitem} days\nAverage of Last Seen items: {average} days" + Fore.CYAN)
 
 # Credits to https://github.com/MyNameIsDark01 for the original Merger code.
