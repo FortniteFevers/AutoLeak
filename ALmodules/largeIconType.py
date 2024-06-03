@@ -133,21 +133,21 @@ def largeicontype(useFeaturedIfAvaliable, language):
 
         # RARITY GEN #
         iconImg = Image.open(f'cache/{id}temp.png')
-        iconImg.resize((1083,1083),PIL.Image.ANTIALIAS)
+        iconImg.resize((1083,1083))
 
         rarity = i["rarity"]['value']
         rarity = rarity.lower()
         #rarity = 'common'
 
         try:
-            raritybackground = Image.open(f'rarities/cataba/{rarity}.png').resize((1083, 1083), Image.ANTIALIAS).convert("RGBA")
+            raritybackground = Image.open(f'rarities/cataba/{rarity}.png').resize((1083, 1083)).convert("RGBA")
         except:
-            raritybackground = Image.open(f'rarities/cataba/common.png').resize((1083, 1083), Image.ANTIALIAS).convert("RGBA")
+            raritybackground = Image.open(f'rarities/cataba/common.png').resize((1083, 1083)).convert("RGBA")
 
         img=Image.new("RGB",(1083,1083))
         img.paste(raritybackground)
 
-        iconimg = Image.open(f'cache/{id}temp.png').resize((1083, 1083), Image.ANTIALIAS).convert("RGBA")
+        iconimg = Image.open(f'cache/{id}temp.png').resize((1083, 1083)).convert("RGBA")
         img.paste(iconimg, (0,0), iconimg)
         img.save(f'cache/{id}.png')
         try:
@@ -160,7 +160,7 @@ def largeicontype(useFeaturedIfAvaliable, language):
         # CARD GEN #
         img=Image.new("RGB",(1793,1080))
 
-        finishedIcon = Image.open(f'cache/{id}.png').resize((1083, 1083), Image.ANTIALIAS).convert("RGBA")
+        finishedIcon = Image.open(f'cache/{id}.png').resize((1083, 1083)).convert("RGBA")
         img.paste(finishedIcon, (710, 0), finishedIcon)
 
         os.remove(f'cache/{id}.png')
@@ -274,7 +274,7 @@ def largeicontype(useFeaturedIfAvaliable, language):
                     url = x['image']
                     r = requests.get(url)
                     open(f'cache/variant_{name}.png', 'wb').write(r.content)
-                    varianticon = Image.open(f'cache/variant_{name}.png').resize((157, 157), Image.ANTIALIAS).convert("RGBA")
+                    varianticon = Image.open(f'cache/variant_{name}.png').resize((157, 157)).convert("RGBA")
                     variantbox.paste(varianticon, (0,0), varianticon)
                     
                     variantbox.save(f'cache/V_{name}.png')
@@ -360,21 +360,21 @@ def largeicontype_search(useFeaturedIfAvaliable, language):
 
     # RARITY GEN #
     iconImg = Image.open(f'cache/{id}temp.png')
-    iconImg.resize((1083,1083),PIL.Image.ANTIALIAS)
+    iconImg.resize((1083,1083))
 
     rarity = i["rarity"]['value']
     rarity = rarity.lower()
     #rarity = 'common'
 
     try:
-        raritybackground = Image.open(f'rarities/cataba/{rarity}.png').resize((1083, 1083), Image.ANTIALIAS).convert("RGBA")
+        raritybackground = Image.open(f'rarities/cataba/{rarity}.png').resize((1083, 1083)).convert("RGBA")
     except:
-        raritybackground = Image.open(f'rarities/cataba/common.png').resize((1083, 1083), Image.ANTIALIAS).convert("RGBA")
+        raritybackground = Image.open(f'rarities/cataba/common.png').resize((1083, 1083)).convert("RGBA")
 
     img=Image.new("RGB",(1083,1083))
     img.paste(raritybackground)
 
-    iconimg = Image.open(f'cache/{id}temp.png').resize((1083, 1083), Image.ANTIALIAS).convert("RGBA")
+    iconimg = Image.open(f'cache/{id}temp.png').resize((1083, 1083)).convert("RGBA")
     img.paste(iconimg, (0,0), iconimg)
     img.save(f'cache/{id}.png')
     try:
@@ -387,7 +387,7 @@ def largeicontype_search(useFeaturedIfAvaliable, language):
     # CARD GEN #
     img=Image.new("RGB",(1793,1080))
 
-    finishedIcon = Image.open(f'cache/{id}.png').resize((1083, 1083), Image.ANTIALIAS).convert("RGBA")
+    finishedIcon = Image.open(f'cache/{id}.png').resize((1083, 1083)).convert("RGBA")
     img.paste(finishedIcon, (710, 0), finishedIcon)
 
     os.remove(f'cache/{id}.png')
@@ -501,7 +501,7 @@ def largeicontype_search(useFeaturedIfAvaliable, language):
                 url = x['image']
                 r = requests.get(url)
                 open(f'cache/variant_{name}.png', 'wb').write(r.content)
-                varianticon = Image.open(f'cache/variant_{name}.png').resize((157, 157), Image.ANTIALIAS).convert("RGBA")
+                varianticon = Image.open(f'cache/variant_{name}.png').resize((157, 157)).convert("RGBA")
                 variantbox.paste(varianticon, (0,0), varianticon)
                 
                 variantbox.save(f'cache/V_{name}.png')
@@ -585,21 +585,21 @@ def largeicontype_search_banner(useFeaturedIfAvaliable, language):
 
             # RARITY GEN #
             iconImg = Image.open(f'cache/{id}temp.png')
-            iconImg.resize((1083,1083),PIL.Image.ANTIALIAS)
+            iconImg.resize((1083,1083))
 
             rarity = "common"
             rarity = rarity.lower()
             #rarity = 'common'
 
             try:
-                raritybackground = Image.open(f'rarities/cataba/{rarity}.png').resize((1083, 1083), Image.ANTIALIAS).convert("RGBA")
+                raritybackground = Image.open(f'rarities/cataba/{rarity}.png').resize((1083, 1083)).convert("RGBA")
             except:
-                raritybackground = Image.open(f'rarities/cataba/common.png').resize((1083, 1083), Image.ANTIALIAS).convert("RGBA")
+                raritybackground = Image.open(f'rarities/cataba/common.png').resize((1083, 1083)).convert("RGBA")
 
             img=Image.new("RGB",(1083,1083))
             img.paste(raritybackground)
 
-            iconimg = Image.open(f'cache/{id}temp.png').resize((1083, 1083), Image.ANTIALIAS).convert("RGBA")
+            iconimg = Image.open(f'cache/{id}temp.png').resize((1083, 1083)).convert("RGBA")
             img.paste(iconimg, (0,0), iconimg)
             img.save(f'cache/{id}.png')
             try:
@@ -612,7 +612,7 @@ def largeicontype_search_banner(useFeaturedIfAvaliable, language):
             # CARD GEN #
             img=Image.new("RGB",(1793,1080))
 
-            finishedIcon = Image.open(f'cache/{id}.png').resize((1083, 1083), Image.ANTIALIAS).convert("RGBA")
+            finishedIcon = Image.open(f'cache/{id}.png').resize((1083, 1083)).convert("RGBA")
             img.paste(finishedIcon, (710, 0), finishedIcon)
 
             os.remove(f'cache/{id}.png')
@@ -722,21 +722,21 @@ def largeicontype_pak(useFeaturedIfAvaliable, language):
 
         # RARITY GEN #
         iconImg = Image.open(f'cache/{id}temp.png')
-        iconImg.resize((1083,1083),PIL.Image.ANTIALIAS)
+        iconImg.resize((1083,1083))
 
         rarity = i["rarity"]['value']
         rarity = rarity.lower()
         #rarity = 'common'
 
         try:
-            raritybackground = Image.open(f'rarities/cataba/{rarity}.png').resize((1083, 1083), Image.ANTIALIAS).convert("RGBA")
+            raritybackground = Image.open(f'rarities/cataba/{rarity}.png').resize((1083, 1083)).convert("RGBA")
         except:
-            raritybackground = Image.open(f'rarities/cataba/common.png').resize((1083, 1083), Image.ANTIALIAS).convert("RGBA")
+            raritybackground = Image.open(f'rarities/cataba/common.png').resize((1083, 1083)).convert("RGBA")
 
         img=Image.new("RGB",(1083,1083))
         img.paste(raritybackground)
 
-        iconimg = Image.open(f'cache/{id}temp.png').resize((1083, 1083), Image.ANTIALIAS).convert("RGBA")
+        iconimg = Image.open(f'cache/{id}temp.png').resize((1083, 1083)).convert("RGBA")
         img.paste(iconimg, (0,0), iconimg)
         img.save(f'cache/{id}.png')
         try:
@@ -749,7 +749,7 @@ def largeicontype_pak(useFeaturedIfAvaliable, language):
         # CARD GEN #
         img=Image.new("RGB",(1793,1080))
 
-        finishedIcon = Image.open(f'cache/{id}.png').resize((1083, 1083), Image.ANTIALIAS).convert("RGBA")
+        finishedIcon = Image.open(f'cache/{id}.png').resize((1083, 1083)).convert("RGBA")
         img.paste(finishedIcon, (710, 0), finishedIcon)
 
         os.remove(f'cache/{id}.png')
@@ -857,7 +857,7 @@ def largeicontype_pak(useFeaturedIfAvaliable, language):
                     url = x['image']
                     r = requests.get(url)
                     open(f'cache/variant_{name}.png', 'wb').write(r.content)
-                    varianticon = Image.open(f'cache/variant_{name}.png').resize((157, 157), Image.ANTIALIAS).convert("RGBA")
+                    varianticon = Image.open(f'cache/variant_{name}.png').resize((157, 157)).convert("RGBA")
                     variantbox.paste(varianticon, (0,0), varianticon)
                     
                     variantbox.save(f'cache/V_{name}.png')
