@@ -103,29 +103,33 @@ def raritycolor(rarity):
 
 
 def largeicontype(useFeaturedIfAvaliable, language):
-    response = requests.get(f'https://fortnite-api.com/v2/cosmetics/br/new?language={language}')
+    response = requests.get(f'https://fortnite-api.com/v2/cosmetics/new')
 
     count = 0
-    items = len(response.json()['data']['items'])
+    items = len(response.json()['data']['items']['br'])
 
     version = response.json()['data']['build']
     print('Loaded Large icon type')
     print(f'Loaded build {version}')
     print(f'Generating {items} items...\n')
-    for i in response.json()['data']['items']:
+    for i in response.json()['data']['items']['br']:
         id = i['id']
 
         if useFeaturedIfAvaliable == 'True':
-            if i["images"]["featured"] != None:
-                url = i["images"]["featured"]
+            featured_image = i["images"].get("featured")
+            icon_image = i["images"].get("icon")
+    
+            if featured_image:
+                url = featured_image
+            elif icon_image:
+                url = icon_image
             else:
-                if i['images']['icon'] != None:
-                    url = i['images']['icon']
-                else:
-                    url = 'https://i.ibb.co/KyvMydQ/do-Not-Delete.png'
+                url = 'https://i.ibb.co/KyvMydQ/do-Not-Delete.png'
         else:
-            if i['images']['icon'] != None:
-                url = i['images']['icon']
+            icon_image = i["images"].get("icon")
+            
+            if icon_image:
+                url = icon_image
             else:
                 url = 'https://i.ibb.co/KyvMydQ/do-Not-Delete.png'
         r = requests.get(url)
@@ -206,10 +210,12 @@ def largeicontype(useFeaturedIfAvaliable, language):
 
         raritytag_w = raritywidth + 40
 
+        if rarity in ["epic", "rare", "icon"]:
+            raritytag_w -= 27
+
         raritytag=Image.new("RGB",(raritytag_w,48), color = button_color).convert('RGBA') # Draws Rarity Button Tag
 
         background.paste(raritytag, (28, 124), raritytag)
-
         # RARITY BUTTON TEXT
         rarity=rarity.upper()
         draw=ImageDraw.Draw(background)
@@ -223,7 +229,6 @@ def largeicontype(useFeaturedIfAvaliable, language):
         backend=backend.upper()
         draw=ImageDraw.Draw(background)
         draw.text((backend_x,133),backend,font=font,fill='white')
-
 
         font=ImageFont.truetype(loadFont,35)
         try:
@@ -255,61 +260,62 @@ def largeicontype(useFeaturedIfAvaliable, language):
 
         font=ImageFont.truetype(loadFont,35)
         draw.text((20,1035),otherdesc,font=font,fill=0xc8c5c4)
-
         #Variant Gen
-        variants = i['variants']
-        variantnum = 0
-        if i['variants'] != None:
-            plus_sign = Image.open(f'rarities/large/PlusSign.png').convert("RGBA")
-            background.paste(plus_sign, (0,0), plus_sign)
+        try:
+            variantnum = 0
+            if i['variants'] != None:
+                plus_sign = Image.open(f'rarities/large/PlusSign.png').convert("RGBA")
+                background.paste(plus_sign, (0,0), plus_sign)
 
-            variants_text = Image.open(f'rarities/large/VariantsText.png').convert("RGBA")
-            background.paste(variants_text, (0,0), variants_text)
+                variants_text = Image.open(f'rarities/large/VariantsText.png').convert("RGBA")
+                background.paste(variants_text, (0,0), variants_text)
 
-            for x in i['variants'][0]['options']:
-                if x['name'] is not 'DEFAULT' or x['name'] is not 'Stage1':
-                    variantbox=Image.new("RGB",(157,157), color = 0x211f20).convert('RGBA')
+                for x in i['variants'][0]['options']:
+                    if x['name'] != 'DEFAULT' and x['name'] != 'Stage1':
+                        variantbox=Image.new("RGB",(157,157), color = 0x211f20).convert('RGBA')
 
-                    name = x['name']
-                    url = x['image']
-                    r = requests.get(url)
-                    open(f'cache/variant_{name}.png', 'wb').write(r.content)
-                    varianticon = Image.open(f'cache/variant_{name}.png').resize((157, 157)).convert("RGBA")
-                    variantbox.paste(varianticon, (0,0), varianticon)
-                    
-                    variantbox.save(f'cache/V_{name}.png')
-                    os.remove(f'cache/variant_{name}.png')
-
-                    varianticon = Image.open(f'cache/V_{name}.png').convert("RGBA")
-                    
-                    variantnum = variantnum + 1
-                    
-                    xnum = 24
-                    if variantnum == 1:
-                        xnum = 24
-                    elif variantnum == 2:
-                        xnum = 204 # 180
-                    elif variantnum == 3:
-                        xnum = 384 # 180
-
-                    ynum = 390
-                    if variantnum == 4:
-                        xnum = 24
-                        ynum = 570
-                    elif variantnum == 5:
-                        xnum = 204
-                        ynum = 570
-                    elif variantnum == 6:
-                        xnum = 384
-                        ynum = 570
+                        name = x['name']
+                        url = x['image']
+                        r = requests.get(url)
+                        open(f'cache/variant_{name}.png', 'wb').write(r.content)
+                        varianticon = Image.open(f'cache/variant_{name}.png').resize((157, 157)).convert("RGBA")
+                        variantbox.paste(varianticon, (0,0), varianticon)
                         
-                    background.paste(varianticon, (xnum, ynum), varianticon)
-                    os.remove(f'cache/V_{name}.png')
+                        variantbox.save(f'cache/V_{name}.png')
+                        os.remove(f'cache/variant_{name}.png')
+
+                        varianticon = Image.open(f'cache/V_{name}.png').convert("RGBA")
+                        
+                        variantnum = variantnum + 1
+                        
+                        xnum = 24
+                        if variantnum == 1:
+                            xnum = 24
+                        elif variantnum == 2:
+                            xnum = 204 # 180
+                        elif variantnum == 3:
+                            xnum = 384 # 180
+
+                        ynum = 390
+                        if variantnum == 4:
+                            xnum = 24
+                            ynum = 570
+                        elif variantnum == 5:
+                            xnum = 204
+                            ynum = 570
+                        elif variantnum == 6:
+                            xnum = 384
+                            ynum = 570
+                            
+                        background.paste(varianticon, (xnum, ynum), varianticon)
+                        os.remove(f'cache/V_{name}.png')
 
 
-            font=ImageFont.truetype(loadFont,35)
-            draw.text((230,340),f'{variantnum}',font=font,fill=0x999999)
-            #print(f'Variants: {variantnum}')
+                font=ImageFont.truetype(loadFont,35)
+                draw.text((230,340),f'{variantnum}',font=font,fill=0x999999)
+                #print(f'Variants: {variantnum}')
+        except:
+            pass
         
 
 
@@ -430,8 +436,11 @@ def largeicontype_search(useFeaturedIfAvaliable, language):
 
     raritylen = len(rarity)
     raritywidth = font.getsize(rarity)[0]
-
+    
     raritytag_w = raritywidth + 40
+
+    if rarity != "epic" and rarity != "rare" and rarity != "icon":
+        raritytag_w -= 27
 
     raritytag=Image.new("RGB",(raritytag_w,48), color = button_color).convert('RGBA') # Draws Rarity Button Tag
 
@@ -484,59 +493,62 @@ def largeicontype_search(useFeaturedIfAvaliable, language):
     draw.text((20,1035),otherdesc,font=font,fill=0xc8c5c4)
 
     #Variant Gen
-    variants = i['variants']
-    variantnum = 0
-    if i['variants'] != None:
-        plus_sign = Image.open(f'rarities/large/PlusSign.png').convert("RGBA")
-        background.paste(plus_sign, (0,0), plus_sign)
+    try:
+        variants = i['variants']
+        variantnum = 0
+        if i['variants'] != None:
+            plus_sign = Image.open(f'rarities/large/PlusSign.png').convert("RGBA")
+            background.paste(plus_sign, (0,0), plus_sign)
 
-        variants_text = Image.open(f'rarities/large/VariantsText.png').convert("RGBA")
-        background.paste(variants_text, (0,0), variants_text)
+            variants_text = Image.open(f'rarities/large/VariantsText.png').convert("RGBA")
+            background.paste(variants_text, (0,0), variants_text)
 
-        for x in i['variants'][0]['options']:
-            if x['name'] is not 'DEFAULT' or x['name'] is not 'Stage1':
-                variantbox=Image.new("RGB",(157,157), color = 0x211f20).convert('RGBA')
+            for x in i['variants'][0]['options']:
+                if x['name'] != 'DEFAULT' and x['name'] != 'Stage1':
+                    variantbox=Image.new("RGB",(157,157), color = 0x211f20).convert('RGBA')
 
-                name = x['name']
-                url = x['image']
-                r = requests.get(url)
-                open(f'cache/variant_{name}.png', 'wb').write(r.content)
-                varianticon = Image.open(f'cache/variant_{name}.png').resize((157, 157)).convert("RGBA")
-                variantbox.paste(varianticon, (0,0), varianticon)
-                
-                variantbox.save(f'cache/V_{name}.png')
-                os.remove(f'cache/variant_{name}.png')
-
-                varianticon = Image.open(f'cache/V_{name}.png').convert("RGBA")
-                
-                variantnum = variantnum + 1
-                
-                xnum = 24
-                if variantnum == 1:
-                    xnum = 24
-                elif variantnum == 2:
-                    xnum = 204 # 180
-                elif variantnum == 3:
-                    xnum = 384 # 180
-
-                ynum = 390
-                if variantnum == 4:
-                    xnum = 24
-                    ynum = 570
-                elif variantnum == 5:
-                    xnum = 204
-                    ynum = 570
-                elif variantnum == 6:
-                    xnum = 384
-                    ynum = 570
+                    name = x['name']
+                    url = x['image']
+                    r = requests.get(url)
+                    open(f'cache/variant_{name}.png', 'wb').write(r.content)
+                    varianticon = Image.open(f'cache/variant_{name}.png').resize((157, 157)).convert("RGBA")
+                    variantbox.paste(varianticon, (0,0), varianticon)
                     
-                background.paste(varianticon, (xnum, ynum), varianticon)
-                os.remove(f'cache/V_{name}.png')
+                    variantbox.save(f'cache/V_{name}.png')
+                    os.remove(f'cache/variant_{name}.png')
+
+                    varianticon = Image.open(f'cache/V_{name}.png').convert("RGBA")
+                    
+                    variantnum = variantnum + 1
+                    
+                    xnum = 24
+                    if variantnum == 1:
+                        xnum = 24
+                    elif variantnum == 2:
+                        xnum = 204 # 180
+                    elif variantnum == 3:
+                        xnum = 384 # 180
+
+                    ynum = 390
+                    if variantnum == 4:
+                        xnum = 24
+                        ynum = 570
+                    elif variantnum == 5:
+                        xnum = 204
+                        ynum = 570
+                    elif variantnum == 6:
+                        xnum = 384
+                        ynum = 570
+                        
+                    background.paste(varianticon, (xnum, ynum), varianticon)
+                    os.remove(f'cache/V_{name}.png')
 
 
-        font=ImageFont.truetype(loadFont,35)
-        draw.text((230,340),f'{variantnum}',font=font,fill=0x999999)
-        #print(f'Variants: {variantnum}')
+            font=ImageFont.truetype(loadFont,35)
+            draw.text((230,340),f'{variantnum}',font=font,fill=0x999999)
+            #print(f'Variants: {variantnum}')
+    except:
+        print("Variants not found.")
     
 
 
