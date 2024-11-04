@@ -95,6 +95,9 @@ def raritycolor(rarity):
     elif rarity == 'common':
         button_color = (184, 184, 184)
         text_color =  (92, 92, 92)
+    elif rarity == 'marvel':
+        button_color = (229, 33, 43)
+        text_color = (89, 7, 12)
     else:
         button_color = (184, 184, 184)
         text_color =  (92, 92, 92)
@@ -103,7 +106,7 @@ def raritycolor(rarity):
 
 
 def largeicontype(useFeaturedIfAvaliable, language):
-    response = requests.get(f'https://fortnite-api.com/v2/cosmetics/new')
+    response = requests.get(f'https://fortnite-api.com/v2/cosmetics/new?language={language}')
 
     count = 0
     items = len(response.json()['data']['items']['br'])
@@ -114,30 +117,30 @@ def largeicontype(useFeaturedIfAvaliable, language):
     print(f'Generating {items} items...\n')
     for i in response.json()['data']['items']['br']:
         id = i['id']
+        #print(id)
 
-        if useFeaturedIfAvaliable == 'True':
-            featured_image = i["images"].get("featured")
-            icon_image = i["images"].get("icon")
-    
-            if featured_image:
-                url = featured_image
-            elif icon_image:
-                url = icon_image
+        try:
+            if useFeaturedIfAvaliable == 'True':
+                try:
+                    url = i['images']['featured']
+                except:
+                    url = i['images']['icon']
             else:
-                url = 'https://i.ibb.co/KyvMydQ/do-Not-Delete.png'
+                url = i['images']['icon']
+        except:
+            url = None
+        
+        if url != None:
+            r = requests.get(url)
+            open(f'cache/{id}temp.png', 'wb').write(r.content)
         else:
-            icon_image = i["images"].get("icon")
-            
-            if icon_image:
-                url = icon_image
-            else:
-                url = 'https://i.ibb.co/KyvMydQ/do-Not-Delete.png'
-        r = requests.get(url)
-        open(f'cache/{id}temp.png', 'wb').write(r.content)
+            shutil.copy("assets/watermarklol.png", f'cache/{id}temp.png')
 
         # RARITY GEN #
         iconImg = Image.open(f'cache/{id}temp.png')
         iconImg.resize((1083,1083))
+
+        #print("Saved image.")
 
         rarity = i["rarity"]['value']
         rarity = rarity.lower()
@@ -150,6 +153,7 @@ def largeicontype(useFeaturedIfAvaliable, language):
 
         img=Image.new("RGB",(1083,1083))
         img.paste(raritybackground)
+        #print("Generated rarities.")
 
         iconimg = Image.open(f'cache/{id}temp.png').resize((1083, 1083)).convert("RGBA")
         img.paste(iconimg, (0,0), iconimg)
@@ -166,6 +170,8 @@ def largeicontype(useFeaturedIfAvaliable, language):
 
         finishedIcon = Image.open(f'cache/{id}.png').resize((1083, 1083)).convert("RGBA")
         img.paste(finishedIcon, (710, 0), finishedIcon)
+
+        #print("Started finished icon")
 
         os.remove(f'cache/{id}.png')
 
@@ -209,9 +215,16 @@ def largeicontype(useFeaturedIfAvaliable, language):
         raritywidth = font.getsize(rarity)[0]
 
         raritytag_w = raritywidth + 40
-
-        if rarity in ["epic", "rare", "icon"]:
+        
+        # Starts big. Minus to be smalller.
+        if "epic" in rarity:
             raritytag_w -= 27
+        elif "icon" in rarity:
+            raritytag_w -= 27
+        elif "rare" in rarity:
+            raritytag_w -= 10
+        elif "marvel" in rarity:
+            raritytag_w -= 14
 
         raritytag=Image.new("RGB",(raritytag_w,48), color = button_color).convert('RGBA') # Draws Rarity Button Tag
 
