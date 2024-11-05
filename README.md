@@ -2,7 +2,8 @@
 
 ------------
 
-:x: **This branch is not stable. Please use the [beta](https://github.com/FortniteFevers/AutoLeak/tree/beta) branch instead.**
+> [!IMPORTANT]
+> This branch is not stable. Please use the [beta](https://github.com/FortniteFevers/AutoLeak/tree/beta) branch instead.
 
 ------------
 
