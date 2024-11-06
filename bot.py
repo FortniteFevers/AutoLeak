@@ -2,7 +2,7 @@
 
 """
 Commons Clause - License Condition v1.0
-Copyright Fevers 2021
+Copyright Fevers 2024
 
 The Software is provided to you by the Licensor under the
 License, as defined below, subject to the following condition.
@@ -110,7 +110,7 @@ if x == 'Windows':
 
 # Used to communicate with updates
 try:
-    response = requests.get('https://pastebin.com/raw/zku0yz9q')
+    response = requests.get('https://raw.githubusercontent.com/FortniteFevers/AutoLeak/beta/notices.json')
     ln1 = response.json()["1"]
     ln2 = response.json()["2"]
     ln3 = response.json()["3"]
