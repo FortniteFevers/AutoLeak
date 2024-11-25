@@ -23,7 +23,7 @@ def genshop():
     print('Starting the generation process.'+Fore.CYAN)
     start = time.time()
 
-    response = requests.get('https://fortnite-api.com/v2/shop/br/combined')
+    response = requests.get('https://fortnite-api.com/v2/shop')
 
     data = response.json()['data']
 
@@ -347,13 +347,11 @@ def genshop():
 
 # Credits to https://github.com/MyNameIsDark01 for the original Merger code.
 # This merger is under rights, you may not take this code and use it in your own project without proper credits to Fevers and Dark.
-response = requests.get('https://fortnite-api.com/v2/shop/br/combined')
-currentdate = response.json()['data']['date']
-currentdate = currentdate[:10]
-def shopmerge(datas: Union[list, None] = None, save_as: str = f'merged/shop {currentdate}.jpg'):
-    response = requests.get('https://fortnite-api.com/v2/shop/br/combined')
+def shopmerge(datas: Union[list, None] = None):
+    response = requests.get('https://fortnite-api.com/v2/')
     currentdate = response.json()['data']['date']
     currentdate = currentdate[:10]
+    save_as = f'merged/shop {currentdate}.jpg'
     if not datas:
         datas = [Image.open(i) for i in glob.glob('icons/*.png')]
 
@@ -392,6 +390,7 @@ def shopmerge(datas: Union[list, None] = None, save_as: str = f'merged/shop {cur
 
         i += 1
 
+
     image.save(f"{save_as}")
 
     img = PIL.Image.open(f"{save_as}")
@@ -414,7 +413,7 @@ def shopmerge(datas: Union[list, None] = None, save_as: str = f'merged/shop {cur
     return image
 
 def update(api):
-    apiurl = f'https://fortnite-api.com/v2/shop/br/combined'
+    apiurl = f'https://fortnite-api.com/v2/'
 
     response = requests.get(apiurl)
     shopData = response.json()['data']['hash']
