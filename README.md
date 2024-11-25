@@ -6,9 +6,6 @@ Make sure to check out our Wiki, with info on how to utilitize [**settings.json*
 
 ---
 
-# Are you having issues with modules not being installed?
-- [Click me for a tutorial on how to fix this!](https://discord.com/channels/810722059302731819/810723457049690153/921507748678606868)
-
 # Features
 AutoLeak is a program with many features.
 Currently, the program features these options:
@@ -34,6 +31,9 @@ After you have done this, extract the folder, and open up **INSTALL PACKAGES** a
 If you would like to, go into 'settings.json' and edit the content to your liking.
 
 After this, run 'startprogram.bat' and enter in a number (Each number correlates to a command) and enjoy!
+
+# Are you having issues with modules not being installed?
+- [Click me for a tutorial on how to fix this!](https://discord.com/channels/810722059302731819/810723457049690153/921507748678606868)
 
 # Languages
 The following languages are supported: ar / de / en / es / es-419 / fr / it / ja / ko / pl / pt-BR / ru / tr / zh-CN / zh-Hant
