@@ -5,14 +5,9 @@ AutoLeak is a Terminal-Based utility that interacts with varius Fortnite API's. 
 Make sure to check out our Wiki, with info on how to utilitize [**settings.json**](https://github.com/FortniteFevers/AutoLeak/wiki/Settings.json-With-Comments), and information on the latest AutoLeak versions.
 
 ---
-(this README is in beta, not finished yet.)
-#### AutoLeak Beta 1.4 has just been released!
-# Whats new in version 1.4?
-- [Click me for a list of 1.4 changes and fixes.](https://github.com/FortniteFevers/AutoLeak/wiki/1.4-Changes)
 
 # Are you having issues with modules not being installed?
 - [Click me for a tutorial on how to fix this!](https://discord.com/channels/810722059302731819/810723457049690153/921507748678606868)
-
 
 # Features
 AutoLeak is a program with many features.
